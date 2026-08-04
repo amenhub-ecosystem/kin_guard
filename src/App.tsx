@@ -1,9 +1,21 @@
-function App() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-950 text-neutral-100">
-      <h1 className="text-3xl font-semibold tracking-tight">web3_landing_page</h1>
-    </div>
-  )
-}
+import { AnnouncementBanner } from "@/components/layout/AnnouncementBanner";
+import { Nav } from "@/components/layout/Nav";
+import { Footer } from "@/components/layout/Footer";
+import { Hero } from "@/components/hero/Hero";
+import { ProblemSection } from "@/components/problem/ProblemSection";
 
-export default App
+export default function App() {
+  return (
+    <>
+
+      <AnnouncementBanner />
+      <Nav />
+      <main className="min-h-[60vh] bg-white">
+        <Hero />
+        <ProblemSection />
+      </main>
+
+      <Footer />
+    </>
+  );
+}
