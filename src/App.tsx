@@ -7,6 +7,8 @@ import { FeaturesSection } from "@/components/features/FeaturesSection";
 import FamilyCircleSection from "@/components/features/FamilyCircleSection";
 import HowItWorksSection from "@/components/how-it-works/HowItWorksSection";
 import PricingSection from "./components/pricing/PricingSection";
+import FAQSection from "./components/faq/FAQSection";
+import CTASection from "./components/cta/CTASection";
 
 export default function App() {
   return (
@@ -21,6 +23,8 @@ export default function App() {
         <HowItWorksSection />
         <FamilyCircleSection />
         <PricingSection />
+        <FAQSection />
+        <CTASection />
       </main>
 
       <Footer />
