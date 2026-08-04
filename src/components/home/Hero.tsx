@@ -1,5 +1,5 @@
 import heroIllustration from "@/assets/images/hero-illustration.png";
-import { PlayButton } from "@/components/icons";
+import { PlayButton } from "@/components/common/icons";
 
 export function Hero() {
   return (

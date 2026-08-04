@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Minus, Plus } from "@/components/icons";
+import { Minus, Plus } from "@/components/common/icons";
 
 const faqs = [
   {

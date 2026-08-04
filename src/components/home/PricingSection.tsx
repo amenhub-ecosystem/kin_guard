@@ -1,4 +1,4 @@
-import { CheckCircle } from "@/components/icons"; 
+import { CheckCircle } from "@/components/common/icons";
 type PricingPlan = {
   name: string;
   description: string;

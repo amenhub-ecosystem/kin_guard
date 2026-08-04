@@ -1,8 +1,10 @@
-import { LogoWithText } from "@/components/layout/LogoWithText";
+import { LogoWithText } from "@/components/common/layout/LogoWithText";
+
+import { Link, useLocation } from "react-router-dom";
 
 const navigation = [
   { label: "Home", href: "/", active: true },
-  { label: "Features", href: "#features" },
+  { label: "Features", href: "/features" },
   { label: "How It Works", href: "#how-it-works" },
   { label: "Solutions", href: "#solutions" },
   { label: "Pricing", href: "#pricing" },
@@ -10,6 +12,8 @@ const navigation = [
 ];
 
 export function Nav() {
+  const location = useLocation();
+
   return (
     <nav
       aria-label="Primary navigation"
@@ -21,20 +25,24 @@ export function Nav() {
           <LogoWithText variant="dark" />
 
           <ul className="hidden items-center gap-8 lg:flex">
-            {navigation.map((item) => (
-              <li key={item.label}>
-                <a
-                  href={item.href}
-                  className={`flex items-center gap-2 text-sm transition-colors ${
-                    item.active
-                      ? "font-bold text-[#FE706D]"
-                      : "font-medium text-[#5C6B7A] hover:text-[#003665]"
-                  }`}
-                >
-                  <span>{item.label}</span>
-                </a>
-              </li>
-            ))}
+            {navigation.map((item) => {
+              const isActive = location.pathname === item.href;
+
+              return (
+                <li key={item.label}>
+                  <Link
+                    to={item.href}
+                    className={`flex items-center gap-2 text-sm transition-colors ${
+                      isActive
+                        ? "font-bold text-[#FE706D]"
+                        : "font-medium text-[#5C6B7A] hover:text-[#003665]"
+                    }`}
+                  >
+                    <span>{item.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
 

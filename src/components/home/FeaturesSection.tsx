@@ -1,7 +1,7 @@
 // components/features/FeaturesSection.tsx
 
 import type { ReactNode } from "react";
-import { Calender, Pills, EmergencySos, WhatsApp } from "@/components/icons";
+import { Calender, Pills, EmergencySos, WhatsApp } from "@/components/common/icons";
 
 type FeatureCardProps = {
   title: string;

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { MissesCall, Pills, Warning } from "@/components/icons";
+import { MissesCall, Pills, Warning } from "@/components/common/icons";
 
 // components/problem/ProblemSection.tsx
 
