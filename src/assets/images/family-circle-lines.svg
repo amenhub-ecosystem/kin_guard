@@ -1,0 +1,6 @@
+<svg width="600" height="480" viewBox="0 0 600 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <line x1="150" y1="90" x2="300" y2="240" stroke="#FE706D" stroke-width="2" stroke-dasharray="5 5" />
+  <line x1="450" y1="90" x2="300" y2="240" stroke="#FE706D" stroke-width="2" stroke-dasharray="5 5" />
+  <line x1="190" y1="390" x2="300" y2="240" stroke="#FE706D" stroke-width="2" stroke-dasharray="5 5" />
+  <line x1="420" y1="390" x2="300" y2="240" stroke="#FE706D" stroke-width="2" stroke-dasharray="5 5" />
+</svg>

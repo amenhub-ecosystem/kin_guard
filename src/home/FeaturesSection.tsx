@@ -46,10 +46,11 @@ function FeatureCard({
   return (
     <article
       className="
-        rounded-[40px]
+        rounded-[24px]
         border border-white/10
         bg-white/5
         p-8
+        md:rounded-[40px]
         backdrop-blur-sm
         transition-all
         duration-300
@@ -78,10 +79,10 @@ function FeatureCard({
 
 export function FeaturesSection() {
   return (
-    <section className="rounded-t-[96px] bg-[#003665] py-24">
+    <section className="rounded-t-[56px] bg-[#003665] py-24 md:rounded-t-[96px]">
       <div className="mx-auto max-w-7xl px-10">
         <div className="max-w-3xl">
-          <h2 className="font-['Space_Grotesk'] text-5xl font-bold leading-[1] text-white">
+          <h2 className="font-['Space_Grotesk'] text-4xl font-bold leading-[1] text-white sm:text-5xl md:text-5xl">
             One place. Every moment of care.
           </h2>
 

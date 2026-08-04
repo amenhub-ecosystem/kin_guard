@@ -15,13 +15,16 @@ export function Hero() {
 >
 <div className="mx-auto flex max-w-7xl flex-col items-center gap-16 px-6 pt-0 pb-20 lg:flex-row lg:justify-between lg:px-10 lg:pt-0 lg:pb-28">        {/* Content */}
         <div className="max-w-xl">
-          <h1 className="text-[56px] font-bold leading-[1.1] tracking-[-0.03em] text-[#102A43]">
+          <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-[-0.03em] text-[#102A43] sm:text-[3.5rem] lg:text-[56px]">
             Care knows no
             <br />
-            <span className="text-[#FE706D]">distance</span>.
+            <span className="text-[#FE706D] [font-size:inherit]">
+              distance
+            </span>
+            .
           </h1>
 
-          <p className="mt-8 max-w-lg text-[18px] leading-10 text-[#5C6B7A]">
+          <p className="mt-8 max-w-lg text-base leading-8 text-[#5C6B7A] sm:text-[18px] sm:leading-10">
             Stay connected with loved ones through daily check-ins,
             medication reminders and real-time family updates.
           </p>

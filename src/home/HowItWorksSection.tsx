@@ -28,9 +28,11 @@ const HowItWorksSection: FC = () => {
     <section className="bg-white py-24">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="font-space-grotesk text-4xl font-bold leading-tight text-[#102A43]">
+          <h2 className="font-space-grotesk text-[2rem] font-bold leading-tight text-[#102A43] sm:text-4xl">
             Start caring in 4{" "}
-            <span className="text-[#FE706D]">simple steps</span>
+            <span className="text-[#FE706D] [font-size:inherit]">
+              simple steps
+            </span>
           </h2>
         </div>
 
