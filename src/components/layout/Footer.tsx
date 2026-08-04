@@ -108,7 +108,7 @@ export function Footer() {
 
         <div className="mt-16 border-t border-white/10 pt-12">
           <p className="text-xs text-[#6B7280]">
-            © 2024 KinGuard Inc. All rights reserved.
+            © 2026 KinGuard Inc. All rights reserved.
           </p>
         </div>
       </div>

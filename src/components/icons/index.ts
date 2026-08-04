@@ -1,4 +1,10 @@
+export { Calender } from "./Calender";
+export { CheckCircle } from "./CheckCircle";
+export { DropDown } from "./DropDown";
+export { EmergencySos } from "./EmergencySos";
 export { MissesCall } from "./MissesCall";
 export { Pills } from "./Pills";
+export { Pills2 } from "./Pills2";
 export { PlayButton } from "./PlayButton";
 export { Warning } from "./Warning";
+export { WhatsApp } from "./WhatsApp";
