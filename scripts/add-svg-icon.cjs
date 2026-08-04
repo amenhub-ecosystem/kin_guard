@@ -6,7 +6,7 @@ const path = require('path');
 const readline = require('readline');
 
 // ─── Output directory ────────────────────────────────────────────────────────
-const iconsDir = path.resolve(__dirname, '..', 'src', 'components', 'icons');
+const iconsDir = path.resolve(__dirname, '..', 'src', 'components', 'common', 'icons');
 if (!fs.existsSync(iconsDir)) fs.mkdirSync(iconsDir, { recursive: true });
 
 // ─── Colors ──────────────────────────────────────────────────────────────────
@@ -207,7 +207,7 @@ async function run() {
   updateIndex(indexPath, compName);
 
   console.log(green('\nDone. Import with:'));
-  console.log(cyan(`  import { ${compName} } from '@/components/icons';`));
+  console.log(cyan(`  import { ${compName} } from '@/components/common/icons';`));
 }
 
 run().catch((err) => { console.error(red(`\nUnexpected error: ${err.message}`)); process.exit(1); });

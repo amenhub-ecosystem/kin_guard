@@ -4,6 +4,7 @@ import { Nav } from "@/components/common/layout/Nav";
 import { Footer } from "@/components/common/layout/Footer";
 import HomePage from "@/pages/Homepage";
 import FeaturesPage from "@/pages/FeaturesPage";
+import HowItWorksPage from "@/pages/HowItWorksPage";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/how-it-works" element={<HowItWorksPage />} />
       </Routes>
       <Footer />
     </>

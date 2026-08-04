@@ -1,4 +1,6 @@
+export { ArrowRight } from "./ArrowRight";
 export { Calender } from "./Calender";
+export { Check } from "./Check";
 export { CheckCircle } from "./CheckCircle";
 export { DropDown } from "./DropDown";
 export { EmergencySos } from "./EmergencySos";
@@ -6,6 +8,8 @@ export { Instagram } from "./Instagram";
 export { Linkedin } from "./Linkedin";
 export { Minus } from "./Minus";
 export { MissesCall } from "./MissesCall";
+export { MoonIcon } from "./MoonIcon";
+export { PaperPlane } from "./PaperPlane";
 export { Pills } from "./Pills";
 export { Pills2 } from "./Pills2";
 export { PlayButton } from "./PlayButton";

@@ -1,5 +1,5 @@
 import mockPreview from "@/assets/images/preview_mock.png";
-import { ArrowRight } from "@/components/icons";
+import { ArrowRight } from "@/components/common/icons";
 
 type FeatureCard = {
   title: string;
