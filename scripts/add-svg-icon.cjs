@@ -105,14 +105,28 @@ function indent(text, spaces) {
   return text.split('\n').map((line) => (line.trim() ? pad + line : '')).join('\n');
 }
 
-function buildComponent(compName, svgMarkup) {
+function getDefaultSvgColor(svgMarkup) {
+  const colors = [];
+  const re = /fill=(['"])(?!none)([^'"\s>]+)\1/gi;
+  let match;
+  while ((match = re.exec(svgMarkup))) {
+    colors.push(match[2]);
+  }
+  return colors.length ? colors[0] : 'currentColor';
+}
+
+function applyColorPropToFills(svgMarkup) {
+  return svgMarkup.replace(/fill=(['"])(?!none)([^'"\s>]+)\1/gi, 'fill={color}');
+}
+
+function buildComponent(compName, svgMarkup, defaultColor) {
   const indented = indent(svgMarkup.trim(), 4);
   return [
     `import * as React from "react";`,
     ``,
-    `type Props = React.SVGProps<SVGSVGElement> & { size?: number | string };`,
+    `type Props = React.SVGProps<SVGSVGElement> & { size?: number | string; color?: string };`,
     ``,
-    `export function ${compName}({ size, width, height, ...props }: Props) {`,
+    `export function ${compName}({ size, width, height, color = "${defaultColor}", ...props }: Props) {`,
     `  return (`,
     indented,
     `  );`,
@@ -193,7 +207,9 @@ async function run() {
     console.error(red(`SVG error: ${err.message}`)); process.exit(2);
   }
 
-  const component = buildComponent(compName, svg);
+  const defaultColor = getDefaultSvgColor(svg);
+  const coloredSvg = applyColorPropToFills(svg);
+  const component = buildComponent(compName, coloredSvg, defaultColor);
 
   const outPath = path.join(iconsDir, `${compName}.tsx`);
   if (fs.existsSync(outPath)) {

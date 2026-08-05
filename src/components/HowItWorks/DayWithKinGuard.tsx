@@ -8,6 +8,7 @@ type TimelineEvent = {
   icon: React.ReactNode;
   accent?: boolean;
   dark?: boolean;
+  plain?: boolean;
 };
 
 const events: TimelineEvent[] = [
@@ -28,13 +29,14 @@ const events: TimelineEvent[] = [
     time: "8:11",
     title: "Family notified",
     description: "Care circle members received positive update",
-    icon: <img src={usersIcon} alt="Family notified" className="h-5 w-5" />,
+    icon: <img src={usersIcon} alt="Family notified" className="h-5 w-15" />,
+    plain: true,
   },
   {
     time: "1:00",
     title: "Afternoon medication completed",
     description: "Mid-day routine finished and logged successfully",
-    icon: <Pills className="h-5 w-5" />,
+    icon: <Pills className="h-5 w-5" color="#003665" />,
   },
   {
     time: "8:00",
@@ -80,7 +82,9 @@ function TimelineCard({
       <div
         className={`flex h-12 w-12 items-center justify-center rounded-full
         ${
-          event.dark
+          event.plain
+            ? "bg-transparent text-[#003665] shadow-none"
+            : event.dark
             ? "bg-white/10 text-white"
             : event.accent
             ? "bg-[#FFF3F2] text-[#FE706D]"
