@@ -7,7 +7,7 @@ export function PricingHero() {
             Home / Pricing
           </p>
 
-          <h1 className="mt-6 font-space-grotesk text-5xl font-bold leading-[1.1] tracking-[-0.02em] text-[#102A43] sm:text-6xl lg:text-[64px] lg:leading-[72px]">
+          <h1 className="mt-6 font-space-grotesk text-5xl font-bold leading-[1.1] tracking-[-0.02em] text-[#003665] sm:text-6xl lg:text-[64px] lg:leading-[72px]">
             Choose the right care
           </h1>
 
