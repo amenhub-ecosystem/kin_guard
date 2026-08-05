@@ -2,7 +2,7 @@ import * as React from "react";
 
 type Props = React.SVGProps<SVGSVGElement> & { size?: number | string; color?: string; };
 
-export function Minus({ size, width, height, color = "#0B3D63", ...props }: Props) {
+export function Minus({ size, width, height, color = "#FF6F61", ...props }: Props) {
     return (
         <svg
             viewBox="0 0 13 13"

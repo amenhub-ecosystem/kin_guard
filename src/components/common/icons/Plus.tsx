@@ -1,11 +1,11 @@
 import * as React from "react";
 
-type Props = React.SVGProps<SVGSVGElement> & { size?: number | string; color?: string; };
+type Props = React.SVGProps<SVGSVGElement> & { size?: number | string; color?: string };
 
-export function Plus({ size, width, height, color = "#0B3D63", ...props }: Props) {
+export function Plus({ size, width, height, color = "#FF6F61", ...props }: Props) {
   return (
-    <svg viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" width={size ?? width ?? 24} height={size ?? height ?? 24} {...props}>
-    <path d="M7.5 1C7.5 0.446875 7.05312 0 6.5 0C5.94688 0 5.5 0.446875 5.5 1V5.5H1C0.446875 5.5 0 5.94688 0 6.5C0 7.05312 0.446875 7.5 1 7.5H5.5V12C5.5 12.5531 5.94688 13 6.5 13C7.05312 13 7.5 12.5531 7.5 12V7.5H12C12.5531 7.5 13 7.05312 13 6.5C13 5.94688 12.5531 5.5 12 5.5H7.5V1Z" fill={color}/>
+    <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" width={size ?? width ?? 24} height={size ?? height ?? 24} {...props}>
+    <path d="M6.5625 0.875C6.5625 0.391016 6.17148 0 5.6875 0C5.20352 0 4.8125 0.391016 4.8125 0.875V4.8125H0.875C0.391016 4.8125 0 5.20352 0 5.6875C0 6.17148 0.391016 6.5625 0.875 6.5625H4.8125V10.5C4.8125 10.984 5.20352 11.375 5.6875 11.375C6.17148 11.375 6.5625 10.984 6.5625 10.5V6.5625H10.5C10.984 6.5625 11.375 6.17148 11.375 5.6875C11.375 5.20352 10.984 4.8125 10.5 4.8125H6.5625V0.875Z" fill={color}/>
     </svg>
   );
 }

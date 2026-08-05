@@ -8,7 +8,7 @@ const footerSections = [
       { label: "Features", href: "#" },
       { label: "How It Works", href: "#" },
       { label: "Emergency SOS", href: "#" },
-      { label: "Pricing", href: "#" },
+      { label: "Pricing", href: "/pricing" },
     ],
   },
   {
