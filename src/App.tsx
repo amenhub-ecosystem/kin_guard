@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
-import { AnnouncementBanner } from "@/components/common/ui/AnnouncementBanner";
-import { Nav } from "@/components/common/ui/Nav";
-import { Footer } from "@/components/common/ui/Footer";
+import { AnnouncementBanner } from "@/features/marketing/layouts/AnnouncementBanner";
+import { Nav } from "@/features/marketing/layouts/Nav";
+import { Footer } from "@/features/marketing/layouts/Footer";
 import HomePage from "@/features/marketing/pages/Homepage";
 import FeaturesPage from "@/features/marketing/pages/FeaturesPage";
 import HowItWorksPage from "@/features/marketing/pages/HowItWorksPage";

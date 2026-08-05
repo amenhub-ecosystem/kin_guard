@@ -5,7 +5,7 @@ import FamilyCircleSection from "@/features/marketing/components/home/FamilyCirc
 import HowItWorksSection from "@/features/marketing/components/home/HowItWorksSection";
 import PricingSection from "@/features/marketing/components/home/PricingSection";
 import FAQSection from "@/features/marketing/components/home/FAQSection";
-import CTASection from "@/components/common/ui/CTASection";
+import CTASection from "@/features/marketing/layouts/CTASection";
 
 export default function HomePage() {
   return (

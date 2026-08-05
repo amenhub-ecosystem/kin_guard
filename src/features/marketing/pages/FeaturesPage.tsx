@@ -1,7 +1,7 @@
 import { FeaturesHero } from "@/features/marketing/components/features/FeaturesHero";
 import { FeaturesDashboardPreview } from "@/features/marketing/components/features/FeaturesDashboardPreview";
 import { FeaturesGrid } from "@/features/marketing/components/features/FeaturesGrid";
-import CTASection from "@/components/common/ui/CTASection";
+import CTASection from "@/features/marketing/layouts/CTASection";
 
 export default function FeaturesPage() {
   return (
