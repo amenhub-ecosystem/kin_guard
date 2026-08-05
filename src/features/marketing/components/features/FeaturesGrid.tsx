@@ -1,4 +1,4 @@
-import mockPreview from "@/assets/images/preview_mock.png";
+import mockPreview from "@/features/marketing/assets/images/preview_mock.png";
 import { ArrowRight } from "@/components/common/icons";
 
 type FeatureCard = {

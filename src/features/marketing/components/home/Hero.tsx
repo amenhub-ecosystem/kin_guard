@@ -1,4 +1,4 @@
-import heroIllustration from "@/assets/images/hero-illustration.png";
+import heroIllustration from "@/features/marketing/assets/images/hero-illustration.png";
 import { PlayButton } from "@/components/common/icons";
 
 export function Hero() {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { LogoWithText } from "@/components/common/layout/LogoWithText";
+import { LogoWithText } from "@/components/common/ui/LogoWithText";
 
 import { Link, useLocation } from "react-router-dom";
 

@@ -1,12 +1,12 @@
 import { Routes, Route } from "react-router-dom";
-import { AnnouncementBanner } from "@/components/common/layout/AnnouncementBanner";
-import { Nav } from "@/components/common/layout/Nav";
-import { Footer } from "@/components/common/layout/Footer";
-import HomePage from "@/pages/Homepage";
-import FeaturesPage from "@/pages/FeaturesPage";
-import HowItWorksPage from "@/pages/HowItWorksPage";
-import PricingPage from "@/pages/PricingPage";
-import SolutionsPage from "@/pages/SolutionsPage";
+import { AnnouncementBanner } from "@/components/common/ui/AnnouncementBanner";
+import { Nav } from "@/components/common/ui/Nav";
+import { Footer } from "@/components/common/ui/Footer";
+import HomePage from "@/features/marketing/pages/Homepage";
+import FeaturesPage from "@/features/marketing/pages/FeaturesPage";
+import HowItWorksPage from "@/features/marketing/pages/HowItWorksPage";
+import PricingPage from "@/features/marketing/pages/PricingPage";
+import SolutionsPage from "@/features/marketing/pages/SolutionsPage";
 
 export default function App() {
   return (

@@ -1,9 +1,9 @@
 import { cloneElement } from "react";
 import type { ReactElement } from "react";
 import { Link } from "react-router-dom";
-import familyPreview from "@/assets/images/solutions/solutions-family-preview.png";
-import caregiverPreview from "@/assets/images/solutions/solutions-caregiver-preview.png";
-import healthcarePreview from "@/assets/images/solutions/solutions-healthcare-preview.png";
+import familyPreview from "@/features/marketing/assets/images/solutions/solutions-family-preview.png";
+import caregiverPreview from "@/features/marketing/assets/images/solutions/solutions-caregiver-preview.png";
+import healthcarePreview from "@/features/marketing/assets/images/solutions/solutions-healthcare-preview.png";
 import {
   Bell,
   Pills,

@@ -1,5 +1,5 @@
 import { Check, MoonIcon, PaperPlane, Pills } from "@/components/common/icons";
-import usersIcon from "@/assets/images/how-it-works/users-icon.png";
+import usersIcon from "@/features/marketing/assets/images/how-it-works/users-icon.png";
 
 type TimelineEvent = {
   time: string;

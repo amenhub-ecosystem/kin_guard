@@ -1,4 +1,4 @@
-import familyLayoutImage from "@/assets/images/family_layout.png";
+import familyLayoutImage from "@/features/marketing/assets/images/family_layout.png";
 
 const features = [
   "Designed for older adults",

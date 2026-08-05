@@ -1,4 +1,4 @@
-import mockPreview from "@/assets/images/features_page_mock_preview.png";
+import mockPreview from "@/features/marketing/assets/images/features_page_mock_preview.png";
 
 export function FeaturesDashboardPreview() {
     return (

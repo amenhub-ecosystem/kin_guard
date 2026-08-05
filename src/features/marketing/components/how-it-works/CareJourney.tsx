@@ -1,8 +1,8 @@
-import step1Preview from "@/assets/images/how-it-works/care-journey-step-1.png";
-import step2Preview from "@/assets/images/how-it-works/care-journey-step-2.png";
-import step3Preview from "@/assets/images/how-it-works/care-journey-step-3.png";
-import step4Preview from "@/assets/images/how-it-works/care-journey-step-4.png";
-import step5Preview from "@/assets/images/how-it-works/care-journey-step-5.png";
+import step1Preview from "@/features/marketing/assets/images/how-it-works/care-journey-step-1.png";
+import step2Preview from "@/features/marketing/assets/images/how-it-works/care-journey-step-2.png";
+import step3Preview from "@/features/marketing/assets/images/how-it-works/care-journey-step-3.png";
+import step4Preview from "@/features/marketing/assets/images/how-it-works/care-journey-step-4.png";
+import step5Preview from "@/features/marketing/assets/images/how-it-works/care-journey-step-5.png";
 
 type JourneyStep = {
   step: number;

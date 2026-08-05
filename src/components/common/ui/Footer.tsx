@@ -32,7 +32,7 @@ const footerSections = [
 ];
 
 import { Instagram, Linkedin, X } from "@/components/common/icons";
-import { LogoWithText } from "@/components/common/layout/LogoWithText";
+import { LogoWithText } from "@/components/common/ui/LogoWithText";
 
 const socialLinks = [
   {
