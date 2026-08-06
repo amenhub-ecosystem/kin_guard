@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye } from "@/components/common/icons";
 import { AuthInput } from "../../components/AuthInput";
 import { AuthDivider } from "../../components/AuthDivider";
@@ -6,6 +6,13 @@ import { AuthButton } from "../../components/AuthButton";
 import { SocialLoginButton } from "../../components/SocialLoginButton";
 
 export function LoginPage() {
+  const navigate = useNavigate();
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    navigate("/family-admin/care-circle-setup");
+  };
+
   return (
       <div className="space-y-10">
         {/* Header */}
@@ -20,7 +27,7 @@ export function LoginPage() {
         </div>
 
         {/* Form */}
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <AuthInput
             label="Email Address"
             type="email"
@@ -47,7 +54,7 @@ export function LoginPage() {
             </label>
 
             <Link
-              to="/forgot-password"
+              to="/family-admin/forgot-password"
               className="text-sm font-semibold text-[#FE706D]"
             >
               Forgot Password?
@@ -55,7 +62,7 @@ export function LoginPage() {
           </div>
 
           <div className="space-y-4 pt-2">
-            <AuthButton>
+            <AuthButton type="submit">
               Sign In
             </AuthButton>
 
@@ -72,7 +79,7 @@ export function LoginPage() {
           <p className="text-center text-sm text-[#64748B]">
             Don't have an account?{" "}
             <Link
-              to="/create-account"
+              to="/family-admin/register"
               className="font-bold text-[#FE706D]"
             >
               Create one

@@ -1,11 +1,24 @@
 import { Outlet } from "react-router-dom";
+import type { ReactNode } from "react";
 import authIllustration from "../assets/images/auth-illustration.png";
 
-export function FamilyAdminAuthLayout() {
+interface FamilyAdminAuthLayoutProps {
+  children?: ReactNode;
+  step?: number;
+  title?: string;
+  description?: string;
+}
+
+export function FamilyAdminAuthLayout({
+  children,
+  step: _step,
+  title: _title,
+  description: _description,
+}: FamilyAdminAuthLayoutProps) {
   return (
-    <div className="min-h-screen bg-white lg:grid lg:grid-cols-[48%_52%]">
+    <div className="h-screen overflow-hidden bg-white lg:grid lg:grid-cols-[48%_52%]">
       {/* Illustration Panel */}
-      <aside className="relative hidden overflow-hidden bg-[#003665] lg:flex lg:items-center lg:justify-center">
+      <aside className="relative hidden h-screen overflow-hidden bg-[#003665] lg:flex lg:items-center lg:justify-center">
         {/* Decorative background glow */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute left-[20%] top-[18%] h-[32rem] w-[32rem] rounded-full bg-white blur-[120px]" />
@@ -23,13 +36,9 @@ export function FamilyAdminAuthLayout() {
       </aside>
 
       {/* Auth Content */}
-      <main className="relative min-h-screen bg-[#FDFDFD] px-4 py-0 sm:px-8">
-        <div className="mx-auto flex h-full w-full max-w-[600px]">
-          <div className="flex-1 overflow-auto py-12">
-            <div className="min-h-full">
-              <Outlet />
-            </div>
-          </div>
+      <main className="auth-scroll relative h-screen overflow-y-auto overflow-x-hidden bg-[#FDFDFD] px-4 py-12 sm:px-8">
+        <div className="mx-auto w-full max-w-[600px]">
+          {children ?? <Outlet />}
         </div>
       </main>
     </div>

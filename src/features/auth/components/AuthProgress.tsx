@@ -1,18 +1,20 @@
 export type AuthProgressProps = {
   currentStep: number;
   totalSteps: number;
+  completedLabel?: string;
   className?: string;
 };
 
 export function AuthProgress({
   currentStep,
   totalSteps,
+  completedLabel,
   className = "",
 }: AuthProgressProps) {
   return (
     <div className={`flex items-center ${className}`.trim()}>
       <span className="text-sm font-semibold tracking-[-0.004em] text-[#64748B]">
-        Step {currentStep} of {totalSteps}
+        {completedLabel ?? `Step ${currentStep} of ${totalSteps}`}
       </span>
 
       <div className="ml-3 flex gap-1">

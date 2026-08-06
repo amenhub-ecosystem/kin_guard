@@ -88,7 +88,11 @@ export default function CreateAccountPage() {
         
       <p className="mt-8 text-center text-base text-[#64748B]">
         Already have an account?{" "}
-        <button type="button" className="font-bold text-[#FE706D]">
+        <button
+          type="button"
+          className="font-bold text-[#FE706D]"
+          onClick={() => navigate("/family-admin/login")}
+        >
           Sign In
         </button>
       </p>

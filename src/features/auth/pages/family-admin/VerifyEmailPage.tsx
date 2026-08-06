@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { RotateCw, ArrowLeft } from "@/components/common/icons";
 
 import { AuthButton } from "../../components/AuthButton";
@@ -6,6 +7,8 @@ import { OTPInput } from "../../components/OTPInput";
 import { VerifyEmailIcon } from "../../components/VerifyEmailIcon";
 
 export function VerifyEmailPage() {
+  const navigate = useNavigate();
+
   return (
     <section className="flex min-h-screen justify-center bg-[#FDFDFD] px-6 py-12">
       <div className="w-full max-w-[448px] space-y-8">
@@ -32,7 +35,7 @@ export function VerifyEmailPage() {
           <OTPInput />
 
           <div className="space-y-4">
-            <AuthButton>
+            <AuthButton onClick={() => navigate("/family-admin/care-circle-setup")}>
               Verify Account
             </AuthButton>
 
@@ -46,13 +49,21 @@ export function VerifyEmailPage() {
         <div className="space-y-4 pt-4">
           <p className="text-center text-sm text-[#64748B]">
             Entered the wrong email?{" "}
-            <button className="font-bold text-[#FE706D]">
+            <button
+              type="button"
+              className="font-bold text-[#FE706D]"
+              onClick={() => navigate("/family-admin/register")}
+            >
               Change Email
             </button>
           </p>
 
           <div className="border-t border-[#F3F4F6] pt-7">
-            <button className="mx-auto flex items-center gap-1 text-xs text-[#9CA3AF] hover:text-[#64748B]">
+            <button
+              type="button"
+              className="mx-auto flex items-center gap-1 text-xs text-[#9CA3AF] hover:text-[#64748B]"
+              onClick={() => navigate("/family-admin/register")}
+            >
               <ArrowLeft size={12} />
               Back to Create Account
             </button>

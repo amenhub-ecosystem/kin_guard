@@ -1,11 +1,11 @@
 import {
   ArrowRight,
-  Users,
+  Users2,
   RotateCcw,
   MapPinned,
 } from "@/components/common/icons";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { LogoWithText } from "@/components/common/LogoWithText";
 import { AuthProgress } from "../../components/AuthProgress";
@@ -15,7 +15,7 @@ import WelcomeImage from "../../assets/images/family-onboarding.png";
 
 const FEATURES = [
   {
-    icon: Users,
+    icon: Users2,
     label: "INVITE MEMBERS",
   },
   {
@@ -29,6 +29,8 @@ const FEATURES = [
 ];
 
 export default function FamilyAdminWelcome() {
+  const navigate = useNavigate();
+
   return (
     <div className="flex min-h-screen justify-center bg-[#FDFDFD] px-12 py-12">
       <div className="flex w-full max-w-[512px] flex-col">
@@ -94,6 +96,7 @@ export default function FamilyAdminWelcome() {
 
         {/* CTA */}
         <button
+          onClick={() => navigate("/family-admin/create-care-circle")}
           className="
             mt-14
             flex
@@ -123,7 +126,7 @@ export default function FamilyAdminWelcome() {
           </span>
 
           <Link
-            to="/family/join"
+            to="/family-admin/login"
             className="ml-1 font-medium text-[#FE706D] hover:underline"
           >
             Join existing

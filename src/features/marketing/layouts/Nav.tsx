@@ -58,14 +58,7 @@ export function Nav() {
         {/* Desktop Actions */}
         <div className="hidden items-center gap-6 lg:flex">
           <Link
-            to="/family-admin/login"
-            className="text-sm font-semibold tracking-[0.01em] text-[#003665] transition-colors hover:text-[#001f3a]"
-          >
-            Login
-          </Link>
-
-          <Link
-            to="/family-admin/register"
+            to="/family-admin"
             className="rounded-xl bg-[#003665] px-6 py-3 text-sm font-bold text-white shadow-lg transition-colors hover:bg-[#002b50] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#003665] focus-visible:ring-offset-2"
           >
             Get Started
@@ -178,15 +171,8 @@ export function Nav() {
 
           <div className="mt-6 border-t border-[#EEF2F6] pt-6">
             <div className="space-y-4">
-              <Link
-                to="/family-admin/login"
-                className="flex h-14 items-center justify-center rounded-[20px] border border-[#D8E1EA] bg-white font-space-grotesk text-base font-bold text-[#003665] transition-colors hover:bg-[#F7F9FB]"
-              >
-                Login
-              </Link>
-
-              <Link
-                to="/family-admin/register"
+                  <Link
+                to="/family-admin"
                 className="flex h-16 w-full items-center justify-center rounded-[20px] bg-[#003665] px-6 font-space-grotesk text-lg font-bold text-white transition-colors hover:bg-[#002B50] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#003665] focus-visible:ring-offset-2"
               >
                 Get Started Free

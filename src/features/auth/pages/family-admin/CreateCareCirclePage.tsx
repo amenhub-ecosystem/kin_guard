@@ -1,5 +1,5 @@
 import { useRef, useState, type ChangeEvent, type InputHTMLAttributes } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Camera,
   Users,
@@ -60,6 +60,7 @@ function FormInput(props: InputHTMLAttributes<HTMLInputElement>) {
 }
 
 export default function CreateCareCirclePage() {
+  const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [photo, setPhoto] = useState<string>();
@@ -244,7 +245,7 @@ export default function CreateCareCirclePage() {
             </div>
 
           </div>
-                    {/* Age + Gender */}
+          {/* Age + Gender */}
 
           <div className="grid grid-cols-2 gap-4">
 
@@ -419,21 +420,22 @@ export default function CreateCareCirclePage() {
 
           <AuthButton
             className="h-[68px] w-full rounded-2xl bg-[#003665] text-lg font-bold shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
-            onClick={() => console.log(form)}
+            onClick={() => navigate("/family-admin/invite-family")}
           >
             Continue →
           </AuthButton>
 
-{/* Join Existing */}
-        <div className="mt-10 text-center text-sm">
+          {/* Join Existing */}
+          <div className="mt-10 text-center text-sm">
 
-          <Link
-            to="/family-admin/care-circle-setup"
-            className="ml-1 font-medium text-[#64748B] hover:underline"
-          >
-            Back
-          </Link>
-        </div>
+            <button
+              type="button"
+              onClick={() => navigate("/family-admin/care-circle-setup")}
+              className="ml-1 font-medium text-[#64748B] hover:underline"
+            >
+              Back
+            </button>
+          </div>
 
 
         </div>

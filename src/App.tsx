@@ -15,7 +15,7 @@ import { ForgotPasswordPage } from "@/features/auth/pages/family-admin/ForgotPas
 import { VerifyEmailPage } from "@/features/auth/pages/family-admin/VerifyEmailPage";
 import CreateCareCirclePage from "@/features/auth/pages/family-admin/CreateCareCirclePage";
 import InviteFamilyPage from "@/features/auth/pages/family-admin/InviteFamilyPage";
-import CareCircleReadyPage from "@/features/auth/pages/family-admin/CareCircleReadyPage";
+import SetupCompletePage from "@/features/auth/pages/family-admin/SetupCompletePage";
 import CareCircleSetupInit from "@/features/auth/pages/family-admin/CareCircleSetupInit";
 
 function MarketingLayout() {
@@ -40,7 +40,8 @@ export default function App() {
         <Route path="verify-email" element={<VerifyEmailPage />} />
         <Route path="create-care-circle" element={<CreateCareCirclePage />} />
         <Route path="invite-family" element={<InviteFamilyPage />} />
-        <Route path="care-circle-ready" element={<CareCircleReadyPage />} />
+        <Route path="setup-complete" element={<SetupCompletePage />} />
+        <Route path="Setup-complete" element={<SetupCompletePage />} />
         <Route path="care-circle-setup" element={<CareCircleSetupInit />} />
       </Route>
 

@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "@/components/common/icons";
 
 import { AuthInput } from "../../components/AuthInput";
@@ -6,6 +7,13 @@ import { AuthButton } from "../../components/AuthButton";
 import { SuccessAlert } from "../../components/SuccessAlert";
 
 export function ForgotPasswordPage() {
+  const navigate = useNavigate();
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    navigate("/family-admin/login");
+  };
+
   return (
     <>
       <AuthLogo />
@@ -21,7 +29,7 @@ export function ForgotPasswordPage() {
         </p>
       </div>
 
-      <form className="mt-8 space-y-5">
+      <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
         <AuthInput
           label="Email Address"
           type="email"
@@ -29,7 +37,7 @@ export function ForgotPasswordPage() {
           icon="mail"
         />
 
-        <AuthButton className="h-14 w-full rounded-2xl bg-[#003665] text-base font-semibold shadow-[0_10px_30px_rgba(15,23,42,0.08)] hover:bg-[#003665]/95">
+        <AuthButton type="submit" className="h-14 w-full rounded-2xl bg-[#003665] text-base font-semibold shadow-[0_10px_30px_rgba(15,23,42,0.08)] hover:bg-[#003665]/95">
           Send Reset Link
         </AuthButton>
 
@@ -37,6 +45,7 @@ export function ForgotPasswordPage() {
           type="button"
           variant="outline"
           className="h-14 w-full rounded-2xl border-[#E5E7EB] bg-white text-base font-semibold text-[#1B2A4A]"
+          onClick={() => navigate("/family-admin/login")}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Sign In
