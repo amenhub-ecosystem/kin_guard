@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function CTASection() {
   return (
     <section className="bg-white px-6 py-24">
@@ -14,9 +16,12 @@ export default function CTASection() {
             </p>
 
             <div className="mt-12 flex flex-col gap-4 sm:flex-row">
-              <button className="rounded-2xl bg-[#F7F7F7] px-12 py-5 text-base font-bold text-[#003665] shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-white">
+              <Link
+                to="/family-admin/register"
+                className="rounded-2xl bg-[#F7F7F7] px-12 py-5 text-base font-bold text-[#003665] shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-white"
+              >
                 Get Started for Free
-              </button>
+              </Link>
 
               <button className="rounded-2xl border border-white/30 px-12 py-5 text-base font-bold text-white transition-all duration-300 hover:bg-white/10">
                 Speak to a Care Expert

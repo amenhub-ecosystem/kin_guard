@@ -1,5 +1,6 @@
 import heroIllustration from "@/features/marketing/assets/images/hero-illustration.png";
 import { PlayButton } from "@/components/common/icons";
+import { Link } from "react-router-dom";
 
 export function Hero() {
   return (
@@ -30,12 +31,12 @@ export function Hero() {
           </p>
 
           <div className="mt-12 flex flex-col gap-4 sm:flex-row">
-            <button
-              type="button"
+            <Link
+              to="/family-admin/register"
               className="rounded-xl bg-[#003665] px-10 py-4 text-lg font-bold text-white shadow-lg transition-colors hover:bg-[#002b55] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#003665] focus-visible:ring-offset-2"
             >
               Get Started Free
-            </button>
+            </Link>
 
             <button
               type="button"
