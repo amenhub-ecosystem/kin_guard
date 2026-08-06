@@ -1,3 +1,4 @@
+import { useMemo, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthLogo } from "../../components/AuthLogo";
 import { AuthInput } from "../../components/AuthInput";
@@ -5,9 +6,44 @@ import { PasswordStrength } from "../../components/PasswordStrength";
 import { AuthButton } from "../../components/AuthButton";
 import { SocialLoginButton } from "../../components/SocialLoginButton";
 import { AuthDivider } from "../../components/AuthDivider";
+import { saveAccount, saveOtp, validateSignupForm, type SignupFormValues } from "../../utils/authFlow";
 
 export default function CreateAccountPage() {
   const navigate = useNavigate();
+  const [form, setForm] = useState<SignupFormValues>({
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    agreeToTerms: false,
+  });
+  const [errors, setErrors] = useState<Partial<Record<keyof SignupFormValues, string>>>({});
+
+  const passwordStrength = useMemo(() => {
+    const password = form.password;
+    if (!password) return "weak";
+    let score = 0;
+    if (password.length >= 8) score += 1;
+    if (/[A-Z]/.test(password)) score += 1;
+    if (/[a-z]/.test(password)) score += 1;
+    if (/\d/.test(password) || /[^A-Za-z0-9]/.test(password)) score += 1;
+    if (score <= 2) return "weak";
+    if (score <= 3) return "medium";
+    return "strong";
+  }, [form.password]);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const result = validateSignupForm(form);
+    setErrors(result.errors);
+    if (result.isValid) {
+      const account = saveAccount(form);
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      saveOtp(otp);
+      window.sessionStorage.setItem("kinGuardAccount", JSON.stringify(account));
+      navigate("/family-admin/verify-email");
+    }
+  };
 
   return (
     <>
@@ -23,11 +59,19 @@ export default function CreateAccountPage() {
         </p>
       </div>
 
-      <form className="mt-8 space-y-5">
+      <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
         <AuthInput
           label="Full Name"
           placeholder="John Doe"
           icon="user"
+          value={form.fullName}
+          name="fullName"
+          error={errors.fullName}
+          required
+          onChange={(value) => {
+            setForm((prev) => ({ ...prev, fullName: value }));
+            setErrors((prev) => ({ ...prev, fullName: undefined }));
+          }}
         />
 
         <AuthInput
@@ -35,6 +79,14 @@ export default function CreateAccountPage() {
           placeholder="example@email.com"
           type="email"
           icon="mail"
+          value={form.email}
+          name="email"
+          error={errors.email}
+          required
+          onChange={(value) => {
+            setForm((prev) => ({ ...prev, email: value }));
+            setErrors((prev) => ({ ...prev, email: undefined }));
+          }}
         />
 
         <div className="space-y-4">
@@ -43,9 +95,17 @@ export default function CreateAccountPage() {
             placeholder="secretpassword"
             type="password"
             icon="lock"
+            value={form.password}
+            name="password"
+            error={errors.password}
+            required
+            onChange={(value) => {
+              setForm((prev) => ({ ...prev, password: value }));
+              setErrors((prev) => ({ ...prev, password: undefined }));
+            }}
           />
 
-          <PasswordStrength strength="strong" />
+          <PasswordStrength strength={passwordStrength} />
         </div>
 
         <AuthInput
@@ -53,11 +113,24 @@ export default function CreateAccountPage() {
           placeholder="Re-enter password"
           type="password"
           icon="check"
+          value={form.confirmPassword}
+          name="confirmPassword"
+          error={errors.confirmPassword}
+          required
+          onChange={(value) => {
+            setForm((prev) => ({ ...prev, confirmPassword: value }));
+            setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
+          }}
         />
 
         <div className="flex items-center gap-3 pt-1">
           <input
             type="checkbox"
+            checked={form.agreeToTerms}
+            onChange={(event) => {
+              setForm((prev) => ({ ...prev, agreeToTerms: event.target.checked }));
+              setErrors((prev) => ({ ...prev, agreeToTerms: undefined }));
+            }}
             className="h-4 w-4 rounded border-[#767676]"
           />
 
@@ -73,7 +146,7 @@ export default function CreateAccountPage() {
           </p>
         </div>
 
-        <AuthButton onClick={() => navigate("/family-admin/verify-email")}>
+        <AuthButton type="submit">
           Create Account
         </AuthButton>
       </form>

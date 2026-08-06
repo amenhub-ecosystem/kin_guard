@@ -15,6 +15,12 @@ interface AuthInputProps {
   icon?: "user" | "mail" | "lock" | "check";
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
+  value?: string;
+  name?: string;
+  error?: string;
+  onChange?: (value: string) => void;
+  onBlur?: () => void;
+  required?: boolean;
 }
 
 export function AuthInput({
@@ -24,6 +30,12 @@ export function AuthInput({
   icon,
   leftIcon,
   rightIcon,
+  value,
+  name,
+  error,
+  onChange,
+  onBlur,
+  required,
 }: AuthInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -77,6 +89,7 @@ export function AuthInput({
     <div className="space-y-2">
       <label className="block text-sm font-semibold text-[#1B2A4A]">
         {label}
+        {required ? <span className="ml-1 text-red-500">*</span> : null}
       </label>
 
       <div className="relative">
@@ -85,11 +98,18 @@ export function AuthInput({
         <input
           type={inputType}
           placeholder={placeholder}
-          className={`h-[54px] w-full rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] ${paddingLeft} ${paddingRight} text-base text-[#1B2A4A] placeholder:text-[#9CA3AF] outline-none transition focus:border-[#003665]`}
+          name={name}
+          value={value ?? ""}
+          onChange={(event) => onChange?.(event.target.value)}
+          onBlur={onBlur}
+          required={required}
+          className={`h-[54px] w-full rounded-xl border ${error ? "border-red-500" : "border-[#E5E7EB]"} bg-[#F8FAFC] ${paddingLeft} ${paddingRight} text-base text-[#1B2A4A] placeholder:text-[#9CA3AF] outline-none transition focus:border-[#003665]`}
         />
 
         {rightIconElement}
       </div>
+
+      {error ? <p className="text-sm text-red-500">{error}</p> : null}
     </div>
   );
 }

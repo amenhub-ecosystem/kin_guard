@@ -1,3 +1,4 @@
+import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "@/components/common/icons";
 
@@ -5,13 +6,24 @@ import { AuthInput } from "../../components/AuthInput";
 import { AuthLogo } from "../../components/AuthLogo";
 import { AuthButton } from "../../components/AuthButton";
 import { SuccessAlert } from "../../components/SuccessAlert";
+import { validateLoginForm } from "../../utils/authFlow";
 
 export function ForgotPasswordPage() {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    navigate("/family-admin/login");
+    const result = validateLoginForm({ email, password: "reset-password" });
+    if (!result.isValid) {
+      setError(result.errors.email ?? "Enter a valid email address.");
+      setSubmitted(false);
+      return;
+    }
+    setError("");
+    setSubmitted(true);
   };
 
   return (
@@ -35,6 +47,14 @@ export function ForgotPasswordPage() {
           type="email"
           placeholder="name@example.com"
           icon="mail"
+          value={email}
+          name="email"
+          error={error}
+          required
+          onChange={(value) => {
+            setEmail(value);
+            setError("");
+          }}
         />
 
         <AuthButton type="submit" className="h-14 w-full rounded-2xl bg-[#003665] text-base font-semibold shadow-[0_10px_30px_rgba(15,23,42,0.08)] hover:bg-[#003665]/95">
@@ -52,12 +72,14 @@ export function ForgotPasswordPage() {
         </AuthButton>
       </form>
 
-      <div className="mt-8">
-        <SuccessAlert
-          title="Check your inbox"
-          description="We've sent a reset email. If you don't see it, check your spam folder."
-        />
-      </div>
+      {submitted ? (
+        <div className="mt-8">
+          <SuccessAlert
+            title="Check your inbox"
+            description="We've sent a reset email. If you don't see it, check your spam folder."
+          />
+        </div>
+      ) : null}
     </>
   );
 }

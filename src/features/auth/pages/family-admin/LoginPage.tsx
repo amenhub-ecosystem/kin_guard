@@ -1,15 +1,31 @@
+import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye } from "@/components/common/icons";
 import { AuthInput } from "../../components/AuthInput";
 import { AuthDivider } from "../../components/AuthDivider";
 import { AuthButton } from "../../components/AuthButton";
 import { SocialLoginButton } from "../../components/SocialLoginButton";
+import { authenticateUser, validateLoginForm, type LoginFormValues } from "../../utils/authFlow";
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const [form, setForm] = useState<LoginFormValues>({ email: "", password: "" });
+  const [errors, setErrors] = useState<Partial<Record<keyof LoginFormValues, string>>>({});
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const result = validateLoginForm(form);
+    setErrors(result.errors);
+    if (!result.isValid) {
+      return;
+    }
+
+    const authResult = authenticateUser(form);
+    if (!authResult.isValid) {
+      setErrors((prev) => ({ ...prev, email: authResult.message, password: authResult.message }));
+      return;
+    }
+
     navigate("/family-admin/care-circle-setup");
   };
 
@@ -33,6 +49,14 @@ export function LoginPage() {
             type="email"
             placeholder="name@example.com"
             leftIcon={<Mail size={18} />}
+            value={form.email}
+            name="email"
+            error={errors.email}
+            required
+            onChange={(value) => {
+              setForm((prev) => ({ ...prev, email: value }));
+              setErrors((prev) => ({ ...prev, email: undefined }));
+            }}
           />
 
           <AuthInput
@@ -41,6 +65,14 @@ export function LoginPage() {
             placeholder="••••••••"
             leftIcon={<Lock size={18} />}
             rightIcon={<Eye size={18} />}
+            value={form.password}
+            name="password"
+            error={errors.password}
+            required
+            onChange={(value) => {
+              setForm((prev) => ({ ...prev, password: value }));
+              setErrors((prev) => ({ ...prev, password: undefined }));
+            }}
           />
 
           {/* Remember / Forgot */}
