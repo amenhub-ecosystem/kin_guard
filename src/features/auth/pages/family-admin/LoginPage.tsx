@@ -5,7 +5,7 @@ import { AuthInput } from "../../components/AuthInput";
 import { AuthDivider } from "../../components/AuthDivider";
 import { AuthButton } from "../../components/AuthButton";
 import { SocialLoginButton } from "../../components/SocialLoginButton";
-import { authenticateUser, validateLoginForm, type LoginFormValues } from "../../utils/authFlow";
+import { activateAuthJourney, authenticateUser, validateLoginForm, type LoginFormValues } from "../../utils/authFlow";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -26,6 +26,7 @@ export function LoginPage() {
       return;
     }
 
+    activateAuthJourney();
     navigate("/family-admin/care-circle-setup");
   };
 

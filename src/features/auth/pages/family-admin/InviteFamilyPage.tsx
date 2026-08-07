@@ -5,12 +5,12 @@ import { AuthButton } from "../../components/AuthButton";
 import { AuthProgress } from "../../components/AuthProgress";
 import Select, { type SelectOption } from "../../components/Select";
 import { LogoWithText } from "@/components/common/LogoWithText";
+import { getInviteTeamDraft, saveInviteTeamDraft, type InviteTeamDraft } from "../../utils/authFlow";
 
 import {
   PlusWithDottedCircle,
   Trash2,
   Shield,
-  ChevronDownIcon,
   ChevronLeft,
 } from "@/components/common/icons";
 
@@ -149,11 +149,6 @@ function MemberCard({
               }
             />
 
-            <ChevronDownIcon
-              size={18}
-              className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
-            />
-
           </div>
 
         </div>
@@ -194,11 +189,6 @@ function MemberCard({
             }
           />
 
-          <ChevronDownIcon
-            size={18}
-            className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
-          />
-
         </div>
 
         <div className="relative">
@@ -216,11 +206,6 @@ function MemberCard({
             }
           />
 
-          <ChevronDownIcon
-            size={18}
-            className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
-          />
-
         </div>
 
       </div>
@@ -231,55 +216,73 @@ function MemberCard({
 
 export default function InviteFamilyPage() {
   const navigate = useNavigate();
-  const [members, setMembers] = useState<FamilyMember[]>([
-    {
-      id: 1,
-      fullName: "",
-      relationship: "",
-      email: "",
-      phone: "",
-      role: "",
-      preferredMethod: "",
-      avatar: "/images/avatar-placeholder.png",
-    },
-  ]);
+  const [members, setMembers] = useState<FamilyMember[]>(() => {
+    const savedDraft = getInviteTeamDraft();
+    if (savedDraft?.members?.length) {
+      return savedDraft.members.map((member) => ({
+        ...member,
+        avatar: member.avatar ?? "/images/avatar-placeholder.png",
+      }));
+    }
 
-  const updateMember = (
-    id: number,
-    field: keyof FamilyMember,
-    value: string
-  ) => {
-    setMembers((prev) =>
-      prev.map((member) =>
-        member.id === id
-          ? {
-            ...member,
-            [field]: value,
-          }
-          : member
-      )
-    );
-  };
-
-  const addMember = () => {
-    setMembers((prev) => [
-      ...prev,
+    return [
       {
-        id: Date.now(),
+        id: 1,
         fullName: "",
         relationship: "",
         email: "",
         phone: "",
         role: "",
         preferredMethod: "",
+        avatar: "/images/avatar-placeholder.png",
       },
-    ]);
+    ];
+  });
+
+  const updateMember = (
+    id: number,
+    field: keyof FamilyMember,
+    value: string
+  ) => {
+    setMembers((prevMembers) => {
+      const nextMembers = prevMembers.map((member) =>
+        member.id === id
+          ? {
+              ...member,
+              [field]: value,
+            }
+          : member
+      );
+      saveInviteTeamDraft({ members: nextMembers } as InviteTeamDraft);
+      return nextMembers;
+    });
+  };
+
+  const addMember = () => {
+    setMembers((prevMembers) => {
+      const nextMembers = [
+        ...prevMembers,
+        {
+          id: Date.now(),
+          fullName: "",
+          relationship: "",
+          email: "",
+          phone: "",
+          role: "",
+          preferredMethod: "",
+        },
+      ];
+      saveInviteTeamDraft({ members: nextMembers } as InviteTeamDraft);
+      return nextMembers;
+    });
   };
 
   const removeMember = (id: number) => {
-    setMembers((prev) =>
-      prev.filter((member) => member.id !== id)
-    );
+    setMembers((prevMembers) => {
+      const nextMembers = prevMembers.filter((member) => member.id !== id);
+      saveInviteTeamDraft({ members: nextMembers } as InviteTeamDraft);
+      return nextMembers;
+    });
   };
 
   return (

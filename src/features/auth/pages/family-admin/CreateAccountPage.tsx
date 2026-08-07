@@ -6,7 +6,7 @@ import { PasswordStrength } from "../../components/PasswordStrength";
 import { AuthButton } from "../../components/AuthButton";
 import { SocialLoginButton } from "../../components/SocialLoginButton";
 import { AuthDivider } from "../../components/AuthDivider";
-import { saveAccount, saveOtp, validateSignupForm, type SignupFormValues } from "../../utils/authFlow";
+import { activateAuthJourney, saveAccount, saveOtp, validateSignupForm, type SignupFormValues } from "../../utils/authFlow";
 
 export default function CreateAccountPage() {
   const navigate = useNavigate();
@@ -38,6 +38,7 @@ export default function CreateAccountPage() {
     setErrors(result.errors);
     if (result.isValid) {
       const account = saveAccount(form);
+      activateAuthJourney();
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
       saveOtp(otp);
       window.sessionStorage.setItem("kinGuardAccount", JSON.stringify(account));

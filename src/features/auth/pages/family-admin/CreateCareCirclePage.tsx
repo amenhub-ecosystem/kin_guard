@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import {
   Camera,
   Users,
-  ChevronDownIcon,
   Shield,
 } from "@/components/common/icons";
 
@@ -11,6 +10,7 @@ import { AuthButton } from "../../components/AuthButton";
 import Select, { type SelectOption } from "../../components/Select.tsx";
 import { LogoWithText } from "@/components/common/LogoWithText.tsx";
 import { AuthProgress } from "../../components/AuthProgress.tsx";
+import { getCareCircleDraft, saveCareCircleDraft, type CareCircleDraft } from "../../utils/authFlow";
 
 interface CareCircleForm {
   circleName: string;
@@ -22,6 +22,18 @@ interface CareCircleForm {
   email: string;
   medication: string;
   dailyCheckIns: string;
+}
+
+interface CareCircleFormErrors {
+  circleName?: string;
+  lovedOneName?: string;
+  relationship?: string;
+  age?: string;
+  gender?: string;
+  phone?: string;
+  email?: string;
+  medication?: string;
+  dailyCheckIns?: string;
 }
 
 const relationshipOptions: SelectOption[] = [
@@ -50,12 +62,17 @@ const dailyCheckInOptions: SelectOption[] = [
   { label: "No", value: "No" },
 ];
 
-function FormInput(props: InputHTMLAttributes<HTMLInputElement>) {
+function FormInput(props: InputHTMLAttributes<HTMLInputElement> & { error?: string }) {
+  const { error, ...inputProps } = props;
+
   return (
-    <input
-      {...props}
-      className={`h-[58px] w-full rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-4 text-base text-[#1B2A4A] placeholder:text-[#9CA3AF] outline-none transition focus:border-[#003665] focus:ring-2 focus:ring-[#003665]/10 ${props.className ?? ""}`.trim()}
-    />
+    <div className="space-y-2">
+      <input
+        {...inputProps}
+        className={`h-[58px] w-full rounded-xl border ${error ? "border-red-500" : "border-[#E5E7EB]"} bg-[#F8FAFC] px-4 text-base text-[#1B2A4A] placeholder:text-[#9CA3AF] outline-none transition focus:border-[#003665] focus:ring-2 focus:ring-[#003665]/10 ${props.className ?? ""}`.trim()}
+      />
+      {error ? <p className="text-sm text-red-500">{error}</p> : null}
+    </div>
   );
 }
 
@@ -63,28 +80,97 @@ export default function CreateCareCirclePage() {
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [photo, setPhoto] = useState<string>();
-
-  const [form, setForm] = useState<CareCircleForm>({
-    circleName: "",
-    lovedOneName: "",
-    relationship: "",
-    age: "",
-    gender: "",
-    phone: "",
-    email: "",
-    medication: "",
-    dailyCheckIns: "",
+  const [photo, setPhoto] = useState<string | undefined>(() => {
+    const savedDraft = getCareCircleDraft();
+    return savedDraft?.photo ?? undefined;
   });
+
+  const [form, setForm] = useState<CareCircleForm>(() => {
+    const savedDraft = getCareCircleDraft();
+    if (!savedDraft) {
+      return {
+        circleName: "",
+        lovedOneName: "",
+        relationship: "",
+        age: "",
+        gender: "",
+        phone: "",
+        email: "",
+        medication: "",
+        dailyCheckIns: "",
+      };
+    }
+
+    return {
+      circleName: savedDraft.circleName ?? "",
+      lovedOneName: savedDraft.lovedOneName ?? "",
+      relationship: savedDraft.relationship ?? "",
+      age: savedDraft.age ?? "",
+      gender: savedDraft.gender ?? "",
+      phone: savedDraft.phone ?? "",
+      email: savedDraft.email ?? "",
+      medication: savedDraft.medication ?? "",
+      dailyCheckIns: savedDraft.dailyCheckIns ?? "",
+    };
+  });
+  const [errors, setErrors] = useState<CareCircleFormErrors>({});
 
   const updateField = (
     field: keyof CareCircleForm,
     value: string
   ) => {
-    setForm((prev) => ({
+    setForm((prevForm) => {
+      const nextForm = {
+        ...prevForm,
+        [field]: value,
+      };
+      saveCareCircleDraft(nextForm as CareCircleDraft);
+      return nextForm;
+    });
+    setErrors((prev) => ({
       ...prev,
-      [field]: value,
+      [field]: undefined,
     }));
+  };
+
+  const validateForm = () => {
+    const nextErrors: CareCircleFormErrors = {};
+    const requiredFields: Array<keyof CareCircleForm> = [
+      "circleName",
+      "lovedOneName",
+      "relationship",
+      "age",
+      "gender",
+      "phone",
+      "email",
+      "medication",
+      "dailyCheckIns",
+    ];
+
+    requiredFields.forEach((field) => {
+      const value = form[field].trim();
+      if (!value) {
+        nextErrors[field] = "This field is required.";
+      }
+    });
+
+    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      nextErrors.email = "Enter a valid email address.";
+    }
+
+    if (form.phone && !/^\+?[0-9\s()-]{7,15}$/.test(form.phone)) {
+      nextErrors.phone = "Enter a valid phone number.";
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
+
+  const handleContinue = () => {
+    if (validateForm()) {
+      saveCareCircleDraft(form as CareCircleDraft);
+      navigate("/family-admin/invite-family");
+    }
   };
 
   const handleUpload = (
@@ -94,7 +180,13 @@ export default function CreateCareCirclePage() {
 
     if (!file) return;
 
-    setPhoto(URL.createObjectURL(file));
+    const preview = URL.createObjectURL(file);
+    setPhoto(preview);
+    setForm((prevForm) => {
+      const nextForm = { ...prevForm, photo: preview } as CareCircleForm & { photo?: string };
+      saveCareCircleDraft(nextForm as CareCircleDraft);
+      return nextForm;
+    });
   };
 
   return (
@@ -188,6 +280,7 @@ export default function CreateCareCirclePage() {
               <FormInput
                 value={form.circleName}
                 placeholder="e.g. Grandma's Team, Johnson Family"
+                error={errors.circleName}
                 onChange={(e) => updateField("circleName", e.target.value)}
               />
 
@@ -213,6 +306,7 @@ export default function CreateCareCirclePage() {
               <FormInput
                 value={form.lovedOneName}
                 placeholder="Full Name"
+                error={errors.lovedOneName}
                 onChange={(e) => updateField("lovedOneName", e.target.value)}
               />
 
@@ -230,14 +324,10 @@ export default function CreateCareCirclePage() {
                   value={form.relationship}
                   options={relationshipOptions}
                   placeholder="Select..."
+                  error={errors.relationship}
                   onChange={(value) =>
                     updateField("relationship", value)
                   }
-                />
-
-                <ChevronDownIcon
-                  size={18}
-                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-300"
                 />
 
               </div>
@@ -259,6 +349,7 @@ export default function CreateCareCirclePage() {
                 type="number"
                 placeholder="Age"
                 value={form.age}
+                error={errors.age}
                 onChange={(e) => updateField("age", e.target.value)}
               />
 
@@ -276,14 +367,10 @@ export default function CreateCareCirclePage() {
                   value={form.gender}
                   options={genderOptions}
                   placeholder="Select..."
+                  error={errors.gender}
                   onChange={(value) =>
                     updateField("gender", value)
                   }
-                />
-
-                <ChevronDownIcon
-                  size={18}
-                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-300"
                 />
 
               </div>
@@ -306,6 +393,7 @@ export default function CreateCareCirclePage() {
                 type="tel"
                 placeholder="Phone Number"
                 value={form.phone}
+                error={errors.phone}
                 onChange={(e) => updateField("phone", e.target.value)}
               />
 
@@ -321,6 +409,7 @@ export default function CreateCareCirclePage() {
                 type="email"
                 placeholder="Email"
                 value={form.email}
+                error={errors.email}
                 onChange={(e) => updateField("email", e.target.value)}
               />
 
@@ -344,14 +433,10 @@ export default function CreateCareCirclePage() {
                   value={form.medication}
                   options={medicationOptions}
                   placeholder="Select..."
+                  error={errors.medication}
                   onChange={(value) =>
                     updateField("medication", value)
                   }
-                />
-
-                <ChevronDownIcon
-                  size={18}
-                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-300"
                 />
 
               </div>
@@ -370,14 +455,10 @@ export default function CreateCareCirclePage() {
                   value={form.dailyCheckIns}
                   options={dailyCheckInOptions}
                   placeholder="Select..."
+                  error={errors.dailyCheckIns}
                   onChange={(value) =>
                     updateField("dailyCheckIns", value)
                   }
-                />
-
-                <ChevronDownIcon
-                  size={18}
-                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-300"
                 />
 
               </div>
@@ -420,7 +501,7 @@ export default function CreateCareCirclePage() {
 
           <AuthButton
             className="h-[68px] w-full rounded-2xl bg-[#003665] text-lg font-bold shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
-            onClick={() => navigate("/family-admin/invite-family")}
+            onClick={handleContinue}
           >
             Continue →
           </AuthButton>

@@ -8,6 +8,7 @@ import HowItWorksPage from "@/features/marketing/pages/HowItWorksPage";
 import PricingPage from "@/features/marketing/pages/PricingPage";
 import SolutionsPage from "@/features/marketing/pages/SolutionsPage";
 import { FamilyAdminAuthLayout } from "@/features/auth/layouts/FamilyAdminAuthLayout";
+import { ProtectedAuthRoute } from "@/features/auth/layouts/ProtectedAuthRoute";
 import { WelcomePage } from "@/features/auth/pages/family-admin/WelcomePage";
 import CreateAccountPage from "@/features/auth/pages/family-admin/CreateAccountPage";
 import { LoginPage } from "@/features/auth/pages/family-admin/LoginPage";
@@ -37,12 +38,54 @@ export default function App() {
         <Route path="register" element={<CreateAccountPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="verify-email" element={<VerifyEmailPage />} />
-        <Route path="create-care-circle" element={<CreateCareCirclePage />} />
-        <Route path="invite-family" element={<InviteFamilyPage />} />
-        <Route path="setup-complete" element={<SetupCompletePage />} />
-        <Route path="Setup-complete" element={<SetupCompletePage />} />
-        <Route path="care-circle-setup" element={<CareCircleSetupInit />} />
+        <Route
+          path="verify-email"
+          element={
+            <ProtectedAuthRoute>
+              <VerifyEmailPage />
+            </ProtectedAuthRoute>
+          }
+        />
+        <Route
+          path="create-care-circle"
+          element={
+            <ProtectedAuthRoute>
+              <CreateCareCirclePage />
+            </ProtectedAuthRoute>
+          }
+        />
+        <Route
+          path="invite-family"
+          element={
+            <ProtectedAuthRoute>
+              <InviteFamilyPage />
+            </ProtectedAuthRoute>
+          }
+        />
+        <Route
+          path="setup-complete"
+          element={
+            <ProtectedAuthRoute>
+              <SetupCompletePage />
+            </ProtectedAuthRoute>
+          }
+        />
+        <Route
+          path="Setup-complete"
+          element={
+            <ProtectedAuthRoute>
+              <SetupCompletePage />
+            </ProtectedAuthRoute>
+          }
+        />
+        <Route
+          path="care-circle-setup"
+          element={
+            <ProtectedAuthRoute>
+              <CareCircleSetupInit />
+            </ProtectedAuthRoute>
+          }
+        />
       </Route>
 
       <Route element={<MarketingLayout />}>
