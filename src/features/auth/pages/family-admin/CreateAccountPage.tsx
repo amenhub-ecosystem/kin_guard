@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthLogo } from "../../components/AuthLogo";
 import { AuthInput } from "../../components/AuthInput";
@@ -7,6 +7,11 @@ import { AuthButton } from "../../components/AuthButton";
 import { SocialLoginButton } from "../../components/SocialLoginButton";
 import { AuthDivider } from "../../components/AuthDivider";
 import { activateAuthJourney, saveAccount, saveOtp, validateSignupForm, type SignupFormValues } from "../../utils/authFlow";
+
+const getConfirmPasswordError = (password: string, confirmPassword: string) => {
+  if (!confirmPassword) return undefined;
+  return password !== confirmPassword ? "Passwords do not match." : undefined;
+};
 
 export default function CreateAccountPage() {
   const navigate = useNavigate();
@@ -19,18 +24,6 @@ export default function CreateAccountPage() {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof SignupFormValues, string>>>({});
 
-  const passwordStrength = useMemo(() => {
-    const password = form.password;
-    if (!password) return "weak";
-    let score = 0;
-    if (password.length >= 8) score += 1;
-    if (/[A-Z]/.test(password)) score += 1;
-    if (/[a-z]/.test(password)) score += 1;
-    if (/\d/.test(password) || /[^A-Za-z0-9]/.test(password)) score += 1;
-    if (score <= 2) return "weak";
-    if (score <= 3) return "medium";
-    return "strong";
-  }, [form.password]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -102,11 +95,11 @@ export default function CreateAccountPage() {
             required
             onChange={(value) => {
               setForm((prev) => ({ ...prev, password: value }));
-              setErrors((prev) => ({ ...prev, password: undefined }));
+              setErrors((prev) => ({ ...prev, password: undefined, confirmPassword: undefined }));
             }}
           />
 
-          <PasswordStrength strength={passwordStrength} />
+          <PasswordStrength password={form.password} />
         </div>
 
         <AuthInput
@@ -116,7 +109,7 @@ export default function CreateAccountPage() {
           icon="check"
           value={form.confirmPassword}
           name="confirmPassword"
-          error={errors.confirmPassword}
+          error={errors.confirmPassword ?? getConfirmPasswordError(form.password, form.confirmPassword)}
           required
           onChange={(value) => {
             setForm((prev) => ({ ...prev, confirmPassword: value }));

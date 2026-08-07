@@ -13,23 +13,26 @@ export function VerifyEmailPage() {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const [error, setError] = useState("");
   const [displayOtp, setDisplayOtp] = useState("");
-  const expectedOtp = useMemo(() => getStoredOtp() ?? "", []);
+  const [expectedOtp, setExpectedOtp] = useState("");
 
   useEffect(() => {
-    if (!expectedOtp) {
+    const storedOtp = getStoredOtp();
+    if (!storedOtp) {
       const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
       saveOtp(generatedOtp);
+      setExpectedOtp(generatedOtp);
       setDisplayOtp(generatedOtp);
       return;
     }
 
-    setDisplayOtp(expectedOtp);
-  }, [expectedOtp]);
+    setExpectedOtp(storedOtp);
+    setDisplayOtp(storedOtp);
+  }, []);
 
   const handleVerify = () => {
     const code = otp.join("");
     if (!validateOtpCode(code, expectedOtp)) {
-      setError("Enter the 6-digit verification code.");
+      setError("The verification code is incorrect. Please try again.");
       return;
     }
     setError("");
@@ -39,6 +42,7 @@ export function VerifyEmailPage() {
   const handleResend = () => {
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
     saveOtp(generatedOtp);
+    setExpectedOtp(generatedOtp);
     setDisplayOtp(generatedOtp);
     setOtp(Array(6).fill(""));
     setError("");
