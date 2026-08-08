@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent, type InputHTMLAttributes } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type InputHTMLAttributes } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Camera,
@@ -10,7 +10,7 @@ import { AuthButton } from "../../components/AuthButton";
 import Select, { type SelectOption } from "../../components/Select.tsx";
 import { LogoWithText } from "@/components/common/LogoWithText.tsx";
 import { AuthProgress } from "../../components/AuthProgress.tsx";
-import { getCareCircleDraft, saveCareCircleDraft, type CareCircleDraft } from "../../utils/authFlow";
+import { getCareCircleDraft, saveCareCircleDraft } from "../../utils/authFlow";
 
 interface CareCircleForm {
   circleName: string;
@@ -22,6 +22,7 @@ interface CareCircleForm {
   email: string;
   medication: string;
   dailyCheckIns: string;
+  photo?: string;
 }
 
 interface CareCircleFormErrors {
@@ -80,11 +81,6 @@ export default function CreateCareCirclePage() {
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [photo, setPhoto] = useState<string | undefined>(() => {
-    const savedDraft = getCareCircleDraft();
-    return savedDraft?.photo ?? undefined;
-  });
-
   const [form, setForm] = useState<CareCircleForm>(() => {
     const savedDraft = getCareCircleDraft();
     if (!savedDraft) {
@@ -111,9 +107,22 @@ export default function CreateCareCirclePage() {
       email: savedDraft.email ?? "",
       medication: savedDraft.medication ?? "",
       dailyCheckIns: savedDraft.dailyCheckIns ?? "",
+      photo: savedDraft.photo,
     };
   });
+
+  const revokePreviewUrl = (url?: string) => {
+    if (url?.startsWith("blob:")) {
+      URL.revokeObjectURL(url);
+    }
+  };
   const [errors, setErrors] = useState<CareCircleFormErrors>({});
+
+  useEffect(() => {
+    return () => {
+      revokePreviewUrl(form.photo);
+    };
+  }, [form.photo]);
 
   const updateField = (
     field: keyof CareCircleForm,
@@ -124,7 +133,7 @@ export default function CreateCareCirclePage() {
         ...prevForm,
         [field]: value,
       };
-      saveCareCircleDraft(nextForm as CareCircleDraft);
+      saveCareCircleDraft(nextForm);
       return nextForm;
     });
     setErrors((prev) => ({
@@ -135,7 +144,7 @@ export default function CreateCareCirclePage() {
 
   const validateForm = () => {
     const nextErrors: CareCircleFormErrors = {};
-    const requiredFields: Array<keyof CareCircleForm> = [
+    const requiredFields: Array<keyof CareCircleFormErrors> = [
       "circleName",
       "lovedOneName",
       "relationship",
@@ -148,7 +157,7 @@ export default function CreateCareCirclePage() {
     ];
 
     requiredFields.forEach((field) => {
-      const value = form[field].trim();
+      const value = (form[field] ?? "").trim();
       if (!value) {
         nextErrors[field] = "This field is required.";
       }
@@ -168,7 +177,7 @@ export default function CreateCareCirclePage() {
 
   const handleContinue = () => {
     if (validateForm()) {
-      saveCareCircleDraft(form as CareCircleDraft);
+      saveCareCircleDraft(form);
       navigate("/family-admin/invite-family");
     }
   };
@@ -181,10 +190,10 @@ export default function CreateCareCirclePage() {
     if (!file) return;
 
     const preview = URL.createObjectURL(file);
-    setPhoto(preview);
     setForm((prevForm) => {
-      const nextForm = { ...prevForm, photo: preview } as CareCircleForm & { photo?: string };
-      saveCareCircleDraft(nextForm as CareCircleDraft);
+      revokePreviewUrl(prevForm.photo);
+      const nextForm = { ...prevForm, photo: preview };
+      saveCareCircleDraft(nextForm);
       return nextForm;
     });
   };
@@ -236,9 +245,9 @@ export default function CreateCareCirclePage() {
             onChange={handleUpload}
           />
 
-          {photo ? (
+          {form.photo ? (
             <img
-              src={photo}
+              src={form.photo}
               alt="Preview"
               className="h-24 w-24 rounded-full object-cover"
             />

@@ -8,16 +8,19 @@ import HowItWorksPage from "@/features/marketing/pages/HowItWorksPage";
 import PricingPage from "@/features/marketing/pages/PricingPage";
 import SolutionsPage from "@/features/marketing/pages/SolutionsPage";
 import { FamilyAdminAuthLayout } from "@/features/auth/layouts/FamilyAdminAuthLayout";
+import NonAdminAuthLayout from "@/features/auth/layouts/NonAdminAuthLayout";
 import { ProtectedAuthRoute } from "@/features/auth/layouts/ProtectedAuthRoute";
 import { WelcomePage } from "@/features/auth/pages/family-admin/WelcomePage";
 import CreateAccountPage from "@/features/auth/pages/family-admin/CreateAccountPage";
 import { LoginPage } from "@/features/auth/pages/family-admin/LoginPage";
 import { ForgotPasswordPage } from "@/features/auth/pages/family-admin/ForgotPasswordPage";
 import { VerifyEmailPage } from "@/features/auth/pages/family-admin/VerifyEmailPage";
-import CreateCareCirclePage from "@/features/auth/pages/family-admin/CreateCareCirclePage";
-import InviteFamilyPage from "@/features/auth/pages/family-admin/InviteFamilyPage";
-import SetupCompletePage from "@/features/auth/pages/family-admin/SetupCompletePage";
-import CareCircleSetupInit from "@/features/auth/pages/family-admin/CareCircleSetupInit";
+import CreateCareCirclePage from "@/features/auth/pages/care-circle/CreateCareCirclePage";
+import InviteFamilyPage from "@/features/auth/pages/invitation/InviteFamilyPage";
+import SetupCompletePage from "@/features/auth/pages/care-circle/SetupCompletePage";
+import CareCircleSetupInit from "@/features/auth/pages/care-circle/CareCircleSetupInit";
+import { FamilyMemberInvitationAcceptancePage } from "@/features/auth/pages/member/FamilyMemberInvitationAcceptancePage";
+import { CaregiverInvitationAcceptancePage } from "@/features/auth/pages/member/CaregiverInvitationAcceptancePage";
 
 function MarketingLayout() {
   return (
@@ -71,14 +74,6 @@ export default function App() {
           }
         />
         <Route
-          path="Setup-complete"
-          element={
-            <ProtectedAuthRoute>
-              <SetupCompletePage />
-            </ProtectedAuthRoute>
-          }
-        />
-        <Route
           path="care-circle-setup"
           element={
             <ProtectedAuthRoute>
@@ -86,6 +81,12 @@ export default function App() {
             </ProtectedAuthRoute>
           }
         />
+      </Route>
+
+      <Route path="/member/*" element={<NonAdminAuthLayout />}>
+        <Route index element={<FamilyMemberInvitationAcceptancePage />} />
+        <Route path="family-invite" element={<FamilyMemberInvitationAcceptancePage />} />
+        <Route path="caregiver-invite" element={<CaregiverInvitationAcceptancePage />} />
       </Route>
 
       <Route element={<MarketingLayout />}>

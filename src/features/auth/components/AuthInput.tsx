@@ -10,7 +10,7 @@ import {
 
 interface AuthInputProps {
   label: string;
-  placeholder: string;
+  placeholder?: string;
   type?: "text" | "email" | "password";
   icon?: "user" | "mail" | "lock" | "check";
   leftIcon?: ReactNode;
@@ -20,7 +20,10 @@ interface AuthInputProps {
   error?: string;
   onChange?: (value: string) => void;
   onBlur?: () => void;
+  autoComplete?: string;
   required?: boolean;
+  disabled?: boolean;
+  autoFocus?: boolean;
 }
 
 export function AuthInput({
@@ -35,7 +38,10 @@ export function AuthInput({
   error,
   onChange,
   onBlur,
+  autoComplete,
   required,
+  disabled,
+  autoFocus,
 }: AuthInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -97,13 +103,16 @@ export function AuthInput({
 
         <input
           type={inputType}
-          placeholder={placeholder}
+          placeholder={placeholder ?? ""}
           name={name}
           value={value ?? ""}
           onChange={(event) => onChange?.(event.target.value)}
           onBlur={onBlur}
+          autoComplete={autoComplete}
           required={required}
-          className={`h-[54px] w-full rounded-xl border ${error ? "border-red-500" : "border-[#E5E7EB]"} bg-[#F8FAFC] ${paddingLeft} ${paddingRight} text-base text-[#1B2A4A] placeholder:text-[#9CA3AF] outline-none transition focus:border-[#003665]`}
+          disabled={disabled}
+          autoFocus={autoFocus}
+          className={`h-[54px] w-full rounded-xl border ${error ? "border-red-500" : "border-[#E5E7EB]"} bg-[#F8FAFC] ${paddingLeft} ${paddingRight} text-base text-[#1B2A4A] placeholder:text-[#9CA3AF] outline-none transition focus:border-[#003665] ${disabled ? "cursor-not-allowed opacity-70" : ""}`}
         />
 
         {rightIconElement}

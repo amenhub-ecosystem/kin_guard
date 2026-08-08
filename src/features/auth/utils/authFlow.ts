@@ -120,6 +120,19 @@ export function validateLoginForm(values: LoginFormValues): ValidationResult<Log
   };
 }
 
+export function validateEmail(email: string) {
+  const errors: Partial<Record<'email', string>> = {};
+
+  if (!emailRegex.test(email.trim())) {
+    errors.email = "Enter a valid email address.";
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors,
+  };
+}
+
 export function validateOtpCode(code: string, expected: string) {
   return code.length === expected.length && code === expected;
 }
@@ -225,5 +238,27 @@ export function getInviteTeamDraft() {
     return JSON.parse(raw) as InviteTeamDraft;
   } catch {
     return null;
+  }
+}
+
+export function clearCareCircleDraft() {
+  if (typeof window !== "undefined") {
+    window.sessionStorage.removeItem("kinGuardCareCircleDraft");
+  }
+}
+
+export function clearInviteTeamDraft() {
+  if (typeof window !== "undefined") {
+    window.sessionStorage.removeItem("kinGuardInviteTeamDraft");
+  }
+}
+
+export function clearAuthSession() {
+  if (typeof window !== "undefined") {
+    window.sessionStorage.removeItem("kinGuardOtp");
+    window.sessionStorage.removeItem("kinGuardAccount");
+    window.sessionStorage.removeItem("kinGuardAuthJourneyActive");
+    clearCareCircleDraft();
+    clearInviteTeamDraft();
   }
 }

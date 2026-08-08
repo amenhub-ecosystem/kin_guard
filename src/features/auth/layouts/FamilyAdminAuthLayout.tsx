@@ -36,7 +36,7 @@ export function FamilyAdminAuthLayout({
       </aside>
 
       {/* Auth Content */}
-      <main className="auth-scroll relative h-screen overflow-y-auto overflow-x-hidden bg-[#FDFDFD] px-4 py-12 sm:px-8">
+      <main className="auth-scroll relative h-screen overflow-y-auto overflow-x-hidden bg-[#FDFDFD] px-4 pt-3 pb-12 sm:px-8">
         <div className="mx-auto w-full max-w-[600px]">
           {children ?? <Outlet />}
         </div>

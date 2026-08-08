@@ -1,0 +1,1718 @@
+diff --git a/src/App.tsx b/src/App.tsx
+index da29dac..4d89e4b 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -8,16 +8,19 @@ import HowItWorksPage from "@/features/marketing/pages/HowItWorksPage";
+ import PricingPage from "@/features/marketing/pages/PricingPage";
+ import SolutionsPage from "@/features/marketing/pages/SolutionsPage";
+ import { FamilyAdminAuthLayout } from "@/features/auth/layouts/FamilyAdminAuthLayout";
++import NonAdminAuthLayout from "@/features/auth/layouts/NonAdminAuthLayout";
+ import { ProtectedAuthRoute } from "@/features/auth/layouts/ProtectedAuthRoute";
+ import { WelcomePage } from "@/features/auth/pages/family-admin/WelcomePage";
+ import CreateAccountPage from "@/features/auth/pages/family-admin/CreateAccountPage";
+ import { LoginPage } from "@/features/auth/pages/family-admin/LoginPage";
+ import { ForgotPasswordPage } from "@/features/auth/pages/family-admin/ForgotPasswordPage";
+ import { VerifyEmailPage } from "@/features/auth/pages/family-admin/VerifyEmailPage";
+-import CreateCareCirclePage from "@/features/auth/pages/family-admin/CreateCareCirclePage";
+-import InviteFamilyPage from "@/features/auth/pages/family-admin/InviteFamilyPage";
+-import SetupCompletePage from "@/features/auth/pages/family-admin/SetupCompletePage";
+-import CareCircleSetupInit from "@/features/auth/pages/family-admin/CareCircleSetupInit";
++import CreateCareCirclePage from "@/features/auth/pages/care-circle/CreateCareCirclePage";
++import InviteFamilyPage from "@/features/auth/pages/invitation/InviteFamilyPage";
++import SetupCompletePage from "@/features/auth/pages/care-circle/SetupCompletePage";
++import CareCircleSetupInit from "@/features/auth/pages/care-circle/CareCircleSetupInit";
++import { FamilyMemberInvitationAcceptancePage } from "@/features/auth/pages/member/FamilyMemberInvitationAcceptancePage";
++import { CaregiverInvitationAcceptancePage } from "@/features/auth/pages/member/CaregiverInvitationAcceptancePage";
+ 
+ function MarketingLayout() {
+   return (
+@@ -70,14 +73,6 @@ export default function App() {
+             </ProtectedAuthRoute>
+           }
+         />
+-        <Route
+-          path="Setup-complete"
+-          element={
+-            <ProtectedAuthRoute>
+-              <SetupCompletePage />
+-            </ProtectedAuthRoute>
+-          }
+-        />
+         <Route
+           path="care-circle-setup"
+           element={
+@@ -88,6 +83,12 @@ export default function App() {
+         />
+       </Route>
+ 
++      <Route path="/member/*" element={<NonAdminAuthLayout />}>
++        <Route index element={<FamilyMemberInvitationAcceptancePage />} />
++        <Route path="family-invite" element={<FamilyMemberInvitationAcceptancePage />} />
++        <Route path="caregiver-invite" element={<CaregiverInvitationAcceptancePage />} />
++      </Route>
++
+       <Route element={<MarketingLayout />}>
+         <Route path="/" element={<HomePage />} />
+         <Route path="/features" element={<FeaturesPage />} />
+diff --git a/src/features/auth/components/AuthInput.tsx b/src/features/auth/components/AuthInput.tsx
+index d49063d..426c5b8 100644
+--- a/src/features/auth/components/AuthInput.tsx
++++ b/src/features/auth/components/AuthInput.tsx
+@@ -10,7 +10,7 @@ import {
+ 
+ interface AuthInputProps {
+   label: string;
+-  placeholder: string;
++  placeholder?: string;
+   type?: "text" | "email" | "password";
+   icon?: "user" | "mail" | "lock" | "check";
+   leftIcon?: ReactNode;
+@@ -20,7 +20,10 @@ interface AuthInputProps {
+   error?: string;
+   onChange?: (value: string) => void;
+   onBlur?: () => void;
++  autoComplete?: string;
+   required?: boolean;
++  disabled?: boolean;
++  autoFocus?: boolean;
+ }
+ 
+ export function AuthInput({
+@@ -35,7 +38,10 @@ export function AuthInput({
+   error,
+   onChange,
+   onBlur,
++  autoComplete,
+   required,
++  disabled,
++  autoFocus,
+ }: AuthInputProps) {
+   const [showPassword, setShowPassword] = useState(false);
+ 
+@@ -97,13 +103,16 @@ export function AuthInput({
+ 
+         <input
+           type={inputType}
+-          placeholder={placeholder}
++          placeholder={placeholder ?? ""}
+           name={name}
+           value={value ?? ""}
+           onChange={(event) => onChange?.(event.target.value)}
+           onBlur={onBlur}
++          autoComplete={autoComplete}
+           required={required}
+-          className={`h-[54px] w-full rounded-xl border ${error ? "border-red-500" : "border-[#E5E7EB]"} bg-[#F8FAFC] ${paddingLeft} ${paddingRight} text-base text-[#1B2A4A] placeholder:text-[#9CA3AF] outline-none transition focus:border-[#003665]`}
++          disabled={disabled}
++          autoFocus={autoFocus}
++          className={`h-[54px] w-full rounded-xl border ${error ? "border-red-500" : "border-[#E5E7EB]"} bg-[#F8FAFC] ${paddingLeft} ${paddingRight} text-base text-[#1B2A4A] placeholder:text-[#9CA3AF] outline-none transition focus:border-[#003665] ${disabled ? "cursor-not-allowed opacity-70" : ""}`}
+         />
+ 
+         {rightIconElement}
+diff --git a/src/features/auth/layouts/FamilyAdminAuthLayout.tsx b/src/features/auth/layouts/FamilyAdminAuthLayout.tsx
+index fb6f6ac..b9d7fb7 100644
+--- a/src/features/auth/layouts/FamilyAdminAuthLayout.tsx
++++ b/src/features/auth/layouts/FamilyAdminAuthLayout.tsx
+@@ -36,7 +36,7 @@ export function FamilyAdminAuthLayout({
+       </aside>
+ 
+       {/* Auth Content */}
+-      <main className="auth-scroll relative h-screen overflow-y-auto overflow-x-hidden bg-[#FDFDFD] px-4 py-12 sm:px-8">
++      <main className="auth-scroll relative h-screen overflow-y-auto overflow-x-hidden bg-[#FDFDFD] px-4 pt-3 pb-12 sm:px-8">
+         <div className="mx-auto w-full max-w-[600px]">
+           {children ?? <Outlet />}
+         </div>
+diff --git a/src/features/auth/layouts/InvitationAuthLayout.tsx b/src/features/auth/layouts/InvitationAuthLayout.tsx
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/src/features/auth/pages/family-admin/CareCircleSetupInit.tsx b/src/features/auth/pages/family-admin/CareCircleSetupInit.tsx
+deleted file mode 100644
+index b421ee6..0000000
+--- a/src/features/auth/pages/family-admin/CareCircleSetupInit.tsx
++++ /dev/null
+@@ -1,147 +0,0 @@
+-import {
+-  ArrowRight,
+-  Users2,
+-  RotateCcw,
+-  MapPinned,
+-} from "@/components/common/icons";
+-
+-import { Link, useNavigate } from "react-router-dom";
+-
+-import { LogoWithText } from "@/components/common/LogoWithText";
+-import { AuthProgress } from "../../components/AuthProgress";
+-
+-// Replace with your exported PNG
+-import WelcomeImage from "../../assets/images/family-onboarding.png";
+-
+-const FEATURES = [
+-  {
+-    icon: Users2,
+-    label: "INVITE MEMBERS",
+-  },
+-  {
+-    icon: RotateCcw,
+-    label: "SET ALERTS",
+-  },
+-  {
+-    icon: MapPinned,
+-    label: "SAFE ZONES",
+-  },
+-];
+-
+-export default function FamilyAdminWelcome() {
+-  const navigate = useNavigate();
+-
+-  return (
+-    <div className="flex min-h-screen justify-center bg-[#FDFDFD] px-12 py-12">
+-      <div className="flex w-full max-w-[512px] flex-col">
+-
+-        {/* Header */}
+-        <header className="flex items-center justify-between">
+-          <LogoWithText />
+-
+-          <div className="flex items-center gap-3">
+-            <AuthProgress currentStep={1} totalSteps={4} />
+-          </div>
+-        </header>
+-
+-        {/* Hero */}
+-        <section className="flex justify-center pt-10">
+-          <div className="relative">
+-            <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-100/40 blur-3xl" />
+-
+-            <img
+-              src={WelcomeImage}
+-              alt="Family Care"
+-              className="relative h-96 w-96 rounded-2xl object-cover"
+-              loading="eager"
+-            />
+-          </div>
+-        </section>
+-
+-        {/* Heading */}
+-        <section className="mt-10 text-center">
+-          <h1 className="font-space-grotesk text-[36px] font-bold leading-10 tracking-[-0.02em] text-[#1B2A4A]">
+-            Let's set up your care circle.
+-          </h1>
+-
+-          <p className="mt-4 text-lg leading-[29px] text-slate-500">
+-            Connect with your loved ones and start monitoring their
+-            well-being. This only takes about two minutes.
+-          </p>
+-        </section>
+-
+-        {/* Feature Cards */}
+-        <section className="mt-10 grid grid-cols-3 gap-4">
+-          {FEATURES.map((feature) => {
+-            const Icon = feature.icon;
+-
+-            return (
+-              <div
+-                key={feature.label}
+-                className="flex flex-col items-center rounded-2xl border border-gray-100 bg-white py-4"
+-              >
+-                <Icon
+-                  size={20}
+-                  className="mb-3 text-[#003665]"
+-                  strokeWidth={2.2}
+-                />
+-
+-                <span className="text-[10px] font-bold tracking-wide text-gray-400">
+-                  {feature.label}
+-                </span>
+-              </div>
+-            );
+-          })}
+-        </section>
+-
+-        {/* CTA */}
+-        <button
+-          onClick={() => navigate("/family-admin/create-care-circle")}
+-          className="
+-            mt-14
+-            flex
+-            h-[60px]
+-            items-center
+-            justify-center
+-            gap-3
+-            rounded-2xl
+-            bg-[#003665]
+-            text-lg
+-            font-bold
+-            text-white
+-            shadow-[0_10px_30px_rgba(15,23,42,.08)]
+-            transition
+-            hover:bg-[#002b50]
+-          "
+-        >
+-          Continue
+-
+-          <ArrowRight size={18} strokeWidth={2.5} />
+-        </button>
+-
+-        {/* Join Existing */}
+-        <div className="mt-10 text-center text-sm">
+-          <span className="text-slate-500">
+-            Already have a circle?
+-          </span>
+-
+-          <Link
+-            to="/family-admin/login"
+-            className="ml-1 font-medium text-[#FE706D] hover:underline"
+-          >
+-            Join existing
+-          </Link>
+-        </div>
+-
+-        {/* Footer */}
+-        <footer className="mt-auto pt-8">
+-          <div className="border-t border-gray-100 pt-8">
+-            <p className="text-center text-xs italic text-gray-400">
+-              "Keeping families connected, no matter the distance."
+-            </p>
+-          </div>
+-        </footer>
+-      </div>
+-    </div>
+-  );
+-}
+\ No newline at end of file
+diff --git a/src/features/auth/pages/family-admin/CreateAccountPage.tsx b/src/features/auth/pages/family-admin/CreateAccountPage.tsx
+index f0d536a..244355e 100644
+--- a/src/features/auth/pages/family-admin/CreateAccountPage.tsx
++++ b/src/features/auth/pages/family-admin/CreateAccountPage.tsx
+@@ -24,17 +24,15 @@ export default function CreateAccountPage() {
+   });
+   const [errors, setErrors] = useState<Partial<Record<keyof SignupFormValues, string>>>({});
+ 
+-
+   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+     event.preventDefault();
+     const result = validateSignupForm(form);
+     setErrors(result.errors);
+     if (result.isValid) {
+-      const account = saveAccount(form);
++      saveAccount(form);
+       activateAuthJourney();
+       const otp = Math.floor(100000 + Math.random() * 900000).toString();
+       saveOtp(otp);
+-      window.sessionStorage.setItem("kinGuardAccount", JSON.stringify(account));
+       navigate("/family-admin/verify-email");
+     }
+   };
+diff --git a/src/features/auth/pages/family-admin/CreateCareCirclePage.tsx b/src/features/auth/pages/family-admin/CreateCareCirclePage.tsx
+deleted file mode 100644
+index 8f0b464..0000000
+--- a/src/features/auth/pages/family-admin/CreateCareCirclePage.tsx
++++ /dev/null
+@@ -1,562 +0,0 @@
+-import { useRef, useState, type ChangeEvent, type InputHTMLAttributes } from "react";
+-import { useNavigate } from "react-router-dom";
+-import {
+-  Camera,
+-  Users,
+-  Shield,
+-} from "@/components/common/icons";
+-
+-import { AuthButton } from "../../components/AuthButton";
+-import Select, { type SelectOption } from "../../components/Select.tsx";
+-import { LogoWithText } from "@/components/common/LogoWithText.tsx";
+-import { AuthProgress } from "../../components/AuthProgress.tsx";
+-import { getCareCircleDraft, saveCareCircleDraft, type CareCircleDraft } from "../../utils/authFlow";
+-
+-interface CareCircleForm {
+-  circleName: string;
+-  lovedOneName: string;
+-  relationship: string;
+-  age: string;
+-  gender: string;
+-  phone: string;
+-  email: string;
+-  medication: string;
+-  dailyCheckIns: string;
+-}
+-
+-interface CareCircleFormErrors {
+-  circleName?: string;
+-  lovedOneName?: string;
+-  relationship?: string;
+-  age?: string;
+-  gender?: string;
+-  phone?: string;
+-  email?: string;
+-  medication?: string;
+-  dailyCheckIns?: string;
+-}
+-
+-const relationshipOptions: SelectOption[] = [
+-  { label: "Parent", value: "Parent" },
+-  { label: "Grandparent", value: "Grandparent" },
+-  { label: "Sibling", value: "Sibling" },
+-  { label: "Spouse", value: "Spouse" },
+-  { label: "Friend", value: "Friend" },
+-  { label: "Neighbor", value: "Neighbor" },
+-  { label: "Other", value: "Other" },
+-];
+-
+-const genderOptions: SelectOption[] = [
+-  { label: "Male", value: "Male" },
+-  { label: "Female", value: "Female" },
+-  { label: "Other", value: "Other" },
+-];
+-
+-const medicationOptions: SelectOption[] = [
+-  { label: "Yes", value: "Yes" },
+-  { label: "No", value: "No" },
+-];
+-
+-const dailyCheckInOptions: SelectOption[] = [
+-  { label: "Yes", value: "Yes" },
+-  { label: "No", value: "No" },
+-];
+-
+-function FormInput(props: InputHTMLAttributes<HTMLInputElement> & { error?: string }) {
+-  const { error, ...inputProps } = props;
+-
+-  return (
+-    <div className="space-y-2">
+-      <input
+-        {...inputProps}
+-        className={`h-[58px] w-full rounded-xl border ${error ? "border-red-500" : "border-[#E5E7EB]"} bg-[#F8FAFC] px-4 text-base text-[#1B2A4A] placeholder:text-[#9CA3AF] outline-none transition focus:border-[#003665] focus:ring-2 focus:ring-[#003665]/10 ${props.className ?? ""}`.trim()}
+-      />
+-      {error ? <p className="text-sm text-red-500">{error}</p> : null}
+-    </div>
+-  );
+-}
+-
+-export default function CreateCareCirclePage() {
+-  const navigate = useNavigate();
+-  const inputRef = useRef<HTMLInputElement>(null);
+-
+-  const [photo, setPhoto] = useState<string | undefined>(() => {
+-    const savedDraft = getCareCircleDraft();
+-    return savedDraft?.photo ?? undefined;
+-  });
+-
+-  const [form, setForm] = useState<CareCircleForm>(() => {
+-    const savedDraft = getCareCircleDraft();
+-    if (!savedDraft) {
+-      return {
+-        circleName: "",
+-        lovedOneName: "",
+-        relationship: "",
+-        age: "",
+-        gender: "",
+-        phone: "",
+-        email: "",
+-        medication: "",
+-        dailyCheckIns: "",
+-      };
+-    }
+-
+-    return {
+-      circleName: savedDraft.circleName ?? "",
+-      lovedOneName: savedDraft.lovedOneName ?? "",
+-      relationship: savedDraft.relationship ?? "",
+-      age: savedDraft.age ?? "",
+-      gender: savedDraft.gender ?? "",
+-      phone: savedDraft.phone ?? "",
+-      email: savedDraft.email ?? "",
+-      medication: savedDraft.medication ?? "",
+-      dailyCheckIns: savedDraft.dailyCheckIns ?? "",
+-    };
+-  });
+-  const [errors, setErrors] = useState<CareCircleFormErrors>({});
+-
+-  const updateField = (
+-    field: keyof CareCircleForm,
+-    value: string
+-  ) => {
+-    setForm((prevForm) => {
+-      const nextForm = {
+-        ...prevForm,
+-        [field]: value,
+-      };
+-      saveCareCircleDraft(nextForm as CareCircleDraft);
+-      return nextForm;
+-    });
+-    setErrors((prev) => ({
+-      ...prev,
+-      [field]: undefined,
+-    }));
+-  };
+-
+-  const validateForm = () => {
+-    const nextErrors: CareCircleFormErrors = {};
+-    const requiredFields: Array<keyof CareCircleForm> = [
+-      "circleName",
+-      "lovedOneName",
+-      "relationship",
+-      "age",
+-      "gender",
+-      "phone",
+-      "email",
+-      "medication",
+-      "dailyCheckIns",
+-    ];
+-
+-    requiredFields.forEach((field) => {
+-      const value = form[field].trim();
+-      if (!value) {
+-        nextErrors[field] = "This field is required.";
+-      }
+-    });
+-
+-    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+-      nextErrors.email = "Enter a valid email address.";
+-    }
+-
+-    if (form.phone && !/^\+?[0-9\s()-]{7,15}$/.test(form.phone)) {
+-      nextErrors.phone = "Enter a valid phone number.";
+-    }
+-
+-    setErrors(nextErrors);
+-    return Object.keys(nextErrors).length === 0;
+-  };
+-
+-  const handleContinue = () => {
+-    if (validateForm()) {
+-      saveCareCircleDraft(form as CareCircleDraft);
+-      navigate("/family-admin/invite-family");
+-    }
+-  };
+-
+-  const handleUpload = (
+-    e: ChangeEvent<HTMLInputElement>
+-  ) => {
+-    const file = e.target.files?.[0];
+-
+-    if (!file) return;
+-
+-    const preview = URL.createObjectURL(file);
+-    setPhoto(preview);
+-    setForm((prevForm) => {
+-      const nextForm = { ...prevForm, photo: preview } as CareCircleForm & { photo?: string };
+-      saveCareCircleDraft(nextForm as CareCircleDraft);
+-      return nextForm;
+-    });
+-  };
+-
+-  return (
+-    <div className="flex min-h-screen justify-center bg-[#FDFDFD] px-6 py-12">
+-
+-      <div className="w-full max-w-[512px]">
+-
+-        {/* HEADER */}
+-
+-        <div className="mb-12 flex items-center justify-between">
+-
+-          <LogoWithText />
+-
+-          <div className="flex items-center gap-3">
+-            <AuthProgress currentStep={2} totalSteps={4} />
+-          </div>
+-
+-        </div>
+-
+-        {/* TITLE */}
+-
+-        <div className="mb-8">
+-
+-          <h1 className="font-space text-[30px] font-bold text-[#1B2A4A]">
+-            Create your first Care Circle
+-          </h1>
+-
+-          <p className="mt-2 text-base text-slate-500">
+-            Identify the person you'll be looking after and
+-            name your team.
+-          </p>
+-
+-        </div>
+-
+-        {/* PHOTO */}
+-
+-        <div
+-          onClick={() => inputRef.current?.click()}
+-          className="mb-6 flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50/50 px-6 py-8 transition hover:border-[#003665]"
+-        >
+-
+-          <input
+-            ref={inputRef}
+-            type="file"
+-            accept="image/*"
+-            hidden
+-            onChange={handleUpload}
+-          />
+-
+-          {photo ? (
+-            <img
+-              src={photo}
+-              alt="Preview"
+-              className="h-24 w-24 rounded-full object-cover"
+-            />
+-          ) : (
+-            <div className="flex h-20 w-20 items-center justify-center rounded-full border bg-white shadow-sm">
+-
+-              <Camera
+-                size={24}
+-                className="text-gray-400"
+-              />
+-
+-            </div>
+-          )}
+-
+-          <h3 className="mt-4 text-sm font-semibold text-[#003665]">
+-            Upload Photo
+-          </h3>
+-
+-          <p className="mt-1 text-xs text-slate-500">
+-            Optional: A photo of your loved one
+-          </p>
+-
+-        </div>
+-
+-        {/* FORM */}
+-
+-        <div className="space-y-6">
+-
+-          {/* Circle Name */}
+-
+-          <div>
+-
+-            <label className="mb-2 block text-sm font-bold text-[#1B2A4A]">
+-              Circle Name
+-            </label>
+-
+-            <div className="relative">
+-
+-              <FormInput
+-                value={form.circleName}
+-                placeholder="e.g. Grandma's Team, Johnson Family"
+-                error={errors.circleName}
+-                onChange={(e) => updateField("circleName", e.target.value)}
+-              />
+-
+-              <Users
+-                size={18}
+-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300"
+-              />
+-
+-            </div>
+-
+-          </div>
+-
+-          {/* Name + Relationship */}
+-
+-          <div className="grid grid-cols-2 gap-4">
+-
+-            <div>
+-
+-              <label className="mb-2 block text-sm font-bold text-[#1B2A4A]">
+-                Loved One's Name
+-              </label>
+-
+-              <FormInput
+-                value={form.lovedOneName}
+-                placeholder="Full Name"
+-                error={errors.lovedOneName}
+-                onChange={(e) => updateField("lovedOneName", e.target.value)}
+-              />
+-
+-            </div>
+-
+-            <div>
+-
+-              <label className="mb-2 block text-sm font-bold text-[#1B2A4A]">
+-                Relationship
+-              </label>
+-
+-              <div className="relative">
+-
+-                <Select
+-                  value={form.relationship}
+-                  options={relationshipOptions}
+-                  placeholder="Select..."
+-                  error={errors.relationship}
+-                  onChange={(value) =>
+-                    updateField("relationship", value)
+-                  }
+-                />
+-
+-              </div>
+-
+-            </div>
+-
+-          </div>
+-          {/* Age + Gender */}
+-
+-          <div className="grid grid-cols-2 gap-4">
+-
+-            <div>
+-
+-              <label className="mb-2 block text-sm font-bold text-[#1B2A4A]">
+-                Loved One's Age
+-              </label>
+-
+-              <FormInput
+-                type="number"
+-                placeholder="Age"
+-                value={form.age}
+-                error={errors.age}
+-                onChange={(e) => updateField("age", e.target.value)}
+-              />
+-
+-            </div>
+-
+-            <div>
+-
+-              <label className="mb-2 block text-sm font-bold text-[#1B2A4A]">
+-                Loved One's Gender
+-              </label>
+-
+-              <div className="relative">
+-
+-                <Select
+-                  value={form.gender}
+-                  options={genderOptions}
+-                  placeholder="Select..."
+-                  error={errors.gender}
+-                  onChange={(value) =>
+-                    updateField("gender", value)
+-                  }
+-                />
+-
+-              </div>
+-
+-            </div>
+-
+-          </div>
+-
+-          {/* Phone + Email */}
+-
+-          <div className="grid grid-cols-2 gap-4">
+-
+-            <div>
+-
+-              <label className="mb-2 block text-sm font-bold text-[#1B2A4A]">
+-                Phone Number
+-              </label>
+-
+-              <FormInput
+-                type="tel"
+-                placeholder="Phone Number"
+-                value={form.phone}
+-                error={errors.phone}
+-                onChange={(e) => updateField("phone", e.target.value)}
+-              />
+-
+-            </div>
+-
+-            <div>
+-
+-              <label className="mb-2 block text-sm font-bold text-[#1B2A4A]">
+-                Email
+-              </label>
+-
+-              <FormInput
+-                type="email"
+-                placeholder="Email"
+-                value={form.email}
+-                error={errors.email}
+-                onChange={(e) => updateField("email", e.target.value)}
+-              />
+-
+-            </div>
+-
+-          </div>
+-
+-          {/* Medication + Daily Check-ins */}
+-
+-          <div className="grid grid-cols-2 gap-4">
+-
+-            <div>
+-
+-              <label className="mb-2 block text-sm font-bold text-[#1B2A4A]">
+-                Medication
+-              </label>
+-
+-              <div className="relative">
+-
+-                <Select
+-                  value={form.medication}
+-                  options={medicationOptions}
+-                  placeholder="Select..."
+-                  error={errors.medication}
+-                  onChange={(value) =>
+-                    updateField("medication", value)
+-                  }
+-                />
+-
+-              </div>
+-
+-            </div>
+-
+-            <div>
+-
+-              <label className="mb-2 block text-sm font-bold text-[#1B2A4A]">
+-                Needs Daily Check-ins
+-              </label>
+-
+-              <div className="relative">
+-
+-                <Select
+-                  value={form.dailyCheckIns}
+-                  options={dailyCheckInOptions}
+-                  placeholder="Select..."
+-                  error={errors.dailyCheckIns}
+-                  onChange={(value) =>
+-                    updateField("dailyCheckIns", value)
+-                  }
+-                />
+-
+-              </div>
+-
+-            </div>
+-
+-          </div>
+-
+-          {/* Pro Tip */}
+-
+-          <div className="flex items-start rounded-2xl border border-sky-100 bg-sky-50/40 p-4">
+-
+-            <div className="mt-1 shrink-0">
+-
+-              <svg
+-                width="14"
+-                height="14"
+-                viewBox="0 0 24 24"
+-                fill="currentColor"
+-                className="text-[#003665]"
+-              >
+-                <path d="M9 21h6v-1H9v1Zm3-20C7.59 1 4 4.59 4 9c0 2.38 1.19 4.47 3 5.74V18a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-3.26A6.99 6.99 0 0 0 20 9c0-4.41-3.59-8-8-8Z" />
+-              </svg>
+-
+-            </div>
+-
+-            <p className="ml-3 text-xs leading-5 text-[#1B2A4A]">
+-              <span className="font-bold">Pro-tip:</span> You can invite family
+-              members, neighbors, or professional caregivers to this circle in
+-              the next step.
+-            </p>
+-
+-          </div>
+-
+-        </div>
+-
+-        {/* ACTIONS */}
+-
+-        <div className="mt-8">
+-
+-          <AuthButton
+-            className="h-[68px] w-full rounded-2xl bg-[#003665] text-lg font-bold shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
+-            onClick={handleContinue}
+-          >
+-            Continue →
+-          </AuthButton>
+-
+-          {/* Join Existing */}
+-          <div className="mt-10 text-center text-sm">
+-
+-            <button
+-              type="button"
+-              onClick={() => navigate("/family-admin/care-circle-setup")}
+-              className="ml-1 font-medium text-[#64748B] hover:underline"
+-            >
+-              Back
+-            </button>
+-          </div>
+-
+-
+-        </div>
+-
+-        {/* FOOTER */}
+-
+-        <div className="mt-12 flex items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-[0.05em] text-[#1B2A4A] opacity-50">
+-
+-          <div className="flex items-center gap-1">
+-
+-            <svg
+-              width="10"
+-              height="10"
+-              viewBox="0 0 24 24"
+-              fill="currentColor"
+-            >
+-              <path d="M17 8V6a5 5 0 1 0-10 0v2H5v13h14V8h-2Zm-8-2a3 3 0 1 1 6 0v2H9V6Z" />
+-            </svg>
+-
+-            <span>End-to-End Encrypted</span>
+-
+-          </div>
+-
+-          <div className="h-3 w-px bg-gray-300" />
+-
+-          <div className="flex items-center gap-1">
+-
+-            <Shield
+-              size={10}
+-              className="text-gray-400"
+-            />
+-
+-            <span>GDPR Compliant</span>
+-
+-          </div>
+-
+-        </div>
+-
+-      </div>
+-
+-    </div>
+-  );
+-}
+\ No newline at end of file
+diff --git a/src/features/auth/pages/family-admin/ForgotPasswordPage.tsx b/src/features/auth/pages/family-admin/ForgotPasswordPage.tsx
+index 0ebe03c..ed48831 100644
+--- a/src/features/auth/pages/family-admin/ForgotPasswordPage.tsx
++++ b/src/features/auth/pages/family-admin/ForgotPasswordPage.tsx
+@@ -6,7 +6,7 @@ import { AuthInput } from "../../components/AuthInput";
+ import { AuthLogo } from "../../components/AuthLogo";
+ import { AuthButton } from "../../components/AuthButton";
+ import { SuccessAlert } from "../../components/SuccessAlert";
+-import { validateLoginForm } from "../../utils/authFlow";
++import { validateEmail } from "../../utils/authFlow";
+ 
+ export function ForgotPasswordPage() {
+   const navigate = useNavigate();
+@@ -16,7 +16,7 @@ export function ForgotPasswordPage() {
+ 
+   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+     event.preventDefault();
+-    const result = validateLoginForm({ email, password: "reset-password" });
++    const result = validateEmail(email);
+     if (!result.isValid) {
+       setError(result.errors.email ?? "Enter a valid email address.");
+       setSubmitted(false);
+diff --git a/src/features/auth/pages/family-admin/InviteFamilyPage.tsx b/src/features/auth/pages/family-admin/InviteFamilyPage.tsx
+deleted file mode 100644
+index 1d32fbf..0000000
+--- a/src/features/auth/pages/family-admin/InviteFamilyPage.tsx
++++ /dev/null
+@@ -1,459 +0,0 @@
+-import { useState, type InputHTMLAttributes } from "react";
+-import { useNavigate } from "react-router-dom";
+-
+-import { AuthButton } from "../../components/AuthButton";
+-import { AuthProgress } from "../../components/AuthProgress";
+-import Select, { type SelectOption } from "../../components/Select";
+-import { LogoWithText } from "@/components/common/LogoWithText";
+-import { getInviteTeamDraft, saveInviteTeamDraft, type InviteTeamDraft } from "../../utils/authFlow";
+-
+-import {
+-  PlusWithDottedCircle,
+-  Trash2,
+-  Shield,
+-  ChevronLeft,
+-} from "@/components/common/icons";
+-
+-interface FamilyMember {
+-  id: number;
+-  avatar?: string;
+-  fullName: string;
+-  relationship: string;
+-  email: string;
+-  phone: string;
+-  role: string;
+-  preferredMethod: string;
+-}
+-
+-const relationshipOptions: SelectOption[] = [
+-  { label: "Parent", value: "Parent" },
+-  { label: "Child", value: "Child" },
+-  { label: "Sibling", value: "Sibling" },
+-  { label: "Spouse", value: "Spouse" },
+-  { label: "Friend", value: "Friend" },
+-  { label: "Neighbor", value: "Neighbor" },
+-  { label: "Caregiver", value: "Caregiver" },
+-  { label: "Other", value: "Other" },
+-];
+-
+-const roleOptions: SelectOption[] = [
+-  { label: "Primary Caregiver", value: "Primary Caregiver" },
+-  { label: "Family Member", value: "Family Member" },
+-  { label: "Healthcare Professional", value: "Healthcare Professional" },
+-  { label: "Emergency Contact", value: "Emergency Contact" },
+-];
+-
+-const methodOptions: SelectOption[] = [
+-  { label: "SMS", value: "SMS" },
+-  { label: "Email", value: "Email" },
+-  { label: "Phone Call", value: "Phone Call" },
+-  { label: "Push Notification", value: "Push Notification" },
+-];
+-
+-function FormInput(
+-  props: InputHTMLAttributes<HTMLInputElement>
+-) {
+-  return (
+-    <input
+-      {...props}
+-      className={`h-[58px] w-full rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-4 text-base text-[#1B2A4A] placeholder:text-[#9CA3AF] outline-none transition focus:border-[#003665] focus:ring-2 focus:ring-[#003665]/10 ${props.className ?? ""
+-        }`.trim()}
+-    />
+-  );
+-}
+-
+-interface MemberCardProps {
+-  member: FamilyMember;
+-  onChange: (
+-    id: number,
+-    field: keyof FamilyMember,
+-    value: string
+-  ) => void;
+-  onRemove: (id: number) => void;
+-}
+-
+-function MemberCard({
+-  member,
+-  onChange,
+-  onRemove,
+-}: MemberCardProps) {
+-  return (
+-    <div className="overflow-hidden rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
+-
+-      {/* Header */}
+-
+-      <div className="flex items-center justify-between border-b border-[#F3F4F6] px-7 py-6">
+-
+-        <div className="flex items-center gap-4">
+-
+-          <div className="h-16 w-16 overflow-hidden rounded-full bg-gray-200">
+-
+-            {member.avatar ? (
+-              <img
+-                src={member.avatar}
+-                alt={member.fullName}
+-                className="h-full w-full object-cover"
+-              />
+-            ) : (
+-              <div className="flex h-full w-full items-center justify-center text-xl font-bold text-slate-500">
+-                {member.fullName
+-                  ? member.fullName.charAt(0)
+-                  : "?"}
+-              </div>
+-            )}
+-
+-          </div>
+-
+-        </div>
+-
+-        <button
+-          type="button"
+-          onClick={() => onRemove(member.id)}
+-          className="text-gray-400 transition hover:text-red-500"
+-        >
+-          <Trash2 size={20} />
+-        </button>
+-
+-      </div>
+-
+-      {/* Body */}
+-
+-      <div className="space-y-4 bg-[#FCFCFD] p-7">
+-
+-        <div className="grid grid-cols-2 gap-4">
+-
+-          <FormInput
+-            placeholder="Full Name"
+-            value={member.fullName}
+-            onChange={(e) =>
+-              onChange(
+-                member.id,
+-                "fullName",
+-                e.target.value
+-              )
+-            }
+-          />
+-
+-          <div className="relative">
+-
+-            <Select
+-              value={member.relationship}
+-              options={relationshipOptions}
+-              placeholder="Relationship"
+-              onChange={(value) =>
+-                onChange(
+-                  member.id,
+-                  "relationship",
+-                  value
+-                )
+-              }
+-            />
+-
+-          </div>
+-
+-        </div>
+-
+-        <FormInput
+-          type="email"
+-          placeholder="email@address.com"
+-          value={member.email}
+-          onChange={(e) =>
+-            onChange(
+-              member.id,
+-              "email",
+-              e.target.value
+-            )
+-          }
+-        />
+-
+-        <FormInput
+-          placeholder="+2348000000000"
+-          value={member.phone}
+-          onChange={(e) =>
+-            onChange(
+-              member.id,
+-              "phone",
+-              e.target.value
+-            )
+-          }
+-        />
+-
+-        <div className="relative">
+-
+-          <Select
+-            value={member.role}
+-            options={roleOptions}
+-            placeholder="Role"
+-            onChange={(value) =>
+-              onChange(member.id, "role", value)
+-            }
+-          />
+-
+-        </div>
+-
+-        <div className="relative">
+-
+-          <Select
+-            value={member.preferredMethod}
+-            options={methodOptions}
+-            placeholder="Preferred Method"
+-            onChange={(value) =>
+-              onChange(
+-                member.id,
+-                "preferredMethod",
+-                value
+-              )
+-            }
+-          />
+-
+-        </div>
+-
+-      </div>
+-
+-    </div>
+-  );
+-}
+-
+-export default function InviteFamilyPage() {
+-  const navigate = useNavigate();
+-  const [members, setMembers] = useState<FamilyMember[]>(() => {
+-    const savedDraft = getInviteTeamDraft();
+-    if (savedDraft?.members?.length) {
+-      return savedDraft.members.map((member) => ({
+-        ...member,
+-        avatar: member.avatar ?? "/images/avatar-placeholder.png",
+-      }));
+-    }
+-
+-    return [
+-      {
+-        id: 1,
+-        fullName: "",
+-        relationship: "",
+-        email: "",
+-        phone: "",
+-        role: "",
+-        preferredMethod: "",
+-        avatar: "/images/avatar-placeholder.png",
+-      },
+-    ];
+-  });
+-
+-  const updateMember = (
+-    id: number,
+-    field: keyof FamilyMember,
+-    value: string
+-  ) => {
+-    setMembers((prevMembers) => {
+-      const nextMembers = prevMembers.map((member) =>
+-        member.id === id
+-          ? {
+-              ...member,
+-              [field]: value,
+-            }
+-          : member
+-      );
+-      saveInviteTeamDraft({ members: nextMembers } as InviteTeamDraft);
+-      return nextMembers;
+-    });
+-  };
+-
+-  const addMember = () => {
+-    setMembers((prevMembers) => {
+-      const nextMembers = [
+-        ...prevMembers,
+-        {
+-          id: Date.now(),
+-          fullName: "",
+-          relationship: "",
+-          email: "",
+-          phone: "",
+-          role: "",
+-          preferredMethod: "",
+-        },
+-      ];
+-      saveInviteTeamDraft({ members: nextMembers } as InviteTeamDraft);
+-      return nextMembers;
+-    });
+-  };
+-
+-  const removeMember = (id: number) => {
+-    setMembers((prevMembers) => {
+-      const nextMembers = prevMembers.filter((member) => member.id !== id);
+-      saveInviteTeamDraft({ members: nextMembers } as InviteTeamDraft);
+-      return nextMembers;
+-    });
+-  };
+-
+-  return (
+-    <div className="flex min-h-screen justify-center bg-[#FDFDFD] px-6 py-12">
+-
+-      <div className="w-full max-w-[640px]">
+-
+-        {/* Header */}
+-
+-        <div className="mb-12 flex items-center justify-between">
+-
+-          <LogoWithText />
+-
+-          <AuthProgress
+-            currentStep={3}
+-            totalSteps={4}
+-          />
+-
+-        </div>
+-
+-        {/* Title */}
+-
+-        <div className="mb-8">
+-
+-          <h1 className="font-space text-[30px] font-bold text-[#1B2A4A]">
+-            Invite Your Care Team
+-          </h1>
+-
+-          <p className="mt-2 text-base text-[#64748B]">
+-            Add family members, trusted friends or healthcare
+-            professionals to help care for your loved one.
+-          </p>
+-
+-        </div>
+-
+-        {/* Members */}
+-
+-        <div className="space-y-6">
+-
+-          {members.map((member, index) => (
+-            <div key={member.id}>
+-
+-              <div className="mb-3 flex items-center justify-between">
+-
+-                <h3 className="text-lg font-bold text-[#1B2A4A]">
+-                  Team Member {index + 1}
+-                </h3>
+-
+-                {members.length > 1 && (
+-                  <button
+-                    type="button"
+-                    onClick={() => removeMember(member.id)}
+-                    className="text-sm font-medium text-red-500 hover:underline"
+-                  >
+-                    Remove
+-                  </button>
+-                )}
+-
+-              </div>
+-
+-              <MemberCard
+-                member={member}
+-                onChange={updateMember}
+-                onRemove={removeMember}
+-              />
+-
+-            </div>
+-          ))}
+-
+-          {/* Add Member */}
+-
+-          <button
+-            type="button"
+-            onClick={addMember}
+-            className="flex h-[64px] w-full items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-[#D7DFE9] bg-[#F8FAFC] text-[#003665] transition hover:border-[#003665] hover:bg-[#F4F8FC]"
+-          >
+-
+-            <PlusWithDottedCircle size={32} />
+-
+-            <span className="font-semibold">
+-              Add Another Team Member
+-            </span>
+-
+-          </button>
+-
+-          {/* Tip */}
+-
+-          <div className="rounded-2xl border border-[#DBEAFE] bg-[#EFF6FF] p-5">
+-
+-            <div className="flex gap-3">
+-
+-              <Shield
+-                size={18}
+-                className="mt-1 shrink-0 text-[#003665]"
+-              />
+-
+-              <div>
+-
+-                <h4 className="font-semibold text-[#1B2A4A]">
+-                  Privacy First
+-                </h4>
+-
+-                <p className="mt-1 text-sm leading-6 text-[#64748B]">
+-                  Every invited member will receive their own
+-                  secure account and only the permissions you
+-                  choose to grant them.
+-                </p>
+-
+-              </div>
+-
+-            </div>
+-
+-          </div>
+-
+-        </div>
+-
+-        {/* Actions */}
+-
+-        <div className="mt-10">
+-
+-          <AuthButton
+-            className="h-[64px] w-full rounded-2xl bg-[#003665] text-lg font-semibold shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
+-            onClick={() => navigate("/family-admin/setup-complete")}
+-          >
+-            Send Invitations
+-          </AuthButton>
+-
+-         {/* Navigation */}
+-
+-<div className="mt-10 flex items-center justify-center text-[18px] font-semibold text-[#64748B]">
+-
+-  <button
+-    type="button"
+-    onClick={() => navigate("/family-admin/create-care-circle")}
+-    className="flex items-center gap-2 transition hover:text-[#003665]"
+-  >
+-    <ChevronLeft size={18} />
+-    <span>Back</span>
+-  </button>
+-
+-  <div className="mx-8 h-6 w-px bg-[#E5E7EB]" />
+-
+-  <button
+-    type="button"
+-    onClick={() => navigate("/family-admin/setup-complete")}
+-    className="transition hover:text-[#003665]"
+-  >
+-    Skip for Now
+-  </button>
+-
+-</div>
+-
+-        </div>
+-
+-        {/* Footer */}
+-
+-        <div className="mt-12 flex items-center justify-center gap-6 border-t border-[#F3F4F6] pt-8 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">
+-
+-
+-          <div className="h-3 w-px bg-[#CBD5E1]" />
+-
+-          <span>End-to-End Encrypted</span>
+-
+-          <div className="h-3 w-px bg-[#CBD5E1]" />
+-
+-          <span>GDPR Compliant</span>
+-
+-        </div>
+-
+-      </div>
+-
+-    </div>
+-  );
+-}
+\ No newline at end of file
+diff --git a/src/features/auth/pages/family-admin/SetupCompletePage.tsx b/src/features/auth/pages/family-admin/SetupCompletePage.tsx
+deleted file mode 100644
+index e5231ac..0000000
+--- a/src/features/auth/pages/family-admin/SetupCompletePage.tsx
++++ /dev/null
+@@ -1,175 +0,0 @@
+-import { Link, useNavigate } from "react-router-dom";
+-
+-import {
+-  Chart,
+-  BookOpen,
+-  CirclePlay,
+-  UserPlus,
+-  Question,
+-} from "@/components/common/icons";
+-
+-import { LogoWithText } from "@/components/common/LogoWithText";
+-import { AuthProgress } from "../../components/AuthProgress";
+-import { AuthButton } from "../../components/AuthButton";
+-
+-// TODO: Replace with your exported illustration
+-import setupCompleteImage from "../../assets/images/setup_complete.svg";
+-
+-export default function SetupCompletePage() {
+-  const navigate = useNavigate();
+-
+-  return (
+-    <div className="flex min-h-screen justify-center bg-[#FDFDFD] px-6 py-12">
+-      <div className="w-full max-w-[576px]">
+-
+-        {/* HEADER */}
+-
+-        <div className="mb-16 flex items-center justify-between">
+-
+-          <LogoWithText />
+-
+-          <AuthProgress
+-            currentStep={4}
+-            totalSteps={4}
+-            completedLabel="Setup Complete"
+-          />
+-
+-        </div>
+-
+-        {/* HERO */}
+-
+-        {/* HERO */}
+-
+-        <div className="mb-12 flex justify-center">
+-          <img
+-            src={setupCompleteImage}
+-            alt="Care Circle Ready"
+-            draggable={false}
+-            className="h-auto w-full max-w-[342px]"
+-          />
+-        </div>
+-
+-        {/* TITLE */}
+-
+-        <div className="mx-auto mb-12 max-w-[430px] text-center">
+-
+-          <h1 className="font-space text-[36px] font-bold leading-10 text-[#1B2A4A]">
+-            Your Care Circle is ready.
+-          </h1>
+-
+-          <p className="mt-4 text-[18px] leading-[29px] text-[#64748B]">
+-            You're all set to start caring together.
+-            Your family can now receive real-time updates
+-            and emergency alerts.
+-          </p>
+-
+-        </div>
+-
+-        {/* ACTION BUTTONS */}
+-
+-        <div className="space-y-4">
+-
+-          <AuthButton
+-            className="h-[68px] w-full rounded-2xl bg-[#003665] text-lg font-bold shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
+-            onClick={() => navigate("/")}
+-          >
+-            <span className="flex items-center justify-center">
+-              Go to Dashboard
+-
+-              <Chart
+-                size={16}
+-                className="ml-3"
+-              />
+-
+-            </span>
+-
+-          </AuthButton>
+-
+-          <button
+-            type="button"
+-            onClick={() => navigate("/family-admin/invite-family")}
+-            className="flex h-[72px] w-full items-center justify-center rounded-2xl border-2 border-[#F3F4F6] bg-white text-lg font-bold text-[#1B2A4A] transition hover:bg-gray-50"
+-          >
+-            <UserPlus
+-              size={16}
+-              className="mr-3 text-[#FE706D]"
+-            />
+-
+-            Invite More Members
+-
+-          </button>
+-
+-        </div>
+-        {/* HELP SECTION */}
+-
+-        <div className="mt-16 text-center">
+-
+-          <p className="mb-6 text-sm text-[#64748B]">
+-            Need help getting started?
+-          </p>
+-
+-          <div className="flex items-center justify-center gap-10">
+-
+-            <Link
+-              to="#"
+-              className="flex items-center gap-2 font-semibold text-[#003665] transition hover:opacity-80"
+-            >
+-
+-              <CirclePlay size={14} />
+-
+-              <span>Watch Video Guide</span>
+-
+-            </Link>
+-
+-            <Link
+-              to="#"
+-              className="flex items-center gap-2 font-semibold text-[#003665] transition hover:opacity-80"
+-            >
+-
+-              <BookOpen size={14} />
+-
+-              <span>User Handbook</span>
+-
+-            </Link>
+-
+-          </div>
+-
+-        </div>
+-
+-        {/* FOOTER */}
+-
+-        <div className="mt-16 border-t border-[#F3F4F6] pt-8">
+-
+-          <div className="flex items-center justify-center gap-8 text-[10px] font-bold uppercase tracking-[0.12em] text-[#1B2A4A]/40">
+-
+-            <div className="flex items-center gap-2">
+-
+-              <Question
+-                size={16}
+-                className="shrink-0"
+-              />
+-
+-              <span>Enterprise Security</span>
+-
+-            </div>
+-
+-            <div className="flex items-center gap-2">
+-
+-              <Question
+-                size={16}
+-                className="shrink-0"
+-              />
+-
+-              <span>Cloud Backup Active</span>
+-
+-            </div>
+-
+-          </div>
+-
+-        </div>
+-
+-      </div>
+-
+-    </div>
+-  );
+-}
+\ No newline at end of file
+diff --git a/src/features/auth/pages/family-admin/VerifyEmailPage.tsx b/src/features/auth/pages/family-admin/VerifyEmailPage.tsx
+index bb6f0df..850b4a4 100644
+--- a/src/features/auth/pages/family-admin/VerifyEmailPage.tsx
++++ b/src/features/auth/pages/family-admin/VerifyEmailPage.tsx
+@@ -1,4 +1,4 @@
+-import { useEffect, useMemo, useState } from "react";
++import { useEffect, useState } from "react";
+ import { useNavigate } from "react-router-dom";
+ import { RotateCw, ArrowLeft } from "@/components/common/icons";
+ 
+@@ -6,7 +6,7 @@ import { AuthButton } from "../../components/AuthButton";
+ import { AuthLogo } from "../../components/AuthLogo";
+ import { OTPInput } from "../../components/OTPInput";
+ import { VerifyEmailIcon } from "../../components/VerifyEmailIcon";
+-import { getStoredOtp, saveOtp, validateOtpCode } from "../../utils/authFlow";
++import { clearAuthSession, getStoredOtp, saveOtp, validateOtpCode } from "../../utils/authFlow";
+ 
+ export function VerifyEmailPage() {
+   const navigate = useNavigate();
+@@ -14,6 +14,7 @@ export function VerifyEmailPage() {
+   const [error, setError] = useState("");
+   const [displayOtp, setDisplayOtp] = useState("");
+   const [expectedOtp, setExpectedOtp] = useState("");
++  const [resendTimer, setResendTimer] = useState(59);
+ 
+   useEffect(() => {
+     const storedOtp = getStoredOtp();
+@@ -29,6 +30,16 @@ export function VerifyEmailPage() {
+     setDisplayOtp(storedOtp);
+   }, []);
+ 
++  useEffect(() => {
++    if (resendTimer <= 0) return;
++
++    const timerId = window.setTimeout(() => {
++      setResendTimer((current) => Math.max(current - 1, 0));
++    }, 1000);
++
++    return () => clearTimeout(timerId);
++  }, [resendTimer]);
++
+   const handleVerify = () => {
+     const code = otp.join("");
+     if (!validateOtpCode(code, expectedOtp)) {
+@@ -46,6 +57,7 @@ export function VerifyEmailPage() {
+     setDisplayOtp(generatedOtp);
+     setOtp(Array(6).fill(""));
+     setError("");
++    setResendTimer(59);
+   };
+ 
+   return (
+@@ -84,10 +96,11 @@ export function VerifyEmailPage() {
+             <button
+               type="button"
+               onClick={handleResend}
+-              className="flex h-[60px] w-full items-center justify-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white text-base font-semibold text-[#64748B] transition hover:bg-gray-50"
++              disabled={resendTimer > 0}
++              className={`flex h-[60px] w-full items-center justify-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white text-base font-semibold text-[#64748B] transition ${resendTimer > 0 ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"}`}
+             >
+               <RotateCw size={16} />
+-              Resend Code
++              {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend Code"}
+             </button>
+           </div>
+         </div>
+@@ -98,7 +111,10 @@ export function VerifyEmailPage() {
+             <button
+               type="button"
+               className="font-bold text-[#FE706D]"
+-              onClick={() => navigate("/family-admin/register")}
++              onClick={() => {
++                clearAuthSession();
++                navigate("/family-admin/register");
++              }}
+             >
+               Change Email
+             </button>
+@@ -108,7 +124,10 @@ export function VerifyEmailPage() {
+             <button
+               type="button"
+               className="mx-auto flex items-center gap-1 text-xs text-[#9CA3AF] hover:text-[#64748B]"
+-              onClick={() => navigate("/family-admin/register")}
++              onClick={() => {
++                clearAuthSession();
++                navigate("/family-admin/register");
++              }}
+             >
+               <ArrowLeft size={12} />
+               Back to Create Account
+diff --git a/src/features/auth/pages/family-admin/WelcomePage.tsx b/src/features/auth/pages/family-admin/WelcomePage.tsx
+index 2ff951b..17460ac 100644
+--- a/src/features/auth/pages/family-admin/WelcomePage.tsx
++++ b/src/features/auth/pages/family-admin/WelcomePage.tsx
+@@ -1,4 +1,6 @@
++import { useEffect } from "react";
+ import { useNavigate } from "react-router-dom";
++import { clearAuthSession } from "../../utils/authFlow";
+ 
+ import { AuthButton } from "../../components/AuthButton";
+ import { AuthLogo } from "../../components/AuthLogo";
+@@ -7,6 +9,10 @@ import { SocialLoginButton } from "../../components/SocialLoginButton";
+ export function WelcomePage() {
+   const navigate = useNavigate();
+ 
++  useEffect(() => {
++    clearAuthSession();
++  }, []);
++
+   return (
+     <section
+       aria-labelledby="welcome-heading"
+@@ -30,7 +36,12 @@ export function WelcomePage() {
+       </header>
+ 
+       <div className="mt-10 flex w-full flex-col gap-4">
+-        <AuthButton onClick={() => navigate("/family-admin/register")}> 
++        <AuthButton
++          onClick={() => {
++            clearAuthSession();
++            navigate("/family-admin/register");
++          }}
++        >
+           Create an Account
+         </AuthButton>
+ 
+diff --git a/src/features/auth/utils/authFlow.ts b/src/features/auth/utils/authFlow.ts
+index 895e3df..72d9012 100644
+--- a/src/features/auth/utils/authFlow.ts
++++ b/src/features/auth/utils/authFlow.ts
+@@ -120,6 +120,19 @@ export function validateLoginForm(values: LoginFormValues): ValidationResult<Log
+   };
+ }
+ 
++export function validateEmail(email: string) {
++  const errors: Partial<Record<'email', string>> = {};
++
++  if (!emailRegex.test(email.trim())) {
++    errors.email = "Enter a valid email address.";
++  }
++
++  return {
++    isValid: Object.keys(errors).length === 0,
++    errors,
++  };
++}
++
+ export function validateOtpCode(code: string, expected: string) {
+   return code.length === expected.length && code === expected;
+ }
+@@ -227,3 +240,25 @@ export function getInviteTeamDraft() {
+     return null;
+   }
+ }
++
++export function clearCareCircleDraft() {
++  if (typeof window !== "undefined") {
++    window.sessionStorage.removeItem("kinGuardCareCircleDraft");
++  }
++}
++
++export function clearInviteTeamDraft() {
++  if (typeof window !== "undefined") {
++    window.sessionStorage.removeItem("kinGuardInviteTeamDraft");
++  }
++}
++
++export function clearAuthSession() {
++  if (typeof window !== "undefined") {
++    window.sessionStorage.removeItem("kinGuardOtp");
++    window.sessionStorage.removeItem("kinGuardAccount");
++    window.sessionStorage.removeItem("kinGuardAuthJourneyActive");
++    clearCareCircleDraft();
++    clearInviteTeamDraft();
++  }
++}

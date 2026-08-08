@@ -6,7 +6,7 @@ import { AuthInput } from "../../components/AuthInput";
 import { AuthLogo } from "../../components/AuthLogo";
 import { AuthButton } from "../../components/AuthButton";
 import { SuccessAlert } from "../../components/SuccessAlert";
-import { validateLoginForm } from "../../utils/authFlow";
+import { validateEmail } from "../../utils/authFlow";
 
 export function ForgotPasswordPage() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export function ForgotPasswordPage() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const result = validateLoginForm({ email, password: "reset-password" });
+    const result = validateEmail(email);
     if (!result.isValid) {
       setError(result.errors.email ?? "Enter a valid email address.");
       setSubmitted(false);

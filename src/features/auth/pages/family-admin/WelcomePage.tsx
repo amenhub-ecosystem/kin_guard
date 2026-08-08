@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { clearAuthSession } from "../../utils/authFlow";
 
 import { AuthButton } from "../../components/AuthButton";
 import { AuthLogo } from "../../components/AuthLogo";
@@ -6,6 +8,10 @@ import { SocialLoginButton } from "../../components/SocialLoginButton";
 
 export function WelcomePage() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    clearAuthSession();
+  }, []);
 
   return (
     <section
@@ -30,7 +36,12 @@ export function WelcomePage() {
       </header>
 
       <div className="mt-10 flex w-full flex-col gap-4">
-        <AuthButton onClick={() => navigate("/family-admin/register")}> 
+        <AuthButton
+          onClick={() => {
+            clearAuthSession();
+            navigate("/family-admin/register");
+          }}
+        >
           Create an Account
         </AuthButton>
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RotateCw, ArrowLeft } from "@/components/common/icons";
 
@@ -6,7 +6,7 @@ import { AuthButton } from "../../components/AuthButton";
 import { AuthLogo } from "../../components/AuthLogo";
 import { OTPInput } from "../../components/OTPInput";
 import { VerifyEmailIcon } from "../../components/VerifyEmailIcon";
-import { getStoredOtp, saveOtp, validateOtpCode } from "../../utils/authFlow";
+import { clearAuthSession, getStoredOtp, saveOtp, validateOtpCode } from "../../utils/authFlow";
 
 export function VerifyEmailPage() {
   const navigate = useNavigate();
@@ -14,6 +14,7 @@ export function VerifyEmailPage() {
   const [error, setError] = useState("");
   const [displayOtp, setDisplayOtp] = useState("");
   const [expectedOtp, setExpectedOtp] = useState("");
+  const [resendTimer, setResendTimer] = useState(59);
 
   useEffect(() => {
     const storedOtp = getStoredOtp();
@@ -28,6 +29,16 @@ export function VerifyEmailPage() {
     setExpectedOtp(storedOtp);
     setDisplayOtp(storedOtp);
   }, []);
+
+  useEffect(() => {
+    if (resendTimer <= 0) return;
+
+    const timerId = window.setTimeout(() => {
+      setResendTimer((current) => Math.max(current - 1, 0));
+    }, 1000);
+
+    return () => clearTimeout(timerId);
+  }, [resendTimer]);
 
   const handleVerify = () => {
     const code = otp.join("");
@@ -46,6 +57,7 @@ export function VerifyEmailPage() {
     setDisplayOtp(generatedOtp);
     setOtp(Array(6).fill(""));
     setError("");
+    setResendTimer(59);
   };
 
   return (
@@ -84,10 +96,11 @@ export function VerifyEmailPage() {
             <button
               type="button"
               onClick={handleResend}
-              className="flex h-[60px] w-full items-center justify-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white text-base font-semibold text-[#64748B] transition hover:bg-gray-50"
+              disabled={resendTimer > 0}
+              className={`flex h-[60px] w-full items-center justify-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white text-base font-semibold text-[#64748B] transition ${resendTimer > 0 ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"}`}
             >
               <RotateCw size={16} />
-              Resend Code
+              {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend Code"}
             </button>
           </div>
         </div>
@@ -98,7 +111,10 @@ export function VerifyEmailPage() {
             <button
               type="button"
               className="font-bold text-[#FE706D]"
-              onClick={() => navigate("/family-admin/register")}
+              onClick={() => {
+                clearAuthSession();
+                navigate("/family-admin/register");
+              }}
             >
               Change Email
             </button>
@@ -108,7 +124,10 @@ export function VerifyEmailPage() {
             <button
               type="button"
               className="mx-auto flex items-center gap-1 text-xs text-[#9CA3AF] hover:text-[#64748B]"
-              onClick={() => navigate("/family-admin/register")}
+              onClick={() => {
+                clearAuthSession();
+                navigate("/family-admin/register");
+              }}
             >
               <ArrowLeft size={12} />
               Back to Create Account

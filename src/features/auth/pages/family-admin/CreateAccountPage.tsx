@@ -24,17 +24,15 @@ export default function CreateAccountPage() {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof SignupFormValues, string>>>({});
 
-
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const result = validateSignupForm(form);
     setErrors(result.errors);
     if (result.isValid) {
-      const account = saveAccount(form);
+      saveAccount(form);
       activateAuthJourney();
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
       saveOtp(otp);
-      window.sessionStorage.setItem("kinGuardAccount", JSON.stringify(account));
       navigate("/family-admin/verify-email");
     }
   };

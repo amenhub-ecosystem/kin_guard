@@ -9,8 +9,6 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { LogoWithText } from "@/components/common/LogoWithText";
 import { AuthProgress } from "../../components/AuthProgress";
-
-// Replace with your exported PNG
 import WelcomeImage from "../../assets/images/family-onboarding.png";
 
 const FEATURES = [
