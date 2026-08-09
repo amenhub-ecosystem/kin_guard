@@ -10,7 +10,7 @@ import { AuthButton } from "../../components/AuthButton";
 import Select, { type SelectOption } from "../../components/Select.tsx";
 import { LogoWithText } from "@/components/common/LogoWithText.tsx";
 import { AuthProgress } from "../../components/AuthProgress.tsx";
-import { getCareCircleDraft, saveCareCircleDraft } from "../../utils/authFlow";
+import { getCareCircleDraft, saveCareCircleDraft, createCareCircle, ApiError } from "../../utils/mockAuthApi";
 
 interface CareCircleForm {
   circleName: string;
@@ -142,6 +142,8 @@ export default function CreateCareCirclePage() {
     }));
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const validateForm = () => {
     const nextErrors: CareCircleFormErrors = {};
     const requiredFields: Array<keyof CareCircleFormErrors> = [
@@ -175,10 +177,23 @@ export default function CreateCareCirclePage() {
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleContinue = () => {
-    if (validateForm()) {
-      saveCareCircleDraft(form);
+  const handleContinue = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrors({});
+
+    try {
+      await createCareCircle(form);
       navigate("/family-admin/invite-family");
+    } catch (err) {
+      if (err instanceof ApiError && err.fieldErrors) {
+        setErrors(err.fieldErrors as CareCircleFormErrors);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -509,10 +524,11 @@ export default function CreateCareCirclePage() {
         <div className="mt-8">
 
           <AuthButton
-            className="h-[68px] w-full rounded-2xl bg-[#003665] text-lg font-bold shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
+            className="h-[68px] w-full rounded-2xl bg-[#003665] text-lg font-bold shadow-[0_10px_30px_rgba(15,23,42,0.08)] disabled:cursor-not-allowed disabled:opacity-50"
             onClick={handleContinue}
+            disabled={isSubmitting}
           >
-            Continue →
+            {isSubmitting ? "Saving..." : "Continue →"}
           </AuthButton>
 
           {/* Join Existing */}

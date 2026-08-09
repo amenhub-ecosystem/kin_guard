@@ -1,6 +1,6 @@
+import { useEffect, useState, type ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { type ReactNode } from "react";
-import { isAuthJourneyActive } from "../utils/authFlow";
+import { getSession } from "../utils/mockAuthApi";
 
 interface ProtectedAuthRouteProps {
   children: ReactNode;
@@ -8,8 +8,26 @@ interface ProtectedAuthRouteProps {
 
 export function ProtectedAuthRoute({ children }: ProtectedAuthRouteProps) {
   const location = useLocation();
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
-  if (!isAuthJourneyActive()) {
+  useEffect(() => {
+    let mounted = true;
+
+    getSession().then((session) => {
+      if (!mounted) return;
+      setIsAuthorized(session.authJourneyActive);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  if (isAuthorized === null) {
+    return null;
+  }
+
+  if (!isAuthorized) {
     return <Navigate to="/family-admin" replace state={{ from: location }} />;
   }
 

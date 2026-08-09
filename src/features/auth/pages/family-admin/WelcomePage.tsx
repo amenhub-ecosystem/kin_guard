@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { clearAuthSession } from "../../utils/authFlow";
+import { logout } from "../../utils/mockAuthApi";
 
 import { AuthButton } from "../../components/AuthButton";
 import { AuthLogo } from "../../components/AuthLogo";
@@ -10,7 +10,7 @@ export function WelcomePage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    clearAuthSession();
+    logout();
   }, []);
 
   return (
@@ -38,7 +38,7 @@ export function WelcomePage() {
       <div className="mt-10 flex w-full flex-col gap-4">
         <AuthButton
           onClick={() => {
-            clearAuthSession();
+            void logout();
             navigate("/family-admin/register");
           }}
         >

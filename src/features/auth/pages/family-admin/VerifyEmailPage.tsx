@@ -6,28 +6,24 @@ import { AuthButton } from "../../components/AuthButton";
 import { AuthLogo } from "../../components/AuthLogo";
 import { OTPInput } from "../../components/OTPInput";
 import { VerifyEmailIcon } from "../../components/VerifyEmailIcon";
-import { clearAuthSession, getStoredOtp, saveOtp, validateOtpCode } from "../../utils/authFlow";
+import { getSession, logout, verifyOtp, resendOtp, ApiError } from "../../utils/mockAuthApi";
 
 export function VerifyEmailPage() {
   const navigate = useNavigate();
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const [error, setError] = useState("");
-  const [displayOtp, setDisplayOtp] = useState("");
-  const [expectedOtp, setExpectedOtp] = useState("");
   const [resendTimer, setResendTimer] = useState(59);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [emailAddress, setEmailAddress] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedOtp = getStoredOtp();
-    if (!storedOtp) {
-      const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-      saveOtp(generatedOtp);
-      setExpectedOtp(generatedOtp);
-      setDisplayOtp(generatedOtp);
-      return;
-    }
+    const loadSession = async () => {
+      const session = await getSession();
+      setEmailAddress(session.currentUser?.email ?? null);
+    };
 
-    setExpectedOtp(storedOtp);
-    setDisplayOtp(storedOtp);
+    void loadSession();
   }, []);
 
   useEffect(() => {
@@ -40,24 +36,38 @@ export function VerifyEmailPage() {
     return () => clearTimeout(timerId);
   }, [resendTimer]);
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const code = otp.join("");
-    if (!validateOtpCode(code, expectedOtp)) {
-      setError("The verification code is incorrect. Please try again.");
-      return;
-    }
     setError("");
-    navigate("/family-admin/care-circle-setup");
+    setIsVerifying(true);
+
+    try {
+      await verifyOtp(code);
+      navigate("/family-admin/care-circle-setup");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      }
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
-  const handleResend = () => {
-    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    saveOtp(generatedOtp);
-    setExpectedOtp(generatedOtp);
-    setDisplayOtp(generatedOtp);
-    setOtp(Array(6).fill(""));
+  const handleResend = async () => {
+    setIsResending(true);
     setError("");
-    setResendTimer(59);
+
+    try {
+      await resendOtp();
+      setOtp(Array(6).fill(""));
+      setResendTimer(59);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      }
+    } finally {
+      setIsResending(false);
+    }
   };
 
   return (
@@ -77,11 +87,8 @@ export function VerifyEmailPage() {
           <p className="text-base leading-[26px] text-[#64748B]">
             We've sent a verification code to:{" "}
             <span className="font-semibold text-[#1B2A4A]">
-              {window.sessionStorage.getItem("kinGuardAccount") ? JSON.parse(window.sessionStorage.getItem("kinGuardAccount") || "{}").email : "your email"}
+              {emailAddress ?? "your email"}
             </span>
-          </p>
-          <p className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-4 py-3 text-sm text-[#1B2A4A]">
-            Demo verification code: <span className="font-semibold tracking-[0.3em]">{displayOtp}</span>
           </p>
         </div>
 
@@ -89,18 +96,18 @@ export function VerifyEmailPage() {
           <OTPInput value={otp} onChange={(value) => setOtp(value)} error={error} />
 
           <div className="space-y-4">
-            <AuthButton onClick={handleVerify}>
-              Verify Account
+            <AuthButton onClick={handleVerify} disabled={isVerifying}>
+              {isVerifying ? "Verifying..." : "Verify Account"}
             </AuthButton>
 
             <button
               type="button"
               onClick={handleResend}
-              disabled={resendTimer > 0}
-              className={`flex h-[60px] w-full items-center justify-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white text-base font-semibold text-[#64748B] transition ${resendTimer > 0 ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"}`}
+              disabled={resendTimer > 0 || isResending}
+              className={`flex h-[60px] w-full items-center justify-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white text-base font-semibold text-[#64748B] transition ${resendTimer > 0 || isResending ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"}`}
             >
               <RotateCw size={16} />
-              {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend Code"}
+              {resendTimer > 0 ? `Resend in ${resendTimer}s` : isResending ? "Resending..." : "Resend Code"}
             </button>
           </div>
         </div>
@@ -112,7 +119,7 @@ export function VerifyEmailPage() {
               type="button"
               className="font-bold text-[#FE706D]"
               onClick={() => {
-                clearAuthSession();
+                void logout();
                 navigate("/family-admin/register");
               }}
             >
@@ -125,7 +132,7 @@ export function VerifyEmailPage() {
               type="button"
               className="mx-auto flex items-center gap-1 text-xs text-[#9CA3AF] hover:text-[#64748B]"
               onClick={() => {
-                clearAuthSession();
+                void logout();
                 navigate("/family-admin/register");
               }}
             >

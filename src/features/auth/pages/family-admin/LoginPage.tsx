@@ -5,29 +5,30 @@ import { AuthInput } from "../../components/AuthInput";
 import { AuthDivider } from "../../components/AuthDivider";
 import { AuthButton } from "../../components/AuthButton";
 import { SocialLoginButton } from "../../components/SocialLoginButton";
-import { activateAuthJourney, authenticateUser, validateLoginForm, type LoginFormValues } from "../../utils/authFlow";
+import { login, ApiError } from "../../utils/mockAuthApi";
+import type { LoginFormValues } from "../../utils/authFlow";
 
 export function LoginPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState<LoginFormValues>({ email: "", password: "" });
   const [errors, setErrors] = useState<Partial<Record<keyof LoginFormValues, string>>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const result = validateLoginForm(form);
-    setErrors(result.errors);
-    if (!result.isValid) {
-      return;
-    }
+    setErrors({});
+    setIsSubmitting(true);
 
-    const authResult = authenticateUser(form);
-    if (!authResult.isValid) {
-      setErrors((prev) => ({ ...prev, email: authResult.message, password: authResult.message }));
-      return;
+    try {
+      await login(form);
+      navigate("/family-admin/care-circle-setup");
+    } catch (error) {
+      if (error instanceof ApiError && error.fieldErrors) {
+        setErrors(error.fieldErrors as Partial<Record<keyof LoginFormValues, string>>);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
-
-    activateAuthJourney();
-    navigate("/family-admin/care-circle-setup");
   };
 
   return (
@@ -95,8 +96,8 @@ export function LoginPage() {
           </div>
 
           <div className="space-y-4 pt-2">
-            <AuthButton type="submit">
-              Sign In
+            <AuthButton type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Signing in..." : "Sign In"}
             </AuthButton>
 
             <AuthDivider />

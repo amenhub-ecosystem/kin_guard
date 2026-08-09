@@ -6,7 +6,8 @@ import { PasswordStrength } from "../../components/PasswordStrength";
 import { AuthButton } from "../../components/AuthButton";
 import { SocialLoginButton } from "../../components/SocialLoginButton";
 import { AuthDivider } from "../../components/AuthDivider";
-import { activateAuthJourney, saveAccount, saveOtp, validateSignupForm, type SignupFormValues } from "../../utils/authFlow";
+import { signUp, ApiError } from "../../utils/mockAuthApi";
+import type { SignupFormValues } from "../../utils/authFlow";
 
 const getConfirmPasswordError = (password: string, confirmPassword: string) => {
   if (!confirmPassword) return undefined;
@@ -23,17 +24,22 @@ export default function CreateAccountPage() {
     agreeToTerms: false,
   });
   const [errors, setErrors] = useState<Partial<Record<keyof SignupFormValues, string>>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const result = validateSignupForm(form);
-    setErrors(result.errors);
-    if (result.isValid) {
-      saveAccount(form);
-      activateAuthJourney();
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      saveOtp(otp);
+    setErrors({});
+    setIsSubmitting(true);
+
+    try {
+      await signUp(form);
       navigate("/family-admin/verify-email");
+    } catch (error) {
+      if (error instanceof ApiError && error.fieldErrors) {
+        setErrors(error.fieldErrors as Partial<Record<keyof SignupFormValues, string>>);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -138,8 +144,8 @@ export default function CreateAccountPage() {
           </p>
         </div>
 
-        <AuthButton type="submit">
-          Create Account
+        <AuthButton type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Creating account..." : "Create Account"}
         </AuthButton>
       </form>
 

@@ -17,6 +17,7 @@ interface AuthInputProps {
   rightIcon?: ReactNode;
   value?: string;
   name?: string;
+  id?: string;
   error?: string;
   onChange?: (value: string) => void;
   onBlur?: () => void;
@@ -63,6 +64,9 @@ export function AuthInput({
         : "password"
       : type;
 
+  const inputId = id ?? name ?? `auth-input-${Math.random().toString(36).slice(2, 9)}`;
+  const errorId = `${inputId}-error`;
+
   const leftIconElement = leftIcon ? (
     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#64748B]">
       {leftIcon}
@@ -93,7 +97,7 @@ export function AuthInput({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-semibold text-[#1B2A4A]">
+      <label htmlFor={inputId} className="block text-sm font-semibold text-[#1B2A4A]">
         {label}
         {required ? <span className="ml-1 text-red-500">*</span> : null}
       </label>
@@ -102,6 +106,7 @@ export function AuthInput({
         {leftIconElement}
 
         <input
+          id={inputId}
           type={inputType}
           placeholder={placeholder ?? ""}
           name={name}
@@ -112,13 +117,21 @@ export function AuthInput({
           required={required}
           disabled={disabled}
           autoFocus={autoFocus}
+          aria-describedby={error ? errorId : undefined}
+          aria-invalid={!!error}
           className={`h-[54px] w-full rounded-xl border ${error ? "border-red-500" : "border-[#E5E7EB]"} bg-[#F8FAFC] ${paddingLeft} ${paddingRight} text-base text-[#1B2A4A] placeholder:text-[#9CA3AF] outline-none transition focus:border-[#003665] ${disabled ? "cursor-not-allowed opacity-70" : ""}`}
         />
 
         {rightIconElement}
       </div>
 
-      {error ? <p className="text-sm text-red-500">{error}</p> : null}
+      <p
+        id={errorId}
+        role={error ? "alert" : undefined}
+        className={`min-h-[1.25rem] text-sm text-red-500 ${error ? "visible" : "invisible"}`}
+      >
+        {error || "\u00A0"}
+      </p>
     </div>
   );
 }

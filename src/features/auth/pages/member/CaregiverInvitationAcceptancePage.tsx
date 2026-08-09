@@ -1,28 +1,74 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthInput } from "@/features/auth/components/AuthInput";
 import { AuthLogo } from "@/features/auth/components/AuthLogo";
 import { PasswordStrength } from "@/features/auth/components/PasswordStrength";
 import { Google, CircleCheck } from "@/components/common/icons";
 import { getInvitationPrefill } from "@/features/auth/utils/invitationUtils";
+import {
+  getInvitationByToken,
+  acceptCaregiverInvitation,
+  ApiError,
+} from "@/features/auth/utils/mockAuthApi";
 
 export function CaregiverInvitationAcceptancePage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const prefill = useMemo(() => getInvitationPrefill(location.search), [location.search]);
 
   const [fullName, setFullName] = useState(prefill.fullName);
-  const [email, setEmail] = useState(prefill.email || "jane.cooper@care.com");
+  const [email, setEmail] = useState(prefill.email ?? "");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [invitationError, setInvitationError] = useState<string | null>(null);
+  const [invitationLoading, setInvitationLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setFullName(prefill.fullName);
-    setEmail(prefill.email || "jane.cooper@care.com");
+    setEmail(prefill.email ?? "");
   }, [prefill.fullName, prefill.email]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    const params = new URLSearchParams(location.search.startsWith("?") ? location.search.slice(1) : location.search);
+    const tokenFromQuery = params.get("token");
+    setToken(tokenFromQuery);
+
+    setInvitationLoading(true);
+    setInvitationError(null);
+
+    if (!tokenFromQuery) {
+      setInvitationError("This invitation link is missing a valid token.");
+      setInvitationLoading(false);
+      return;
+    }
+
+    void (async () => {
+      try {
+        const result = await getInvitationByToken(tokenFromQuery);
+        if (result.status === "valid") {
+          setEmail(result.invitation.email);
+          setInvitationError(null);
+        } else if (result.status === "expired") {
+          setInvitationError("This invitation has expired.");
+          setEmail("");
+        } else {
+          setInvitationError("This invitation link is invalid.");
+          setEmail("");
+        }
+      } catch {
+        setInvitationError("Unable to validate this invitation. Please try again later.");
+        setEmail("");
+      } finally {
+        setInvitationLoading(false);
+      }
+    })();
+  }, [location.search]);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!fullName.trim()) {
@@ -32,6 +78,11 @@ export function CaregiverInvitationAcceptancePage() {
 
     if (!email.trim()) {
       setError("Please confirm the email address from your invitation.");
+      return;
+    }
+
+    if (invitationLoading || invitationError) {
+      setError("Unable to process this invitation until it is validated.");
       return;
     }
 
@@ -50,9 +101,31 @@ export function CaregiverInvitationAcceptancePage() {
       return;
     }
 
-    setError("");
+    if (!token) {
+      setError("Unable to process this invitation without a valid token.");
+      return;
+    }
 
-    // TODO: Connect invitation acceptance API.
+    setError("");
+    setIsSubmitting(true);
+
+    try {
+      await acceptCaregiverInvitation(token, {
+        fullName,
+        password,
+        confirmPassword,
+        agreeToTerms: accepted,
+      });
+      navigate("/family-admin/verify-email");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleGoogleSignup = () => {
@@ -99,6 +172,8 @@ export function CaregiverInvitationAcceptancePage() {
                 type="email"
                 icon="mail"
                 value={email}
+                placeholder={invitationLoading ? "Loading invitation..." : undefined}
+                disabled={invitationLoading || Boolean(invitationError)}
                 onChange={(value) => {
                   setEmail(value);
                   if (error) setError("");
@@ -168,14 +243,15 @@ export function CaregiverInvitationAcceptancePage() {
               </div>
 
               {error ? <p className="-mt-2 text-sm font-medium text-red-500">{error}</p> : null}
+              {invitationError ? <p className="-mt-2 text-sm font-medium text-red-500">{invitationError}</p> : null}
 
               <div className="flex w-full flex-col gap-4 pt-4">
                 <button
                   type="submit"
                   className="flex h-[68px] w-full items-center justify-center rounded-2xl bg-[#003665] px-4 text-lg font-bold leading-7 text-white shadow-[0_20px_25px_-5px_rgba(0,54,101,0.2),0_8px_10px_-6px_rgba(0,54,101,0.2)] transition hover:bg-[#004477] focus:outline-none focus:ring-2 focus:ring-[#003665] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-                  disabled={!accepted}
+                  disabled={!accepted || isSubmitting || Boolean(invitationError)}
                 >
-                  Join Care Circle
+                  {isSubmitting ? "Joining..." : "Join Care Circle"}
                 </button>
 
                 <div className="flex h-8 w-full items-center justify-center">

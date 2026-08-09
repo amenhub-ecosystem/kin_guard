@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { AuthButton } from "../../components/AuthButton";
 import { AuthInput } from "../../components/AuthInput";
 import { AuthLogo } from "../../components/AuthLogo";
 import { Shield } from "@/components/common/icons";
 import { getInvitationPrefill } from "@/features/auth/utils/invitationUtils";
+import { acceptFamilyMemberInvitation, ApiError } from "@/features/auth/utils/mockAuthApi";
 
 export function FamilyMemberInvitationAcceptancePage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const prefill = useMemo(() => getInvitationPrefill(location.search), [location.search]);
 
   const [fullName, setFullName] = useState(prefill.fullName);
@@ -18,13 +20,14 @@ export function FamilyMemberInvitationAcceptancePage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     setFullName(prefill.fullName);
     setEmail(prefill.email);
   }, [prefill.fullName, prefill.email]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!fullName.trim()) {
@@ -53,8 +56,26 @@ export function FamilyMemberInvitationAcceptancePage() {
     }
 
     setError("");
+    setIsSubmitting(true);
 
-    // TODO: Connect invitation acceptance to the backend/API.
+    try {
+      await acceptFamilyMemberInvitation({
+        fullName,
+        email,
+        password,
+        confirmPassword,
+        agreeToTerms: acceptedTerms,
+      });
+      navigate("/family-admin/login");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -171,9 +192,10 @@ export function FamilyMemberInvitationAcceptancePage() {
 
           <AuthButton
             type="submit"
+            disabled={isSubmitting}
             className="h-14 w-full rounded-2xl bg-[#003665] font-inter text-base font-semibold text-white shadow-[0_10px_15px_-3px_rgba(15,23,42,0.1),0_4px_6px_-4px_rgba(15,23,42,0.1)]"
           >
-            Join Care Circle
+            {isSubmitting ? "Joining..." : "Join Care Circle"}
           </AuthButton>
         </form>
 
@@ -181,7 +203,7 @@ export function FamilyMemberInvitationAcceptancePage() {
           <span>Already have an account?</span>
 
           <Link
-            to="/auth/login"
+            to="/family-admin/login"
             className="font-bold tracking-[0.00976562em] text-[#FE706D] transition-colors hover:text-[#003665] focus:outline-none focus:ring-2 focus:ring-[#FE706D]/30"
           >
             Sign In

@@ -374,11 +374,13 @@ export default function Select({
 
       {panel}
 
-      {error && (
-        <span id={`${controlId}-error`} role="alert" className="text-sm text-red-500">
-          {error}
-        </span>
-      )}
+      <span
+        id={`${controlId}-error`}
+        role={error ? "alert" : undefined}
+        className={`min-h-[1.25rem] text-sm text-red-500 ${error ? "visible" : "invisible"}`}
+      >
+        {error || "\u00A0"}
+      </span>
     </div>
   );
 }

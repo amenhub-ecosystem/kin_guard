@@ -6,24 +6,33 @@ import { AuthInput } from "../../components/AuthInput";
 import { AuthLogo } from "../../components/AuthLogo";
 import { AuthButton } from "../../components/AuthButton";
 import { SuccessAlert } from "../../components/SuccessAlert";
-import { validateEmail } from "../../utils/authFlow";
+import { requestPasswordReset, ApiError } from "../../utils/mockAuthApi";
 
 export function ForgotPasswordPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const result = validateEmail(email);
-    if (!result.isValid) {
-      setError(result.errors.email ?? "Enter a valid email address.");
-      setSubmitted(false);
-      return;
-    }
     setError("");
-    setSubmitted(true);
+    setSubmitted(false);
+    setIsSubmitting(true);
+
+    try {
+      await requestPasswordReset(email);
+      setSubmitted(true);
+    } catch (err) {
+      if (err instanceof ApiError && err.fieldErrors?.email) {
+        setError(err.fieldErrors.email);
+      } else {
+        setError("Enter a valid email address.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -57,8 +66,12 @@ export function ForgotPasswordPage() {
           }}
         />
 
-        <AuthButton type="submit" className="h-14 w-full rounded-2xl bg-[#003665] text-base font-semibold shadow-[0_10px_30px_rgba(15,23,42,0.08)] hover:bg-[#003665]/95">
-          Send Reset Link
+        <AuthButton
+          type="submit"
+          className="h-14 w-full rounded-2xl bg-[#003665] text-base font-semibold shadow-[0_10px_30px_rgba(15,23,42,0.08)] hover:bg-[#003665]/95"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Sending link..." : "Send Reset Link"}
         </AuthButton>
 
         <AuthButton
