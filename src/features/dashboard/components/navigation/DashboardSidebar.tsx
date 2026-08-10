@@ -60,7 +60,7 @@ export const DashboardSidebar: React.FC = () => {
           className="text-[#FE706D] hover:text-[#FE706D]/80"
         />
         <DashboardNavItem
-          to="/settings"
+          to="/dashboard/settings"
           label="Settings"
           icon={<Gear size={18} />}
         />

@@ -1,5 +1,6 @@
 // components/Dashboard/DashboardTopbar.tsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 // TODO: Replace with the exact exported icon names from your project's icon library
 import { Search, Bell } from '@/components/common/icons';
@@ -24,14 +25,15 @@ export const DashboardTopbar: React.FC = () => {
       <div className="flex items-center gap-6">
         
         {/* Notification Bell */}
-        <button 
+        <Link
+          to="/dashboard/notifications"
           className="relative flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors"
           aria-label="Notifications"
         >
           <Bell size={20} color='#6B7280' />
           {/* Notification Dot */}
           <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
-        </button>
+        </Link>
 
         {/* Vertical Divider */}
         <div className="w-px h-8 bg-gray-200" />

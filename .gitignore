@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 scripts/sync-auth-structure.sh
 package-lock.json
+current_changes.diff
