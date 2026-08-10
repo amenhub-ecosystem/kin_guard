@@ -21,13 +21,17 @@ import CareCircleSetupInit from "@/features/auth/pages/care-circle/CareCircleSet
 
 import { DashboardLayout as DashboardLayoutContent } from "@/features/dashboard/layouts/DashboardLayout";
 import DashboardPage from "@/features/dashboard/pages/DashboardPage";
-import CareCirclePage from "@/features/dashboard/pages/care-circle/CareCirclePage";
-import InviteMemberPage from "@/features/dashboard/pages/care-circle/InviteMemberPage";
-import CheckInPage from "@/features/dashboard/pages/check-in/CheckInPage";
+import { CareCirclePage } from "@/features/dashboard/pages/care-circle/CareCirclePage";
+import { InviteMemberPage } from "@/features/dashboard/pages/care-circle/InviteMemberPage";
+import { CheckInPage } from "@/features/dashboard/pages/check-in/CheckInPage";
 import { MedicationsPage } from "@/features/dashboard/pages/medication/MedicationsPage";
-import AddMedicationPage from "@/features/dashboard/pages/medication/AddMedicationPage";
-import EmergencyCenterPage from "@/features/dashboard/pages/emergency/EmergencyCenterPage";
-import LovedOneProfilePage from "@/features/dashboard/pages/loved-one/LovedOneProfilePage";
+import { AddMedicationPage } from "@/features/dashboard/pages/medication/AddMedicationPage";
+import { EmergencyCenterPage } from "@/features/dashboard/pages/emergency/EmergencyCenterPage";
+import { LovedOneProfilePage } from "@/features/dashboard/pages/loved-one/LovedOneProfilePage";
+import { MessagesPage } from "@/features/dashboard/pages/messages/MessagesPage";
+import { NotificationCenterPage } from "@/features/dashboard/pages/notifications/NotificationCenterPage";
+import { HealthInsightsPage } from "@/features/dashboard/pages/insights/HealthInsightsPage";
+import { SettingsPage } from "@/features/dashboard/pages/settings/SettingsPage";
 
 function MarketingLayout() {
   return (
@@ -102,11 +106,15 @@ export default function App() {
         <Route index element={<DashboardPage />} />
         <Route path="care-circle" element={<CareCirclePage />} />
         <Route path="care-circle/invite" element={<InviteMemberPage />} />
+        <Route path="loved-one" element={<LovedOneProfilePage />} />
         <Route path="check-ins" element={<CheckInPage />} />
         <Route path="medication" element={<MedicationsPage />} />
         <Route path="medication/add" element={<AddMedicationPage />} />
         <Route path="emergency-center" element={<EmergencyCenterPage />} />
-        <Route path="loved-one" element={<LovedOneProfilePage />} />
+        <Route path="messages" element={<MessagesPage />} />
+        <Route path="notifications" element={<NotificationCenterPage />} />
+        <Route path="insights" element={<HealthInsightsPage />} />
+        <Route path="settings" element={<SettingsPage />} />
       </Route>
 
       <Route element={<MarketingLayout />}>
