@@ -358,6 +358,7 @@ export async function requestPasswordReset(email: PasswordResetRequest) {
   }
 
   const responseBody = { message: "Password reset email sent." };
+  const out = PasswordResetResponseSchema.safeParse(responseBody);
   if (!out.success) throw new Error(`response schema validation failed: ${out.error.message}`);
   return out.data as PasswordResetResponse;
 }

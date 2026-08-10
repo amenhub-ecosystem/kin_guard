@@ -1,0 +1,111 @@
+diff --git a/src/App.tsx b/src/App.tsx
+index 4d89e4b..9667d44 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -8,7 +8,6 @@ import HowItWorksPage from "@/features/marketing/pages/HowItWorksPage";
+ import PricingPage from "@/features/marketing/pages/PricingPage";
+ import SolutionsPage from "@/features/marketing/pages/SolutionsPage";
+ import { FamilyAdminAuthLayout } from "@/features/auth/layouts/FamilyAdminAuthLayout";
+-import NonAdminAuthLayout from "@/features/auth/layouts/NonAdminAuthLayout";
+ import { ProtectedAuthRoute } from "@/features/auth/layouts/ProtectedAuthRoute";
+ import { WelcomePage } from "@/features/auth/pages/family-admin/WelcomePage";
+ import CreateAccountPage from "@/features/auth/pages/family-admin/CreateAccountPage";
+@@ -19,8 +18,16 @@ import CreateCareCirclePage from "@/features/auth/pages/care-circle/CreateCareCi
+ import InviteFamilyPage from "@/features/auth/pages/invitation/InviteFamilyPage";
+ import SetupCompletePage from "@/features/auth/pages/care-circle/SetupCompletePage";
+ import CareCircleSetupInit from "@/features/auth/pages/care-circle/CareCircleSetupInit";
+-import { FamilyMemberInvitationAcceptancePage } from "@/features/auth/pages/member/FamilyMemberInvitationAcceptancePage";
+-import { CaregiverInvitationAcceptancePage } from "@/features/auth/pages/member/CaregiverInvitationAcceptancePage";
++
++import { DashboardLayout as DashboardLayoutContent } from "@/features/dashboard/layouts/DashboardLayout";
++import DashboardPage from "@/features/dashboard/pages/DashboardPage";
++import CareCirclePage from "@/features/dashboard/pages/care-circle/CareCirclePage";
++import InviteMemberPage from "@/features/dashboard/pages/care-circle/InviteMemberPage";
++import CheckInPage from "@/features/dashboard/pages/check-in/CheckInPage";
++import MedicationsPage from "@/features/dashboard/pages/medication/MedicationsPage";
++import AddMedicationPage from "@/features/dashboard/pages/medication/AddMedicationPage";
++import EmergencyCenterPage from "@/features/dashboard/pages/emergency/EmergencyCenterPage";
++import LovedOneProfilePage from "@/features/dashboard/pages/loved-one/LovedOneProfilePage";
+ 
+ function MarketingLayout() {
+   return (
+@@ -33,6 +40,14 @@ function MarketingLayout() {
+   );
+ }
+ 
++function DashboardLayout() {
++  return (
++    <DashboardLayoutContent>
++      <Outlet />
++    </DashboardLayoutContent>
++  );
++}
++
+ export default function App() {
+   return (
+     <Routes>
+@@ -83,10 +98,15 @@ export default function App() {
+         />
+       </Route>
+ 
+-      <Route path="/member/*" element={<NonAdminAuthLayout />}>
+-        <Route index element={<FamilyMemberInvitationAcceptancePage />} />
+-        <Route path="family-invite" element={<FamilyMemberInvitationAcceptancePage />} />
+-        <Route path="caregiver-invite" element={<CaregiverInvitationAcceptancePage />} />
++      <Route path="/dashboard/*" element={<DashboardLayout />}>
++        <Route index element={<DashboardPage />} />
++        <Route path="care-circle" element={<CareCirclePage />} />
++        <Route path="care-circle/invite" element={<InviteMemberPage />} />
++        <Route path="check-ins" element={<CheckInPage />} />
++        <Route path="medication" element={<MedicationsPage />} />
++        <Route path="medication/add" element={<AddMedicationPage />} />
++        <Route path="emergency-center" element={<EmergencyCenterPage />} />
++        <Route path="loved-one" element={<LovedOneProfilePage />} />
+       </Route>
+ 
+       <Route element={<MarketingLayout />}>
+diff --git a/src/components/common/icons/index.ts b/src/components/common/icons/index.ts
+index f54ca2a..9eae53b 100644
+--- a/src/components/common/icons/index.ts
++++ b/src/components/common/icons/index.ts
+@@ -1,7 +1,10 @@
++export { Alert } from "./Alert";
+ export { ArrowLeft } from "./ArrowLeft";
+ export { ArrowRight } from "./ArrowRight";
+ export { Bell } from "./Bell";
+ export { BookOpen } from "./BookOpen";
++export { BuildingStorefront } from "./BuildingStorefront";
++export { Calendar } from "./Calendar";
+ export { Calender } from "./Calender";
+ export { Camera } from "./Camera";
+ export { Chart } from "./Chart";
+@@ -11,17 +14,21 @@ export { CheckCircle } from "./CheckCircle";
+ export { CheckCircle2 } from "./CheckCircle2";
+ export { ChevronDownIcon } from "./ChevronDownIcon";
+ export { ChevronLeft } from "./ChevronLeft";
++export { ChevronRight } from "./ChevronRight";
+ export { CircleCheck } from "./CircleCheck";
+ export { CirclePlay } from "./CirclePlay";
+ export { ClipBoard } from "./ClipBoard";
++export { Download } from "./Download";
+ export { DropDown } from "./DropDown";
+ export { EmergencySos } from "./EmergencySos";
+ export { Eye } from "./Eye";
+ export { EyeOff } from "./EyeOff";
+ export { File } from "./File";
++export { Gear } from "./Gear";
+ export { Google } from "./Google";
+ export { HandShake } from "./HandShake";
+ export { HeartThrob } from "./HeartThrob";
++export { House } from "./House";
+ export { Instagram } from "./Instagram";
+ export { Linkedin } from "./Linkedin";
+ export { Lock } from "./Lock";
+@@ -40,6 +47,7 @@ export { PlusWithDottedCircle } from "./PlusWithDottedCircle";
+ export { Question } from "./Question";
+ export { RotateCcw } from "./RotateCcw";
+ export { RotateCw } from "./RotateCw";
++export { Search } from "./Search";
+ export { Send } from "./Send";
+ export { Shield } from "./Shield";
+ export { Stetoscope } from "./Stetoscope";

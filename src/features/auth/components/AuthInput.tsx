@@ -36,6 +36,7 @@ export function AuthInput({
   rightIcon,
   value,
   name,
+  id,
   error,
   onChange,
   onBlur,
