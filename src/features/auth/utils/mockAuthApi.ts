@@ -16,16 +16,6 @@ import {
   VerifyOtpRequestSchema,
   VerifyOtpResponseSchema,
   ResendOtpResponseSchema,
-  CareCircleDetailsSchema,
-  CreateCareCircleResponseSchema,
-  InviteFamilyMembersRequestSchema,
-  InviteFamilyMembersResponseSchema,
-  InvitationLookupTokenSchema,
-  InvitationLookupResultSchema,
-  AcceptCaregiverInvitationRequestSchema,
-  AcceptCaregiverInvitationResponseSchema,
-  AcceptFamilyMemberInvitationRequestSchema,
-  AcceptFamilyMemberInvitationResponseSchema,
   SessionResponseSchema,
   // types
   type SignUpRequest,
@@ -37,8 +27,23 @@ import {
   type VerifyOtpRequest,
   type VerifyOtpResponse,
   type ResendOtpResponse,
+  type SessionResponse,
+} from "../schemas/authSchemas";
+import {
+  CareCircleDetailsSchema,
+  CreateCareCircleResponseSchema,
   type CareCircleDetails,
   type CreateCareCircleResponse,
+} from "../schemas/onboardingSchemas";
+import {
+  InviteFamilyMembersRequestSchema,
+  InviteFamilyMembersResponseSchema,
+  InvitationLookupTokenSchema,
+  InvitationLookupResultSchema,
+  AcceptCaregiverInvitationRequestSchema,
+  AcceptCaregiverInvitationResponseSchema,
+  AcceptFamilyMemberInvitationRequestSchema,
+  AcceptFamilyMemberInvitationResponseSchema,
   type Invitee,
   type InviteFamilyMembersRequest,
   type InviteFamilyMembersResponse,
@@ -48,10 +53,9 @@ import {
   type AcceptCaregiverInvitationResponse,
   type AcceptFamilyMemberInvitationRequest,
   type AcceptFamilyMemberInvitationResponse,
-  type SessionResponse,
-} from "../schemas/authSchemas";
+} from "../schemas/invitationSchemas";
 
-export type { Invitee } from "../schemas/authSchemas";
+export type { Invitee } from "../schemas/invitationSchemas";
 
 export interface ApiErrorPayload {
   code: string;
@@ -85,7 +89,7 @@ export function isApiError(value: unknown): value is ApiError {
 // Use the imported zod-validated types for function signatures and runtime parsing.
 interface MockDb {
   users: Array<import("../schemas/authSchemas").UserAccount>;
-  invitations: Array<import("../schemas/authSchemas").InvitationDetails>;
+  invitations: Array<import("../schemas/invitationSchemas").InvitationDetails>;
   // allow test-only extensions on the session for in-memory mock
   session: import("../schemas/authSchemas").SessionState & {
     failedLoginAttempts?: number;
@@ -523,7 +527,7 @@ export async function inviteFamilyMembers(members: InviteFamilyMembersRequest) {
   }
 
   const invited = inParse.data.map((member) => {
-    const invitation: import("../schemas/authSchemas").InvitationDetails = {
+    const invitation: import("../schemas/invitationSchemas").InvitationDetails = {
       token: `invite-${Date.now()}-${Math.random().toString(16).slice(2)}`,
       email: normalizeEmail(member.email),
       inviterName: "Family Administrator",
@@ -560,7 +564,7 @@ export async function getInvitationByToken(token: InvitationLookupToken): Promis
   }
 
   if (inParse.data === "expired") {
-    const mockInvitation: import("../schemas/authSchemas").InvitationDetails = {
+    const mockInvitation: import("../schemas/invitationSchemas").InvitationDetails = {
       token: "expired",
       email: "john.doe@example.com",
       inviterName: "Sarah Chen",

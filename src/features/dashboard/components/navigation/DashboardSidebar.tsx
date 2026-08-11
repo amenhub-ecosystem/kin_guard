@@ -53,7 +53,7 @@ export const DashboardSidebar: React.FC = () => {
       {/* Bottom Section: Emergency & Settings */}
       <div className="flex flex-col gap-1 w-full pt-6 border-t border-white/10">
         <DashboardNavItem
-          to="/emergency"
+          to="/dashboard/emergency-center"
           label="Emergency Center"
           // Custom icon color and text color for the emergency item
           icon={<Alert size={18} color="#FE706D" />}

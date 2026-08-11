@@ -1,0 +1,420 @@
+[4.0K]  .
+├── [   0]  current_changes.diff
+├── [4.0K]  e2e
+│   ├── [3.1K]  fixtures.ts
+│   └── [2.1K]  signup.spec.ts
+├── [ 591]  eslint.config.js
+├── [ 653]  index.html
+├── [1.0K]  package.json
+├── [140K]  package-lock.json
+├── [ 954]  playwright.config.ts
+├── [  80]  postcss.config.js
+├── [4.0K]  public
+│   ├── [9.3K]  favicon.svg
+│   ├── [4.9K]  icons.svg
+│   └── [4.0K]  images
+│       ├── [160K]  amaka.jpg
+│       ├── [161K]  elderly-woman.jpg
+│       ├── [140K]  james.jpg
+│       └── [132K]  maria.jpg
+├── [2.4K]  README.md
+├── [4.0K]  scripts
+│   └── [9.0K]  add-svg-icon.cjs
+├── [4.0K]  src
+│   ├── [   0]  App.css
+│   ├── [5.5K]  App.tsx
+│   ├── [4.0K]  assets
+│   │   ├── [ 13K]  hero.png
+│   │   ├── [4.0K]  react.svg
+│   │   └── [8.5K]  vite.svg
+│   ├── [4.0K]  components
+│   │   └── [4.0K]  common
+│   │       ├── [4.0K]  icons
+│   │       │   ├── [1.3K]  Alert.tsx
+│   │       │   ├── [ 908]  ArrowLeft.tsx
+│   │       │   ├── [ 869]  ArrowRight.tsx
+│   │       │   ├── [1.2K]  Bell.tsx
+│   │       │   ├── [2.1K]  BillCard.tsx
+│   │       │   ├── [ 928]  Bolt.tsx
+│   │       │   ├── [1.1K]  BookOpen.tsx
+│   │       │   ├── [1.3K]  BuildingStorefront.tsx
+│   │       │   ├── [ 958]  Calendar.tsx
+│   │       │   ├── [ 836]  CalenderSolid.tsx
+│   │       │   ├── [1.1K]  Calender.tsx
+│   │       │   ├── [1012]  Camera.tsx
+│   │       │   ├── [1.8K]  CareGiver.tsx
+│   │       │   ├── [1.0K]  Chart.tsx
+│   │       │   ├── [2.3K]  ChatBubbleLeftRight.tsx
+│   │       │   ├── [1.7K]  Chat.tsx
+│   │       │   ├── [1.0K]  CheckCircle2.tsx
+│   │       │   ├── [1.1K]  CheckCircle.tsx
+│   │       │   ├── [ 785]  Check.tsx
+│   │       │   ├── [ 819]  ChevronDownIcon.tsx
+│   │       │   ├── [ 799]  ChevronLeft.tsx
+│   │       │   ├── [ 830]  ChevronRight.tsx
+│   │       │   ├── [1.0K]  CircleCheck.tsx
+│   │       │   ├── [1.1K]  CirclePlay.tsx
+│   │       │   ├── [2.1K]  ClipBoard.tsx
+│   │       │   ├── [ 972]  Clock.tsx
+│   │       │   ├── [ 823]  CreditCard.tsx
+│   │       │   ├── [ 915]  DevicePhoneMobile.tsx
+│   │       │   ├── [1.7K]  Download.tsx
+│   │       │   ├── [1.1K]  DropDown.tsx
+│   │       │   ├── [1.4K]  EllipsisVertical.tsx
+│   │       │   ├── [ 980]  EmergencySos.tsx
+│   │       │   ├── [1.2K]  Envelope.tsx
+│   │       │   ├── [1.8K]  EyeOff.tsx
+│   │       │   ├── [1.2K]  Eye.tsx
+│   │       │   ├── [2.2K]  FaceSmile.tsx
+│   │       │   ├── [1.4K]  File.tsx
+│   │       │   ├── [2.5K]  Gear.tsx
+│   │       │   ├── [1.1K]  Google.tsx
+│   │       │   ├── [2.4K]  HandShake.tsx
+│   │       │   ├── [1.6K]  HeartThrob.tsx
+│   │       │   ├── [1.3K]  House.tsx
+│   │       │   ├── [3.3K]  index.ts
+│   │       │   ├── [2.2K]  Instagram.tsx
+│   │       │   ├── [1.0K]  Linkedin.tsx
+│   │       │   ├── [ 700]  Lock.tsx
+│   │       │   ├── [1.6K]  MailCheck.tsx
+│   │       │   ├── [ 864]  Mail.tsx
+│   │       │   ├── [1.6K]  MapPinned.tsx
+│   │       │   ├── [ 957]  MapPin.tsx
+│   │       │   ├── [1.2K]  Microphone.tsx
+│   │       │   ├── [ 713]  Minus.tsx
+│   │       │   ├── [1.3K]  MissesCall.tsx
+│   │       │   ├── [ 912]  MoonIcon.tsx
+│   │       │   ├── [ 901]  Note.tsx
+│   │       │   ├── [1.1K]  PaperPlane.tsx
+│   │       │   ├── [1.4K]  PdfFileHollow.tsx
+│   │       │   ├── [1.3K]  PdfFile.tsx
+│   │       │   ├── [ 930]  Pencil.tsx
+│   │       │   ├── [ 931]  Phone.tsx
+│   │       │   ├── [1.3K]  Pills2.tsx
+│   │       │   ├── [1.0K]  Pills.tsx
+│   │       │   ├── [ 737]  PlayButton.tsx
+│   │       │   ├── [ 814]  Plus.tsx
+│   │       │   ├── [ 966]  PlusWithDottedCircle.tsx
+│   │       │   ├── [1.6K]  PuzzlePiece.tsx
+│   │       │   ├── [3.4K]  Question.tsx
+│   │       │   ├── [1.2K]  RotateCcw.tsx
+│   │       │   ├── [1.1K]  RotateCw.tsx
+│   │       │   ├── [1.4K]  Search.tsx
+│   │       │   ├── [1.1K]  Send.tsx
+│   │       │   ├── [ 905]  Shield.tsx
+│   │       │   ├── [1.7K]  Stetoscope.tsx
+│   │       │   ├── [1.1K]  ThreeCircleWithTriangle.tsx
+│   │       │   ├── [2.3K]  Todo.tsx
+│   │       │   ├── [1.5K]  Trash2.tsx
+│   │       │   ├── [1.4K]  Trash.tsx
+│   │       │   ├── [2.0K]  Truck.tsx
+│   │       │   ├── [1.4K]  UserPlus.tsx
+│   │       │   ├── [1.3K]  Users2.tsx
+│   │       │   ├── [2.2K]  Users.tsx
+│   │       │   ├── [1.3K]  User.tsx
+│   │       │   ├── [2.2K]  WandSparkles.tsx
+│   │       │   ├── [1.3K]  Warning.tsx
+│   │       │   ├── [1.9K]  WhatsApp.tsx
+│   │       │   └── [1.4K]  X.tsx
+│   │       ├── [ 11K]  LogoWithTextNoBg.tsx
+│   │       └── [ 21K]  LogoWithText.tsx
+│   ├── [4.0K]  features
+│   │   ├── [4.0K]  auth
+│   │   │   ├── [ 10K]  API_CONTRACT.md
+│   │   │   ├── [4.0K]  assets
+│   │   │   │   ├── [4.0K]  images
+│   │   │   │   │   ├── [220K]  auth-illustration.png
+│   │   │   │   │   ├── [318K]  family-onboarding.png
+│   │   │   │   │   ├── [222K]  setup_complete.svg
+│   │   │   │   │   └── [2.1K]  VerifyEmailIcon.svg
+│   │   │   │   └── [ 10K]  logo.svg
+│   │   │   ├── [ 24K]  AUTH.md
+│   │   │   ├── [4.0K]  components
+│   │   │   │   ├── [1021]  AuthButton.tsx
+│   │   │   │   ├── [ 320]  AuthDivider.tsx
+│   │   │   │   ├── [3.4K]  AuthInput.tsx
+│   │   │   │   ├── [ 358]  AuthLogo.tsx
+│   │   │   │   ├── [ 962]  AuthProgress.tsx
+│   │   │   │   ├── [3.2K]  OTPInput.tsx
+│   │   │   │   ├── [ 10K]  PasswordStrength.tsx
+│   │   │   │   ├── [ 842]  ProgressIndicator.tsx
+│   │   │   │   ├── [ 12K]  Select.tsx
+│   │   │   │   ├── [1.8K]  SocialLoginButton.tsx
+│   │   │   │   ├── [ 655]  SuccessAlert.tsx
+│   │   │   │   └── [ 321]  VerifyEmailIcon.tsx
+│   │   │   ├── [4.0K]  family-admin
+│   │   │   │   ├── [4.0K]  forms
+│   │   │   │   │   ├── [ 116]  CreateCareCircleForm.tsx
+│   │   │   │   │   ├── [ 112]  ForgotPasswordForm.tsx
+│   │   │   │   │   ├── [ 424]  InviteFamilyForm.tsx
+│   │   │   │   │   ├── [   0]  LoginForm.tsx
+│   │   │   │   │   ├── [   0]  RegisterForm.tsx
+│   │   │   │   │   └── [ 106]  VerifyEmailForm.tsx
+│   │   │   │   └── [4.0K]  sections
+│   │   │   │       └── [  98]  AuthSidebar.tsx
+│   │   │   ├── [4.0K]  layouts
+│   │   │   │   ├── [1.6K]  FamilyAdminAuthLayout.tsx
+│   │   │   │   ├── [4.2K]  NonAdminAuthLayout.tsx
+│   │   │   │   └── [ 835]  ProtectedAuthRoute.tsx
+│   │   │   ├── [4.0K]  pages
+│   │   │   │   ├── [4.0K]  care-circle
+│   │   │   │   │   ├── [3.9K]  CareCircleSetupInit.tsx
+│   │   │   │   │   ├── [ 15K]  CreateCareCirclePage.tsx
+│   │   │   │   │   └── [4.2K]  SetupCompletePage.tsx
+│   │   │   │   ├── [4.0K]  family-admin
+│   │   │   │   │   ├── [5.4K]  CreateAccountPage.tsx
+│   │   │   │   │   ├── [2.9K]  ForgotPasswordPage.tsx
+│   │   │   │   │   ├── [4.3K]  LoginPage.tsx
+│   │   │   │   │   ├── [4.5K]  VerifyEmailPage.tsx
+│   │   │   │   │   └── [1.8K]  WelcomePage.tsx
+│   │   │   │   ├── [4.0K]  invitation
+│   │   │   │   │   └── [7.0K]  InviteFamilyPage.tsx
+│   │   │   │   └── [4.0K]  member
+│   │   │   │       ├── [ 11K]  CaregiverInvitationAcceptancePage.tsx
+│   │   │   │       └── [7.6K]  FamilyMemberInvitationAcceptancePage.tsx
+│   │   │   ├── [4.0K]  schemas
+│   │   │   │   └── [7.6K]  authSchemas.ts
+│   │   │   └── [4.0K]  utils
+│   │   │       ├── [2.8K]  authFlow.test.ts
+│   │   │       ├── [6.5K]  authFlow.ts
+│   │   │       ├── [5.0K]  invitationFlow.ts
+│   │   │       ├── [ 827]  invitationUtils.test.ts
+│   │   │       ├── [ 474]  invitationUtils.ts
+│   │   │       ├── [ 752]  mockAuthApi.test.ts
+│   │   │       └── [ 27K]  mockAuthApi.ts
+│   │   ├── [4.0K]  dashboard
+│   │   │   ├── [4.0K]  assets
+│   │   │   │   └── [4.0K]  images
+│   │   │   │       ├── [   0]  dr-aris-thompson.png
+│   │   │   │       ├── [   0]  dr-james-wilson.png
+│   │   │   │       ├── [   0]  emergency-map.png
+│   │   │   │       ├── [   0]  israel-harrison.png
+│   │   │   │       ├── [   0]  mama-grace.png
+│   │   │   │       ├── [   0]  mary-elder.png
+│   │   │   │       └── [   0]  sarah-jenkins.png
+│   │   │   ├── [4.0K]  components
+│   │   │   │   ├── [4.0K]  care-circle
+│   │   │   │   │   ├── [   0]  CareCircleMemberCard.tsx
+│   │   │   │   │   ├── [   0]  CareCircleMemberGrid.tsx
+│   │   │   │   │   ├── [   0]  CommunicationBanner.tsx
+│   │   │   │   │   ├── [   0]  RecentCircleActivity.tsx
+│   │   │   │   │   ├── [   0]  RolePermissionCard.tsx
+│   │   │   │   │   └── [   0]  RolesPermissions.tsx
+│   │   │   │   ├── [4.0K]  check-in
+│   │   │   │   │   ├── [   0]  CheckInMessage.tsx
+│   │   │   │   │   ├── [   0]  CheckInRecipients.tsx
+│   │   │   │   │   ├── [   0]  DeliveryMethodSelector.tsx
+│   │   │   │   │   ├── [   0]  PhonePreview.tsx
+│   │   │   │   │   ├── [   0]  ResponseOptions.tsx
+│   │   │   │   │   ├── [   0]  ResponseOption.tsx
+│   │   │   │   │   └── [   0]  ScheduleSelector.tsx
+│   │   │   │   ├── [4.0K]  common
+│   │   │   │   │   ├── [   0]  DashboardAvatar.tsx
+│   │   │   │   │   ├── [   0]  DashboardBadge.tsx
+│   │   │   │   │   ├── [   0]  DashboardButton.tsx
+│   │   │   │   │   ├── [   0]  DashboardCard.tsx
+│   │   │   │   │   ├── [   0]  DashboardSectionHeader.tsx
+│   │   │   │   │   ├── [   0]  EmptyState.tsx
+│   │   │   │   │   ├── [   0]  PageHeader.tsx
+│   │   │   │   │   └── [   0]  StatusDot.tsx
+│   │   │   │   ├── [4.0K]  dashboard
+│   │   │   │   │   ├── [   0]  ActivityTimelineItem.tsx
+│   │   │   │   │   ├── [   0]  ActivityTimeline.tsx
+│   │   │   │   │   ├── [   0]  CareCircleSummary.tsx
+│   │   │   │   │   ├── [   0]  LovedOneOverview.tsx
+│   │   │   │   │   ├── [   0]  MedicationScheduleCard.tsx
+│   │   │   │   │   ├── [   0]  MedicationSchedule.tsx
+│   │   │   │   │   ├── [   0]  QuickActions.tsx
+│   │   │   │   │   ├── [   0]  UpcomingAppointment.tsx
+│   │   │   │   │   └── [   0]  WellnessSnapshot.tsx
+│   │   │   │   ├── [4.0K]  emergency
+│   │   │   │   │   ├── [   0]  ConfirmSOSModal.tsx
+│   │   │   │   │   ├── [   0]  EmergencyBanner.tsx
+│   │   │   │   │   ├── [   0]  EmergencyLocationMap.tsx
+│   │   │   │   │   ├── [   0]  EmergencyRecipientCard.tsx
+│   │   │   │   │   ├── [   0]  EmergencyRecipientSelector.tsx
+│   │   │   │   │   ├── [   0]  EmergencySOSButton.tsx
+│   │   │   │   │   ├── [   0]  LiveProgress.tsx
+│   │   │   │   │   └── [   0]  LovedOneStatus.tsx
+│   │   │   │   ├── [4.0K]  invite-member
+│   │   │   │   │   ├── [   0]  InvitationInfo.tsx
+│   │   │   │   │   ├── [   0]  InvitationTypeCard.tsx
+│   │   │   │   │   ├── [   0]  InvitationTypeSelector.tsx
+│   │   │   │   │   ├── [   0]  InviteMemberDetails.tsx
+│   │   │   │   │   ├── [   0]  ParticipationCard.tsx
+│   │   │   │   │   └── [   0]  ParticipationSelector.tsx
+│   │   │   │   ├── [4.0K]  loved-one
+│   │   │   │   │   ├── [   0]  CareCircleSummary.tsx
+│   │   │   │   │   ├── [   0]  CareNoteItem.tsx
+│   │   │   │   │   ├── [   0]  CareNotes.tsx
+│   │   │   │   │   ├── [   0]  EmergencyContactCard.tsx
+│   │   │   │   │   ├── [   0]  EmergencyContacts.tsx
+│   │   │   │   │   ├── [   0]  HealthProfile.tsx
+│   │   │   │   │   ├── [   0]  LovedOneProfileHeader.tsx
+│   │   │   │   │   ├── [   0]  MedicationSummaryItem.tsx
+│   │   │   │   │   ├── [   0]  MedicationSummary.tsx
+│   │   │   │   │   ├── [   0]  PersonalInformation.tsx
+│   │   │   │   │   └── [   0]  RecentActivity.tsx
+│   │   │   │   ├── [4.0K]  medication
+│   │   │   │   │   ├── [   0]  ActiveInventory.tsx
+│   │   │   │   │   ├── [   0]  AdherenceCard.tsx
+│   │   │   │   │   ├── [   0]  CircleNotifications.tsx
+│   │   │   │   │   ├── [   0]  DailyScheduleItem.tsx
+│   │   │   │   │   ├── [   0]  DailySchedule.tsx
+│   │   │   │   │   ├── [   0]  DosageSchedule.tsx
+│   │   │   │   │   ├── [   0]  InventoryItem.tsx
+│   │   │   │   │   ├── [   0]  MedicationInformation.tsx
+│   │   │   │   │   ├── [   0]  MedicationListItem.tsx
+│   │   │   │   │   ├── [   0]  MedicationList.tsx
+│   │   │   │   │   ├── [   0]  MedicationNotes.tsx
+│   │   │   │   │   ├── [   0]  PreferredPharmacy.tsx
+│   │   │   │   │   ├── [   0]  RefillAlertCard.tsx
+│   │   │   │   │   ├── [   0]  RefillAlerts.tsx
+│   │   │   │   │   └── [   0]  ReminderSettings.tsx
+│   │   │   │   └── [4.0K]  navigation
+│   │   │   │       ├── [2.0K]  DashboardNavItem.tsx
+│   │   │   │       ├── [ 914]  DashboardSearch.tsx
+│   │   │   │       ├── [2.6K]  DashboardSidebar.tsx
+│   │   │   │       ├── [2.4K]  DashboardTopbar.tsx
+│   │   │   │       ├── [ 467]  NotificationButton.tsx
+│   │   │   │       └── [ 620]  UserProfileMenu.tsx
+│   │   │   ├── [4.0K]  constants
+│   │   │   │   ├── [   0]  care-circle.constants.ts
+│   │   │   │   ├── [   0]  check-in.constants.ts
+│   │   │   │   ├── [   0]  dashboard.constants.ts
+│   │   │   │   ├── [   0]  emergency.constants.ts
+│   │   │   │   ├── [   0]  medication.constants.ts
+│   │   │   │   └── [   0]  navigation.constants.ts
+│   │   │   ├── [4.0K]  hooks
+│   │   │   │   ├── [   0]  useCareCircle.ts
+│   │   │   │   ├── [   0]  useCheckIn.ts
+│   │   │   │   ├── [   0]  useDashboard.ts
+│   │   │   │   ├── [   0]  useEmergencySOS.ts
+│   │   │   │   └── [   0]  useMedications.ts
+│   │   │   ├── [4.0K]  layouts
+│   │   │   │   └── [ 979]  DashboardLayout.tsx
+│   │   │   ├── [4.0K]  pages
+│   │   │   │   ├── [4.0K]  care-circle
+│   │   │   │   │   ├── [ 12K]  CareCirclePage.tsx
+│   │   │   │   │   └── [ 11K]  InviteMemberPage.tsx
+│   │   │   │   ├── [4.0K]  check-in
+│   │   │   │   │   └── [ 14K]  CheckInPage.tsx
+│   │   │   │   ├── [ 17K]  DashboardPage.tsx
+│   │   │   │   ├── [4.0K]  emergency
+│   │   │   │   │   └── [ 16K]  EmergencyCenterPage.tsx
+│   │   │   │   ├── [4.0K]  insights
+│   │   │   │   │   └── [ 19K]  HealthInsightsPage.tsx
+│   │   │   │   ├── [4.0K]  loved-one
+│   │   │   │   │   └── [ 21K]  LovedOneProfilePage.tsx
+│   │   │   │   ├── [4.0K]  medication
+│   │   │   │   │   ├── [ 17K]  AddMedicationPage.tsx
+│   │   │   │   │   └── [ 17K]  MedicationsPage.tsx
+│   │   │   │   ├── [4.0K]  messages
+│   │   │   │   │   └── [10.0K]  MessagesPage.tsx
+│   │   │   │   ├── [4.0K]  notifications
+│   │   │   │   │   └── [8.7K]  NotificationCenterPage.tsx
+│   │   │   │   └── [4.0K]  settings
+│   │   │   │       └── [9.7K]  SettingsPage.tsx
+│   │   │   ├── [4.0K]  services
+│   │   │   │   ├── [   0]  care-circle.service.ts
+│   │   │   │   ├── [   0]  check-in.service.ts
+│   │   │   │   ├── [   0]  dashboard.service.ts
+│   │   │   │   ├── [   0]  emergency.service.ts
+│   │   │   │   ├── [   0]  loved-one.service.ts
+│   │   │   │   └── [   0]  medication.service.ts
+│   │   │   ├── [4.0K]  store
+│   │   │   │   ├── [   0]  care-circle.store.ts
+│   │   │   │   ├── [   0]  dashboard.store.ts
+│   │   │   │   ├── [   0]  emergency.store.ts
+│   │   │   │   └── [   0]  medication.store.ts
+│   │   │   ├── [4.0K]  types
+│   │   │   │   ├── [   0]  care-circle.types.ts
+│   │   │   │   ├── [   0]  check-in.types.ts
+│   │   │   │   ├── [   0]  dashboard.types.ts
+│   │   │   │   ├── [   0]  emergency.types.ts
+│   │   │   │   ├── [   0]  loved-one.types.ts
+│   │   │   │   ├── [   0]  medication.types.ts
+│   │   │   │   └── [   0]  navigation.types.ts
+│   │   │   └── [4.0K]  utils
+│   │   │       ├── [   0]  care-circle.utils.ts
+│   │   │       ├── [   0]  check-in.utils.ts
+│   │   │       ├── [   0]  dashboard.utils.ts
+│   │   │       ├── [   0]  date.utils.ts
+│   │   │       ├── [   0]  emergency.utils.ts
+│   │   │       └── [   0]  medication.utils.ts
+│   │   └── [4.0K]  marketing
+│   │       ├── [4.0K]  assets
+│   │       │   └── [4.0K]  images
+│   │       │       ├── [ 382]  family-circle-badge.svg
+│   │       │       ├── [ 521]  family-circle-lines.svg
+│   │       │       ├── [113K]  family_layout.png
+│   │       │       ├── [143K]  features_page_mock_preview.png
+│   │       │       ├── [171K]  hero-illustration.png
+│   │       │       ├── [4.0K]  how-it-works
+│   │       │       │   ├── [ 36K]  care-journey-step-1.png
+│   │       │       │   ├── [ 45K]  care-journey-step-2.png
+│   │       │       │   ├── [ 71K]  care-journey-step-3.png
+│   │       │       │   ├── [ 59K]  care-journey-step-4.png
+│   │       │       │   ├── [ 39K]  care-journey-step-5.png
+│   │       │       │   └── [4.9K]  users-icon.png
+│   │       │       ├── [ 78K]  preview_mock.png
+│   │       │       └── [4.0K]  solutions
+│   │       │           ├── [ 76K]  solutions-caregiver-preview.png
+│   │       │           ├── [ 50K]  solutions-family-preview.png
+│   │       │           └── [ 69K]  solutions-healthcare-preview.png
+│   │       ├── [4.0K]  components
+│   │       │   ├── [4.0K]  features
+│   │       │   │   ├── [ 553]  FeaturesDashboardPreview.tsx
+│   │       │   │   ├── [2.0K]  FeaturesGrid.tsx
+│   │       │   │   └── [ 994]  FeaturesHero.tsx
+│   │       │   ├── [4.0K]  home
+│   │       │   │   ├── [1.8K]  FamilyCircleSection.tsx
+│   │       │   │   ├── [2.9K]  FAQSection.tsx
+│   │       │   │   ├── [2.6K]  FeaturesSection.tsx
+│   │       │   │   ├── [2.5K]  Hero.tsx
+│   │       │   │   ├── [ 970]  HowItWorksHero.tsx
+│   │       │   │   ├── [2.3K]  HowItWorksSection.tsx
+│   │       │   │   ├── [4.0K]  PricingSection.tsx
+│   │       │   │   └── [2.0K]  ProblemSection.tsx
+│   │       │   ├── [4.0K]  how-it-works
+│   │       │   │   ├── [3.6K]  CareJourney.tsx
+│   │       │   │   ├── [3.9K]  DayWithKinGuard.tsx
+│   │       │   │   └── [ 988]  HowItWorksHero.tsx
+│   │       │   ├── [4.0K]  pricing
+│   │       │   │   ├── [ 872]  PricingHero.tsx
+│   │       │   │   └── [4.0K]  PricingSection.tsx
+│   │       │   └── [4.0K]  solutions
+│   │       │       ├── [6.2K]  SolutionsAudience.tsx
+│   │       │       ├── [ 966]  SolutionsHero.tsx
+│   │       │       └── [1.3K]  SolutionsSection.tsx
+│   │       ├── [4.0K]  hooks
+│   │       ├── [4.0K]  layouts
+│   │       │   ├── [ 761]  AnnouncementBanner.tsx
+│   │       │   ├── [1.4K]  CTASection.tsx
+│   │       │   ├── [4.0K]  Footer.tsx
+│   │       │   └── [6.0K]  Nav.tsx
+│   │       ├── [4.0K]  pages
+│   │       │   ├── [ 567]  FeaturesPage.tsx
+│   │       │   ├── [ 946]  Homepage.tsx
+│   │       │   ├── [ 557]  HowItWorksPage.tsx
+│   │       │   ├── [ 426]  PricingPage.tsx
+│   │       │   └── [ 480]  SolutionsPage.tsx
+│   │       ├── [4.0K]  services
+│   │       └── [4.0K]  types
+│   ├── [1.2K]  index.css
+│   └── [ 322]  main.tsx
+├── [ 393]  tailwind.config.js
+├── [4.0K]  test-results
+│   ├── [4.0K]  signup-full-signup-with-new-email-lands-on-verify-email
+│   │   └── [3.1K]  error-context.md
+│   ├── [4.0K]  signup-signup-with-existin-8955b--shows-field-error-on-email
+│   │   └── [3.1K]  error-context.md
+│   └── [4.0K]  signup-weak-password-blocks-submission-with-field-error
+│       └── [3.1K]  error-context.md
+├── [   0]  tree.txt
+├── [ 755]  tsconfig.app.json
+├── [ 119]  tsconfig.json
+├── [ 558]  tsconfig.node.json
+└── [ 378]  vite.config.ts
+
+76 directories, 342 files

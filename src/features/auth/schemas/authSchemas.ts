@@ -3,80 +3,6 @@ import { z } from "zod";
 export const InvitationRoleSchema = z.enum(["family-member", "caregiver"]);
 export const AuthRoleSchema = z.enum(["family-member", "caregiver", "family-admin"]);
 
-export const SignUpRequestSchema = z
-  .object({
-    fullName: z.string(),
-    email: z.string(),
-    password: z.string(),
-    confirmPassword: z.string(),
-    agreeToTerms: z.boolean(),
-  })
-  .strict();
-export type SignUpRequest = z.infer<typeof SignUpRequestSchema>;
-
-export const SignUpResponseSchema = z
-  .object({
-    user: z
-      .object({
-        id: z.string(),
-        fullName: z.string(),
-        email: z.string(),
-        role: z.literal("family-admin"),
-      })
-      .strict(),
-  })
-  .strict();
-export type SignUpResponse = z.infer<typeof SignUpResponseSchema>;
-
-export const LoginRequestSchema = z
-  .object({
-    email: z.string(),
-    password: z.string(),
-  })
-  .strict();
-export type LoginRequest = z.infer<typeof LoginRequestSchema>;
-
-export const LoginResponseSchema = z
-  .object({
-    user: z
-      .object({
-        id: z.string(),
-        fullName: z.string(),
-        email: z.string(),
-        role: AuthRoleSchema,
-      })
-      .strict(),
-  })
-  .strict();
-export type LoginResponse = z.infer<typeof LoginResponseSchema>;
-
-export const PasswordResetRequestSchema = z.string().trim().min(1);
-export type PasswordResetRequest = z.infer<typeof PasswordResetRequestSchema>;
-
-export const PasswordResetResponseSchema = z
-  .object({
-    message: z.string(),
-  })
-  .strict();
-export type PasswordResetResponse = z.infer<typeof PasswordResetResponseSchema>;
-
-export const VerifyOtpRequestSchema = z.string().trim().min(1);
-export type VerifyOtpRequest = z.infer<typeof VerifyOtpRequestSchema>;
-
-export const VerifyOtpResponseSchema = z
-  .object({
-    success: z.literal(true),
-  })
-  .strict();
-export type VerifyOtpResponse = z.infer<typeof VerifyOtpResponseSchema>;
-
-export const ResendOtpResponseSchema = z
-  .object({
-    success: z.literal(true),
-  })
-  .strict();
-export type ResendOtpResponse = z.infer<typeof ResendOtpResponseSchema>;
-
 export const CareCircleDetailsSchema = z
   .object({
     circleName: z.string(),
@@ -210,6 +136,80 @@ export const AcceptFamilyMemberInvitationResponseSchema = z
   })
   .strict();
 export type AcceptFamilyMemberInvitationResponse = z.infer<typeof AcceptFamilyMemberInvitationResponseSchema>;
+
+export const SignUpRequestSchema = z
+  .object({
+    fullName: z.string(),
+    email: z.string(),
+    password: z.string(),
+    confirmPassword: z.string(),
+    agreeToTerms: z.boolean(),
+  })
+  .strict();
+export type SignUpRequest = z.infer<typeof SignUpRequestSchema>;
+
+export const SignUpResponseSchema = z
+  .object({
+    user: z
+      .object({
+        id: z.string(),
+        fullName: z.string(),
+        email: z.string(),
+        role: z.literal("family-admin"),
+      })
+      .strict(),
+  })
+  .strict();
+export type SignUpResponse = z.infer<typeof SignUpResponseSchema>;
+
+export const LoginRequestSchema = z
+  .object({
+    email: z.string(),
+    password: z.string(),
+  })
+  .strict();
+export type LoginRequest = z.infer<typeof LoginRequestSchema>;
+
+export const LoginResponseSchema = z
+  .object({
+    user: z
+      .object({
+        id: z.string(),
+        fullName: z.string(),
+        email: z.string(),
+        role: AuthRoleSchema,
+      })
+      .strict(),
+  })
+  .strict();
+export type LoginResponse = z.infer<typeof LoginResponseSchema>;
+
+export const PasswordResetRequestSchema = z.string().trim().min(1);
+export type PasswordResetRequest = z.infer<typeof PasswordResetRequestSchema>;
+
+export const PasswordResetResponseSchema = z
+  .object({
+    message: z.string(),
+  })
+  .strict();
+export type PasswordResetResponse = z.infer<typeof PasswordResetResponseSchema>;
+
+export const VerifyOtpRequestSchema = z.string().trim().min(1);
+export type VerifyOtpRequest = z.infer<typeof VerifyOtpRequestSchema>;
+
+export const VerifyOtpResponseSchema = z
+  .object({
+    success: z.literal(true),
+  })
+  .strict();
+export type VerifyOtpResponse = z.infer<typeof VerifyOtpResponseSchema>;
+
+export const ResendOtpResponseSchema = z
+  .object({
+    success: z.literal(true),
+  })
+  .strict();
+export type ResendOtpResponse = z.infer<typeof ResendOtpResponseSchema>;
 
 export const SessionUserSchema = z
   .object({
