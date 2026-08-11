@@ -25,3 +25,4 @@ dist-ssr
 scripts/sync-auth-structure.sh
 package-lock.json
 current_changes.diff
+current_changes.diff
