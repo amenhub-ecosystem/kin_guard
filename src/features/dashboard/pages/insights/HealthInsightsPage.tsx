@@ -10,7 +10,6 @@ import {
   HeartThrob,             // Physical Activity
   PdfFileHollow,      // Archive file icon
   ChevronRight,      // Archive chevron
-  Plus,              // Used for checkmark inside circle logic if needed
 } from '@/components/common/icons';
 
 // --- Chart Sub-components (Self-contained SVG) ---

@@ -1,5 +1,5 @@
 // pages/MessagesPage.tsx
-import React, { useState } from 'react';
+import React from 'react';
 
 // TODO: Verify exact icon names from your existing icon library.
 import {

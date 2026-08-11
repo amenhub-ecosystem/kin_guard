@@ -6,11 +6,11 @@ import {
   Shield,
 } from "@/components/common/icons";
 
-import { AuthButton } from "../../components/AuthButton";
+import { AuthButton } from "../../components/AuthButton.tsx";
 import Select, { type SelectOption } from "../../components/Select.tsx";
 import { LogoWithText } from "@/components/common/LogoWithText.tsx";
 import { AuthProgress } from "../../components/AuthProgress.tsx";
-import { getCareCircleDraft, saveCareCircleDraft, createCareCircle, ApiError } from "../../utils/mockAuthApi";
+import { getCareCircleDraft, saveCareCircleDraft, createCareCircle, ApiError } from "../../utils/mockAuthApi.ts";
 
 interface CareCircleForm {
   circleName: string;

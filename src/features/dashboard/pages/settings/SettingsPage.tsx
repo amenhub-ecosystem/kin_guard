@@ -13,7 +13,6 @@ import {
   PuzzlePiece,        // Connected Apps
   Alert,              // Danger Zone
   Camera,             // Edit Profile Picture Icon
-  Check,              // Button checkmark if needed (optional)
 } from '@/components/common/icons';
 
 // --- Sub-components ---
