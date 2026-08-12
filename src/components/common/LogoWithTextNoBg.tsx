@@ -13,7 +13,7 @@ export function LogoWithTextNoBg({ variant = "dark" }: LogoWithTextNoBgProps) {
   const lightLogo = (
 
     <svg width="232" height="32" viewBox="0 0 232 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <g clip-path="url(#clip0_411_6750)">
+      <g clipPath="url(#clip0_411_6750)">
         <mask id="mask0_411_6750" maskUnits="userSpaceOnUse" x="8" y="0" width="32" height="32">
           <path d="M40 0H8V32H40V0Z" fill="white" />
         </mask>
