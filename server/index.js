@@ -110,7 +110,7 @@ app.post("/auth/signup", async (req, res) => {
 
   // create session token
   const token = genToken();
-  db.data.sessions[token] = { authJourneyActive: true, currentUserId: user.id, expectedOtp: (Math.floor(100000 + Math.random() * 900000)).toString(), recentlyAddedMember: null };
+  db.data.sessions[token] = { authJourneyActive: true, currentUserId: user.id, expectedOtp: "000000", recentlyAddedMember: null };
   await db.write();
 
   const responseBody = { user: { id: user.id, fullName: user.fullName, email: user.email, role: user.role }, token };
@@ -187,7 +187,7 @@ app.post("/auth/otp/resend", async (req, res) => {
     logRequest("POST", "/auth/otp/resend", req.body, 401, payload);
     return res.status(401).json(payload);
   }
-  const otp = (Math.floor(100000 + Math.random() * 900000)).toString();
+  const otp = "000000";
   db.data.sessions[token].expectedOtp = otp;
   await db.write();
   const responseBody = { success: true };
