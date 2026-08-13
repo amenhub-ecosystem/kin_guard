@@ -1,5 +1,14 @@
 {
-  "users": [],
+  "users": [
+    {
+      "id": "user-1786646526174",
+      "fullName": "jnde huehbeu",
+      "email": "admin3@example.com",
+      "password": "Aa!sdfgg3fngng",
+      "role": "family-admin",
+      "isVerified": true
+    }
+  ],
   "invitations": [],
   "careCircleMembers": [],
   "lovedOnes": [],
@@ -10,5 +19,11 @@
   "messages": [],
   "notifications": [],
   "emergencyEvents": [],
-  "sessions": {}
+  "sessions": {
+    "t_ukxbvlcmffj_1786646526174": {
+      "authJourneyActive": true,
+      "currentUserId": "user-1786646526174",
+      "recentlyAddedMember": null
+    }
+  }
 }
