@@ -13,8 +13,20 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredPermissions,
   children,
 }) => {
-  const { user } = useMockUser();
+  const { user, currentUser, authJourneyActive, isLoading } = useMockUser();
   const location = useLocation();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#FDFDFD] text-sm font-medium text-[#64748B]">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!currentUser || !authJourneyActive) {
+    return <Navigate to="/auth" replace state={{ from: location }} />;
+  }
 
   if (routeGuard(user.role, requiredPermissions)) {
     return <>{children}</>;

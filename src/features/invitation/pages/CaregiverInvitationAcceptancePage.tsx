@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useMockUser } from "@/features/app/rbac/MockUserContext";
 import { AuthInput } from "../../auth-core/components/AuthInput";
 import { AuthLogo } from "../../auth-core/components/AuthLogo";
 import { PasswordStrength } from "../../auth-core/components/PasswordStrength";
@@ -14,6 +15,7 @@ import {
 export function CaregiverInvitationAcceptancePage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { refreshUser } = useMockUser();
   const prefill = useMemo(() => getInvitationPrefill(location.search), [location.search]);
 
   const [fullName, setFullName] = useState(prefill.fullName);
@@ -116,6 +118,7 @@ export function CaregiverInvitationAcceptancePage() {
         confirmPassword,
         agreeToTerms: accepted,
       });
+      await refreshUser();
       navigate("/family-admin/verify-email");
     } catch (err) {
       if (err instanceof ApiError) {

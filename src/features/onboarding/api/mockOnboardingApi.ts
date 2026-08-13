@@ -44,12 +44,30 @@ export function saveCareCircleDraft(draft: CareCircleDraft): void {
   window.localStorage.setItem(storageKey, JSON.stringify(draft));
 }
 
-export async function createCareCircle(payload: CareCirclePayload): Promise<{ success: true }> {
-  if (typeof window === "undefined") return { success: true };
-
+export async function createCareCircle(payload: CareCirclePayload): Promise<{ success: true; careCircle: CareCirclePayload }> {
   const draft = getCareCircleDraft();
   const nextDraft = { ...(draft ?? {}), ...payload };
-  window.localStorage.setItem(storageKey, JSON.stringify(nextDraft));
 
-  return { success: true };
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem(storageKey, JSON.stringify(nextDraft));
+  }
+
+  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+  const token = typeof window !== "undefined" ? (window.localStorage.getItem("__kinGuardServerToken") || undefined) : undefined;
+
+  const res = await fetch(`${API_BASE}/care-circles`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { "x-session-token": token } : {}),
+    },
+    body: JSON.stringify(nextDraft),
+  });
+
+  const response = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new ApiError(response?.message ?? "Unable to save your care circle.", response?.fieldErrors);
+  }
+
+  return { success: true, careCircle: response?.careCircle ?? nextDraft };
 }

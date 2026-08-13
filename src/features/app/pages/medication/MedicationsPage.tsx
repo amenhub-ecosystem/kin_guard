@@ -1,5 +1,7 @@
 // pages/MedicationsPage.tsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import apiClient from '@/lib/apiClient';
 
 // TODO: Verify exact icon names from your existing icon library.
 // Updated to use the explicit size & color props as requested.
@@ -15,6 +17,16 @@ import {
 } from '@/components/common/icons';
 
 // --- Sub-components ---
+
+interface Medication {
+  id: string;
+  lovedOneId?: string | null;
+  name: string;
+  dose?: string | null;
+  schedule?: string | null;
+  notes?: string | null;
+  active?: boolean;
+}
 
 const DailyScheduleCard: React.FC = () => {
   return (
@@ -251,13 +263,15 @@ const RefillAlertsCard: React.FC = () => {
   );
 };
 
-const ActiveInventoryCard: React.FC = () => {
-  const inventory = [
-    { name: 'Lisinopril', dosage: '10mg • Daily', left: '4 left', leftColor: 'text-red-500', barWidth: 'w-[15%]', barColor: 'bg-red-500' },
-    { name: 'Metformin', dosage: '500mg • 2x Daily', left: '15 left', leftColor: 'text-[#001F3F]', barWidth: 'w-[45%]', barColor: 'bg-[#009688]' },
-    { name: 'Multivitamin', dosage: 'Softgel • Daily', left: '60 left', leftColor: 'text-[#001F3F]', barWidth: 'w-[80%]', barColor: 'bg-[#009688]' },
-    { name: 'Aspirin', dosage: '81mg • Nightly', left: '22 left', leftColor: 'text-[#001F3F]', barWidth: 'w-[60%]', barColor: 'bg-[#009688]' },
-  ];
+
+const ActiveInventoryCard: React.FC<{ medications: Medication[]; onDelete: (id: string) => Promise<void> }> = ({ medications, onDelete }) => {
+  const inventory = medications.map((m) => ({
+    name: m.name,
+    dosage: m.dose || '',
+    id: m.id,
+    barColor: 'bg-emerald-500',
+    barWidth: 'w-1/3',
+  }));
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 flex flex-col gap-6">
@@ -274,14 +288,16 @@ const ActiveInventoryCard: React.FC = () => {
       </div>
 
       <div className="flex flex-col gap-6">
-        {inventory.map((item, idx) => (
-          <div key={idx} className="flex flex-col gap-1.5">
+        {inventory.map((item) => (
+          <div key={item.id} className="flex flex-col gap-1.5">
             <div className="flex justify-between items-end">
               <div className="flex flex-col">
                 <span className="text-sm font-bold text-[#001F3F] tracking-[0.007em]">{item.name}</span>
                 <span className="text-[10px] text-gray-400 uppercase tracking-[0.002em]">{item.dosage}</span>
               </div>
-              <span className={`text-sm font-bold ${item.leftColor}`}>{item.left}</span>
+              <div className="flex items-center gap-2">
+                <button onClick={() => onDelete(item.id)} className="text-xs text-red-500 font-bold">Delete</button>
+              </div>
             </div>
             <div className="w-full h-1.5 bg-gray-100 rounded-full mt-1">
               <div className={`h-full rounded-full ${item.barColor} ${item.barWidth}`} />
@@ -318,6 +334,35 @@ const PreferredPharmacyCard: React.FC = () => {
 // --- Main Page Component ---
 
 export const MedicationsPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [medications, setMedications] = useState<Medication[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    apiClient.get('/medications').then((j: any) => setMedications(j?.medications ?? [])).catch((e: any) => { console.error(e); setError('Failed to load medications'); setMedications([]); }).finally(() => setLoading(false));
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await apiClient.del(`/medications/${encodeURIComponent(id)}`);
+      setMedications((prev) => prev.filter((m) => m.id !== id));
+    } catch (e) {
+      console.error(e);
+      setError('Failed to delete medication');
+    }
+  };
+
+  if (loading) {
+    return <div className="p-8">Loading medications…</div>;
+  }
+
+  if (error) {
+    return <div className="p-8 text-red-600">{error}</div>;
+  }
+
   return (
     <div className="flex flex-col gap-8 w-full pb-8">
       {/* Header & Actions */}
@@ -331,7 +376,7 @@ export const MedicationsPage: React.FC = () => {
             <Pills size={16} color="#001F3F" />
             Log Dose
           </button>
-          <button className="flex items-center gap-2 bg-[#003665] text-white font-bold text-sm px-5 py-3 rounded-full shadow-md hover:bg-[#002a52] transition-colors">
+          <button onClick={() => navigate('/app/medication/add')} className="flex items-center gap-2 bg-[#003665] text-white font-bold text-sm px-5 py-3 rounded-full shadow-md hover:bg-[#002a52] transition-colors">
             <Plus size={16} color="#FFFFFF" />
             Add Medication
           </button>
@@ -351,7 +396,7 @@ export const MedicationsPage: React.FC = () => {
         {/* Right Column */}
         <div className="flex flex-col gap-8 xl:col-span-4">
           <RefillAlertsCard />
-          <ActiveInventoryCard />
+          <ActiveInventoryCard medications={medications} onDelete={handleDelete} />
           <PreferredPharmacyCard />
         </div>
 

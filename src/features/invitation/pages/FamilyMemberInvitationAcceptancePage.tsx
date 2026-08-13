@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useMockUser } from "@/features/app/rbac/MockUserContext";
 
 import { AuthButton } from "../../auth-core/components/AuthButton";
 import { AuthInput } from "../../auth-core/components/AuthInput";
@@ -12,6 +13,7 @@ import { acceptFamilyMemberInvitation, ApiError } from "../api/mockInvitationApi
 export function FamilyMemberInvitationAcceptancePage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { refreshUser } = useMockUser();
   const prefill = useMemo(() => getInvitationPrefill(location.search), [location.search]);
 
   const [fullName, setFullName] = useState(prefill.fullName);
@@ -66,7 +68,8 @@ export function FamilyMemberInvitationAcceptancePage() {
         confirmPassword,
         agreeToTerms: acceptedTerms,
       });
-      navigate("/family-admin/login");
+      await refreshUser();
+      navigate("/member/access-ready");
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message);

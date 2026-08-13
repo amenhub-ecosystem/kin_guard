@@ -7,6 +7,7 @@ import { AuthLogo } from "../../auth-core/components/AuthLogo";
 import { OTPInput } from "../components/OTPInput";
 import { VerifyEmailIcon } from "../components/VerifyEmailIcon";
 import { getSession, logout, verifyOtp, resendOtp, ApiError } from "../api/mockAuthApi";
+import { useMockUser } from "@/features/app/rbac/MockUserContext";
 
 export function VerifyEmailPage() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export function VerifyEmailPage() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [emailAddress, setEmailAddress] = useState<string | null>(null);
+  const { refreshUser, currentUser } = useMockUser();
 
   useEffect(() => {
     const loadSession = async () => {
@@ -43,7 +45,14 @@ export function VerifyEmailPage() {
 
     try {
       await verifyOtp(code);
-      navigate("/family-admin/care-circle-setup");
+      // refresh session/user state and route to the next step based on role
+      await refreshUser();
+      const role = currentUser?.role ?? (await getSession()).currentUser?.role;
+      if (role === "family-admin") {
+        navigate("/family-admin/care-circle-setup");
+      } else {
+        navigate("/member/access-ready");
+      }
     } catch (err: unknown) {
       if (err instanceof ApiError) {
         setError(err.message);

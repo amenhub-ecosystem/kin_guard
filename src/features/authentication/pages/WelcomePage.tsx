@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../api/mockAuthApi";
 
@@ -8,10 +7,6 @@ import { SocialLoginButton } from "../../auth-core/components/SocialLoginButton"
 
 export function WelcomePage() {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    logout();
-  }, []);
 
   return (
     <section

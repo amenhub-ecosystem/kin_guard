@@ -71,7 +71,7 @@ export default function SetupCompletePage() {
 
           <AuthButton
             className="h-[68px] w-full rounded-2xl bg-[#003665] text-lg font-bold shadow-[0_10px_30px_rgba(15,23,42,0.08)]"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/dashboard")}
           >
             <span className="flex items-center justify-center">
               Go to Dashboard

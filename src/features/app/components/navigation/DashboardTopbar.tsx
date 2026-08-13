@@ -1,13 +1,12 @@
 // components/Dashboard/DashboardTopbar.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useMockUser } from '@/features/app/rbac/MockUserContext';
-import { ROLE_LABELS } from '@/features/app/rbac/roles';
+import { UserProfileMenu } from './UserProfileMenu';
 
 import { Search, Bell } from '@/components/common/icons';
 
 export const DashboardTopbar: React.FC = () => {
-  const { user } = useMockUser();
+  // no user data needed in this topbar component
 
   return (
     <header className="flex w-full flex-row items-center justify-between bg-white px-8 py-5 h-20 sticky top-0 z-30">
@@ -41,22 +40,7 @@ export const DashboardTopbar: React.FC = () => {
         {/* Vertical Divider */}
         <div className="w-px h-8 bg-gray-200" />
 
-        {/* User Profile */}
-        <div className="flex items-center gap-3">
-          <div className="flex flex-col items-end">
-            <span className="text-sm font-bold text-[#001F3F] tracking-[0.0058em]">
-              {user.name}
-            </span>
-            <span className="text-xs text-gray-500 text-right">
-              {ROLE_LABELS[user.role] ?? user.role}
-            </span>
-          </div>
-          <img
-            src={user.avatarUrl}
-            alt={user.name}
-            className="w-10 h-10 rounded-full object-cover border-2 border-[#009688] shrink-0"
-          />
-        </div>
+          <UserProfileMenu />
 
       </div>
     </header>

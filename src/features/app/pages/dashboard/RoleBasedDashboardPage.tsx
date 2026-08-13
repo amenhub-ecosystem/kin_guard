@@ -6,7 +6,15 @@ import { FamilyMemberDashboardPage } from "../dashboard/FamilyMemberDashboardPag
 import { CaregiverDashboardPage } from "../dashboard/CaregiverDashboardPage";
 
 export const RoleBasedDashboardPage: React.FC = () => {
-  const { user } = useMockUser();
+  const { user, isLoading } = useMockUser();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#FDFDFD] text-sm font-medium text-[#64748B]">
+        Loading...
+      </div>
+    );
+  }
 
   if (user.role === ROLES.CAREGIVER) {
     return <CaregiverDashboardPage />;

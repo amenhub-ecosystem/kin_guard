@@ -1,5 +1,7 @@
 // pages/AddMedicationPage.tsx
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import apiClient from '@/lib/apiClient';
 
 // TODO: Verify exact icon names from your existing icon library.
 import {
@@ -139,6 +141,36 @@ const ReminderMethodButton: React.FC<{ label: string; active: boolean; onClick: 
   );
 };
 
+// --- Footer Component ---
+
+interface AddMedicationFooterProps {
+  onCancel?: () => void;
+  onSave?: () => void;
+}
+
+const AddMedicationFooter: React.FC<AddMedicationFooterProps> = ({ onCancel, onSave }) => {
+  return (
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E7EB] shadow-[0_-4px_10px_rgba(0,0,0,0.02)] z-40" style={{ width: 'calc(100% - 280px)', marginLeft: '280px' }}>
+      <div className="h-[100px] flex flex-row justify-end items-center gap-4 px-8 py-6">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-8 py-3 text-[16px] font-semibold text-[#64748B] hover:text-gray-700 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          onClick={onSave}
+          className="px-10 py-3 bg-[#003665] text-white text-[16px] font-bold rounded-xl shadow-lg hover:bg-[#002a52] transition-colors"
+        >
+          Save Medication
+        </button>
+      </div>
+    </div>
+  );
+};
+
 // --- Main Page Component ---
 
 export const AddMedicationPage: React.FC = () => {
@@ -175,31 +207,56 @@ export const AddMedicationPage: React.FC = () => {
     }));
   };
 
+  const navigate = useNavigate();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement actual API call to save medication schedule
-    console.log('Form submitted:', form);
-    alert('Medication saved successfully!');
+    (async () => {
+      try {
+        const body = {
+          name: form.medicationName,
+          dose: `${form.strength} ${form.doseAmount}`.trim(),
+          schedule: form.frequency,
+          notes: form.notes,
+        };
+        await apiClient.post('/medications', body);
+        alert('Medication saved successfully!');
+        navigate('/dashboard/medication');
+      } catch (err) {
+        console.error(err);
+        alert('Failed to save medication');
+      }
+    })();
+  };
+
+  const handleCancel = () => {
+    navigate('/dashboard/medication');
+  };
+
+  const handleSave = () => {
+    const form = document.querySelector('form');
+    if (form) {
+      form.requestSubmit();
+    }
   };
 
   return (
-    <div className="flex flex-col gap-8 w-full pb-8 max-w-7xl mx-auto">
-      
-      {/* Header Section */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-[30px] font-bold text-[#1B2A4A] tracking-[0.0009em]">Add Medication</h1>
-          <p className="text-gray-500 text-[16px]">Create a medication schedule to help your loved one stay on track.</p>
+    <div className="bg-[#FDFDFD] min-h-screen">
+      <div className="max-w-7xl mx-auto px-6 py-8 pb-[140px]">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-[30px] font-bold text-[#1B2A4A] tracking-[0.0009em]">Add Medication</h1>
+            <p className="text-gray-500 text-[16px]">Create a medication schedule to help your loved one stay on track.</p>
+          </div>
+          <button className="flex items-center gap-2 bg-white border border-gray-200 shadow-sm text-[#003665] font-semibold text-[16px] px-5 py-3 rounded-xl hover:bg-gray-50 transition-colors">
+            <ArrowLeft size={16} color="#003665" />
+            Back to Dashboard
+          </button>
         </div>
-        <button className="flex items-center gap-2 bg-white border border-gray-200 shadow-sm text-[#003665] font-semibold text-[16px] px-5 py-3 rounded-xl hover:bg-gray-50 transition-colors">
-          <ArrowLeft size={16} color="#003665" />
-          Back to Dashboard
-        </button>
-      </div>
 
-      {/* Main Form */}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-        
+        {/* Main Form */}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-8">
         {/* Section 1: Medication Information */}
         <FormSection title="Medication Information" icon={<Pills size={22} color="#003665" />}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -376,24 +433,9 @@ export const AddMedicationPage: React.FC = () => {
           </FormSection>
 
         </div>
-
-        {/* Footer Section (Sticky within the container) */}
-        <div className="sticky bottom-0 z-20 flex flex-row justify-end items-center gap-4 px-8 py-6 bg-white border-t border-gray-200 shadow-[0_-4px_10px_rgba(0,0,0,0.02)] mt-4">
-          <button 
-            type="button" 
-            className="px-8 py-3 text-[16px] font-semibold text-gray-500 hover:text-gray-700 transition-colors"
-          >
-            Cancel
-          </button>
-          <button 
-            type="submit" 
-            className="px-10 py-3 bg-[#003665] text-white text-[16px] font-bold rounded-xl shadow-lg hover:bg-[#002a52] transition-colors"
-          >
-            Save Medication
-          </button>
-        </div>
-
       </form>
+      </div>
+      <AddMedicationFooter onCancel={handleCancel} onSave={handleSave} />
     </div>
   );
 };

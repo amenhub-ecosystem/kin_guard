@@ -34,6 +34,7 @@ export const sidebarNavigation: Record<Role, SidebarItem[]> = {
   [ROLES.CAREGIVER]: [
     { label: "Today", path: "/dashboard", icon: "House", permission: "viewDashboard", section: "main" },
     { label: "Loved One", path: "/dashboard/loved-one", icon: "HeartThrob", permission: "viewLovedOneProfile", section: "main" },
+    { label: "Medication", path: "/dashboard/medication", icon: "Pills", permission: "viewMedication", section: "main" },
     { label: "Activity", path: "/dashboard/activity", icon: "Chart", permission: "viewActivityTimeline", section: "main" },
     { label: "Alerts", path: "/dashboard/notifications", icon: "Alert", permission: "viewAlerts", section: "main" },
     { label: "Profile", path: "/dashboard/profile", icon: "User", permission: "viewProfile", section: "main" },

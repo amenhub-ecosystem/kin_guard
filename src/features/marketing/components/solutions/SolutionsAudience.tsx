@@ -76,7 +76,7 @@ const solutions: Solution[] = [
       "Know your loved one is safe with daily check-ins, medication reminders, and instant family updates.",
     cta: "Explore Family Care",
     imageAlt: "Family dashboard preview",
-    imageSrc: familyPreview,
+    imageSrc: healthcarePreview,
     features: [
       {
         label: "Daily wellness",
@@ -131,7 +131,7 @@ const solutions: Solution[] = [
       "Monitor patients remotely, collaborate with families, and receive meaningful updates between appointments.",
     cta: "Explore Healthcare",
     imageAlt: "Healthcare dashboard preview",
-    imageSrc: healthcarePreview,
+    imageSrc: familyPreview,
     features: [
       {
         label: "Patient insights",

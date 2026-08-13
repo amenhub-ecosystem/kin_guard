@@ -1,5 +1,9 @@
 import { Navigate, Outlet, Route } from "react-router-dom";
 import { ProtectedAuthRoute } from "@/features/auth-core/layouts/ProtectedAuthRoute";
+import NonAdminAuthLayout from "@/features/auth-core/layouts/NonAdminAuthLayout";
+import { CaregiverInvitationAcceptancePage } from "@/features/invitation/pages/CaregiverInvitationAcceptancePage";
+import { FamilyMemberInvitationAcceptancePage } from "@/features/invitation/pages/FamilyMemberInvitationAcceptancePage";
+import MemberAccessReadyPage from "@/features/invitation/pages/MemberAccessReadyPage";
 import InviteFamilyPage from "@/features/invitation/pages/InviteFamilyPage";
 import SetupCompletePage from "@/features/onboarding/pages/SetupCompletePage";
 
@@ -42,6 +46,12 @@ export function InvitationRoutes() {
           </ProtectedAuthRoute>
         }
       />
+
+      <Route path="/member/*" element={<NonAdminAuthLayout />}>
+        <Route path="caregiver-invite" element={<CaregiverInvitationAcceptancePage />} />
+        <Route path="family-invite" element={<FamilyMemberInvitationAcceptancePage />} />
+        <Route path="access-ready" element={<MemberAccessReadyPage />} />
+      </Route>
     </>
   );
 }

@@ -1,3 +1,5 @@
+import apiClient from '@/lib/apiClient';
+
 export class ApiError extends Error {
   public readonly fieldErrors?: Record<string, string>;
 
@@ -30,34 +32,23 @@ interface InvitationLookupResult {
   status: "valid" | "expired" | "invalid";
   invitation?: {
     email: string;
+    inviterName?: string;
+    careCircleName?: string;
+    role?: string;
+    relationship?: string;
+    phone?: string;
   };
 }
 
-const storageKey = "__kinGuardInvitationState";
-
-function readState() {
-  if (typeof window === "undefined") return null;
-
-  const raw = window.localStorage.getItem(storageKey);
-  if (!raw) return null;
-
-  try {
-    return JSON.parse(raw) as Record<string, unknown>;
-  } catch {
-    return null;
-  }
-}
-
-function writeState(nextState: Record<string, unknown>) {
-  if (typeof window === "undefined") return;
-
-  window.localStorage.setItem(storageKey, JSON.stringify(nextState));
-}
-
 export async function inviteFamilyMembers(invitees: Invitee[]): Promise<{ success: true }> {
-  const state = readState() ?? {};
-  writeState({ ...state, lastInvites: invitees });
-  return { success: true };
+  try {
+    await apiClient.post('/care-circles/invitations', invitees);
+    return { success: true };
+  } catch (error: any) {
+    const message = error?.message || 'Failed to send invitations';
+    const fieldErrors = error?.fieldErrors || {};
+    throw new ApiError(message, fieldErrors);
+  }
 }
 
 export async function getInvitationByToken(token: string): Promise<InvitationLookupResult> {
@@ -65,23 +56,44 @@ export async function getInvitationByToken(token: string): Promise<InvitationLoo
     return { status: "invalid" };
   }
 
-  const state = readState() ?? {};
-  const invitation = (state as Record<string, unknown>).invitation as Record<string, unknown> | undefined;
-  if (invitation?.email) {
-    return { status: "valid", invitation: { email: String(invitation.email) } };
+  try {
+    const response = await apiClient.get(`/invitations/${token}`);
+    return response;
+  } catch (error: any) {
+    return { status: "invalid" };
   }
-
-  return { status: "invalid" };
 }
 
 export async function acceptFamilyMemberInvitation(payload: InvitationPayload): Promise<{ success: true }> {
-  const state = readState() ?? {};
-  writeState({ ...state, familyMemberAcceptance: payload });
-  return { success: true };
+  try {
+    const response = await apiClient.post('/invitations/accept/family-member', payload);
+    // Store the token returned from the backend
+    if (response?.token) {
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('__kinGuardServerToken', response.token);
+      }
+    }
+    return { success: true };
+  } catch (error: any) {
+    const message = error?.message || 'Failed to accept invitation';
+    const fieldErrors = error?.fieldErrors || {};
+    throw new ApiError(message, fieldErrors);
+  }
 }
 
 export async function acceptCaregiverInvitation(token: string, payload: InvitationPayload): Promise<{ success: true }> {
-  const state = readState() ?? {};
-  writeState({ ...state, caregiverAcceptance: { token, payload } });
-  return { success: true };
+  try {
+    const response = await apiClient.post(`/invitations/${token}/accept/caregiver`, payload);
+    // Store the token returned from the backend
+    if (response?.token) {
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('__kinGuardServerToken', response.token);
+      }
+    }
+    return { success: true };
+  } catch (error: any) {
+    const message = error?.message || 'Failed to accept invitation';
+    const fieldErrors = error?.fieldErrors || {};
+    throw new ApiError(message, fieldErrors);
+  }
 }

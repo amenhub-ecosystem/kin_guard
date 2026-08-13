@@ -9,8 +9,6 @@ import {
   Chart,            // Needs Attention
   Warning,          // Immediate Help
   Check,            // Textarea checkmark & Checkboxes
-  House,            // Save Update button
-  ChevronRight,     // Footer chevron
   Bell,             // Needs family attention icon
 } from '@/components/common/icons';
 
@@ -87,6 +85,62 @@ const ActionCheckbox: React.FC<ActionCheckboxProps> = ({ label, checked, onToggl
   );
 };
 
+// --- Floating Footer Component ---
+
+interface CheckInFooterProps {
+  onCancel?: () => void;
+  onSend?: () => void;
+}
+
+const CheckInFooter: React.FC<CheckInFooterProps> = ({ onCancel, onSend }) => {
+  return (
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E7EB] shadow-[0_-4px_20px_rgba(0,0,0,0.04)] z-40" style={{ width: 'calc(100% - 280px)', marginLeft: '280px' }}>
+      <div className="h-[100px] flex flex-row justify-between items-center px-8 py-6">
+        {/* Left Side: Recipient Info */}
+        <div className="flex flex-row items-center gap-4">
+          {/* Avatar Stack */}
+          <div className="flex flex-row items-center">
+            <img
+              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100&h=100"
+              alt="Caregiver 1"
+              className="w-8 h-8 rounded-full border-2 border-white object-cover relative z-20"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100&h=100"
+              alt="Caregiver 2"
+              className="w-8 h-8 rounded-full border-2 border-white object-cover relative z-10 -ml-3"
+            />
+          </div>
+          <span className="text-[13px] text-[#64748B] tracking-[0.0009em]">
+            Will be sent to{' '}
+            <span className="font-bold text-[#1B2A4A]">Mama Grace</span> and{' '}
+            <span className="font-bold text-[#1B2A4A]">2 caregivers</span>.
+          </span>
+        </div>
+
+        {/* Right Side: Actions */}
+        <div className="flex flex-row items-center gap-4">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-8 py-3 text-[16px] font-semibold text-[#64748B] hover:text-gray-700 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onSend}
+            className="flex flex-row items-center gap-3 px-12 py-3 bg-[#003665] text-white text-[16px] font-bold rounded-2xl shadow-[0_10px_15px_-3px_rgba(30,58,138,0.2),0_4px_6px_-4px_rgba(30,58,138,0.2)] hover:bg-[#002a52] transition-colors"
+          >
+            <PaperPlane size={16} color="#FFFFFF" />
+            Send Check-in
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --- Main Page Component ---
 
 export const UpdateCareStatusPage: React.FC = () => {
@@ -110,8 +164,16 @@ export const UpdateCareStatusPage: React.FC = () => {
     alert('Care update saved!');
   };
 
+  const handleCancel = () => {
+    console.log('Cancelled');
+    // TODO: Navigate back or close modal
+  };
+
+  const handleSend = handleSave;
+
   return (
-    <div className="w-full max-w-[552px] mx-auto flex flex-col bg-white border border-[#E5E7EB] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] rounded-2xl overflow-hidden mt-8">
+    <>
+      <div className="w-full max-w-[552px] mx-auto flex flex-col bg-white border border-[#E5E7EB] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] rounded-2xl overflow-hidden mt-8 pb-[120px]">
       
       {/* --- Header --- */}
       <div className="flex flex-row justify-between items-center px-6 py-6 bg-[#F9FAFB] border-b border-[#F1F4F6]">
@@ -228,46 +290,8 @@ export const UpdateCareStatusPage: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* --- Footer --- */}
-      <div className="flex flex-col w-full">
-        {/* Action Buttons */}
-        <div className="flex flex-row items-center gap-4 px-6 py-6 bg-[#F9FAFB] border-t border-[#F1F4F6]">
-          <button className="flex-1 py-4 bg-white border border-[#E5E7EB] rounded-xl text-[16px] font-bold text-[#64748B] hover:bg-gray-50 transition-colors">
-            Cancel
-          </button>
-          <button
-            onClick={handleSave}
-            className="flex-1 py-4 bg-[#003665] rounded-xl text-[16px] font-bold text-white shadow-[0_10px_15px_-3px_rgba(0,54,101,0.2)] hover:bg-[#002a52] transition-colors flex flex-row items-center justify-center gap-2"
-          >
-            <House size={20} color="#FFFFFF" />
-            Save Update
-          </button>
-        </div>
-
-        {/* Share Info Banner */}
-        <div className="flex flex-row justify-between items-center px-6 py-4 bg-[#EFF6FF]">
-          <div className="flex flex-row items-center gap-3">
-            <div className="flex flex-row -space-x-2">
-              {/* TODO: Replace with actual exported image assets */}
-              <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=50&h=50"
-                alt="Avatar 1"
-                className="w-6 h-6 rounded-full border-2 border-white object-cover"
-              />
-              <img
-                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=50&h=50"
-                alt="Avatar 2"
-                className="w-6 h-6 rounded-full border-2 border-white object-cover relative z-10 -ml-2"
-              />
-            </div>
-            <span className="text-[12px] font-medium text-[#3B82F6] tracking-[-0.0019em]">
-              Updates will be shared with the Care Circle
-            </span>
-          </div>
-          <ChevronRight size={8} color="#3B82F6" />
-        </div>
-      </div>
     </div>
+    <CheckInFooter onCancel={handleCancel} onSend={handleSend} />
+    </>
   );
 };

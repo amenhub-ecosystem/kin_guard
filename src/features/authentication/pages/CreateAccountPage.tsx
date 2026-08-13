@@ -1,5 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMockUser } from "@/features/app/rbac/MockUserContext";
 import { AuthLogo } from "../../auth-core/components/AuthLogo";
 import { AuthInput } from "../../auth-core/components/AuthInput";
 import { PasswordStrength } from "../../auth-core/components/PasswordStrength";
@@ -16,6 +17,7 @@ const getConfirmPasswordError = (password: string, confirmPassword: string) => {
 
 export default function CreateAccountPage() {
   const navigate = useNavigate();
+  const { refreshUser } = useMockUser();
   const [form, setForm] = useState<SignupFormValues>({
     fullName: "",
     email: "",
@@ -33,6 +35,7 @@ export default function CreateAccountPage() {
 
     try {
       await signUp(form);
+      await refreshUser();
       navigate("/family-admin/verify-email");
     } catch (error: unknown) {
       if (error instanceof ApiError && error.fieldErrors) {

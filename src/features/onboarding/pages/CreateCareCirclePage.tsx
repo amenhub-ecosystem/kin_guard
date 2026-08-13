@@ -111,18 +111,14 @@ export default function CreateCareCirclePage() {
     };
   });
 
-  const revokePreviewUrl = (url?: string) => {
-    if (url?.startsWith("blob:")) {
-      URL.revokeObjectURL(url);
-    }
-  };
   const [errors, setErrors] = useState<CareCircleFormErrors>({});
 
-  useEffect(() => {
-    return () => {
-      revokePreviewUrl(form.photo);
-    };
-  }, [form.photo]);
+  const fileToDataUrl = (file: File) => new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.onerror = () => reject(new Error("Unable to read the selected file."));
+    reader.readAsDataURL(file);
+  });
 
   const updateField = (
     field: keyof CareCircleForm,
@@ -197,20 +193,23 @@ export default function CreateCareCirclePage() {
     }
   };
 
-  const handleUpload = (
+  const handleUpload = async (
     e: ChangeEvent<HTMLInputElement>
   ) => {
     const file = e.target.files?.[0];
 
     if (!file) return;
 
-    const preview = URL.createObjectURL(file);
-    setForm((prevForm) => {
-      revokePreviewUrl(prevForm.photo);
-      const nextForm = { ...prevForm, photo: preview };
-      saveCareCircleDraft(nextForm);
-      return nextForm;
-    });
+    try {
+      const dataUrl = await fileToDataUrl(file);
+      setForm((prevForm) => {
+        const nextForm = { ...prevForm, photo: dataUrl };
+        saveCareCircleDraft(nextForm);
+        return nextForm;
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

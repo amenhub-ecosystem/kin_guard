@@ -1,43 +1,55 @@
-import mockPreview from "@/features/marketing/assets/images/preview_mock.png";
 import { ArrowRight } from "@/components/common/icons";
+import featureDailyCare from "@/assets/images/features/feature-1-daily-care.png";
+import featureMedication from "@/assets/images/features/feature-2-medication.png";
+import featureFamilyCircle from "@/assets/images/features/feature-3-family-circle.png";
+import featureWhatsAppCare from "@/assets/images/features/feature-4-whatsapp-care.png";
+import featureEmergencySOS from "@/assets/images/features/feature-5-emergency-sos.png";
+import featureHealthInsights from "@/assets/images/features/feature-6-health-insights.png";
 
 type FeatureCard = {
   title: string;
   description: string;
+  image: string;
 };
 
 const features: FeatureCard[] = [
   {
     title: "Daily Care",
     description: "Daily wellness check-ins that keep families connected.",
+    image: featureDailyCare,
   },
   {
     title: "Medication",
     description: "Smart reminders that help prevent missed medication.",
+    image: featureMedication,
   },
   {
     title: "Family Circle",
     description: "One shared space for family and caregivers.",
+    image: featureFamilyCircle,
   },
   {
     title: "WhatsApp Care",
     description: "Care through the app they already know.",
+    image: featureWhatsAppCare,
   },
   {
     title: "Emergency SOS",
     description: "Alert everyone instantly when help is needed.",
+    image: featureEmergencySOS,
   },
   {
     title: "Health Insights",
     description: "Simple reports that reveal care trends.",
+    image: featureHealthInsights,
   },
 ];
 
-function FeatureCard({ title, description }: FeatureCard) {
+function FeatureCard({ title, description, image }: FeatureCard) {
   return (
 <article className="group rounded-[40px] border border-[#F3F4F6] bg-[#FCFCFC] p-8 transition-all duration-200 hover:shadow-lg">
   <img
-    src={mockPreview}
+    src={image}
     alt={`${title} preview`}
     className="aspect-[334/288] w-full rounded-3xl object-cover"
     draggable={false}

@@ -1,6 +1,7 @@
 // pages/InviteMemberPage.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import apiClient from '@/lib/apiClient';
 
 // TODO: Verify exact icon names from your existing icon library.
 import {
@@ -12,6 +13,9 @@ import {
   WandSparkles, // Or a 'Mixer' or 'Sliders' icon for the "Let them decide" card
   PaperPlane,
   Check,
+  ChevronRight,
+  ClipBoard,
+  X,
 } from '@/components/common/icons';
 
 // --- Reusable Components for this page ---
@@ -167,6 +171,115 @@ const SelectionCard: React.FC<SelectionCardProps> = ({
   );
 };
 
+// --- Footer Component ---
+
+interface InviteMemberFooterProps {
+  onCancel?: () => void;
+  onSend?: () => void;
+}
+
+const InviteMemberFooter: React.FC<InviteMemberFooterProps> = ({ onCancel, onSend }) => {
+  return (
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E7EB] shadow-[0_-4px_10px_rgba(0,0,0,0.02)] z-40" style={{ width: 'calc(100% - 280px)', marginLeft: '280px' }}>
+      <div className="h-[100px] flex flex-row justify-end items-center gap-4 px-8 py-6">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-8 py-3 text-[16px] font-semibold text-[#64748B] hover:text-gray-700 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          onClick={onSend}
+          className="flex flex-row items-center gap-2 px-10 py-3 bg-[#003665] text-white text-[16px] font-bold rounded-xl shadow-lg hover:bg-[#002a52] transition-colors"
+        >
+          Send Invitation
+          <ChevronRight size={16} color="#FFFFFF" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// --- Invite Link Modal ---
+
+interface InviteLinkModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  inviteeEmail: string;
+  inviteeRole: string;
+  invitationToken: string;
+  inviterName: string;
+}
+
+const InviteLinkModal: React.FC<InviteLinkModalProps> = ({
+  isOpen,
+  onClose,
+  inviteeEmail,
+  inviteeRole,
+  invitationToken,
+}) => {
+  const [copied, setCopied] = useState(false);
+  
+  const inviteLink = `${window.location.origin}/member/${inviteeRole === 'caregiver' ? 'caregiver' : 'family'}-invite?token=${invitationToken}&email=${encodeURIComponent(inviteeEmail)}`;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(inviteLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-3xl shadow-lg max-w-[600px] w-full mx-4 p-8">
+        <div className="flex justify-between items-start mb-6">
+          <h2 className="text-[24px] font-bold text-[#1B2A4A]">
+            Invitation Link Ready
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <X size={24} color="#64748B" />
+          </button>
+        </div>
+
+        <div className="bg-[#F8FAFC] rounded-2xl p-6 mb-6 border border-gray-200">
+          <p className="text-[14px] text-gray-600 mb-3">Share this link with {inviteeEmail}:</p>
+          <div className="flex items-center gap-3">
+            <code className="flex-1 bg-white border border-gray-300 rounded-xl px-4 py-3 text-[12px] font-mono text-gray-700 overflow-x-auto">
+              {inviteLink}
+            </code>
+            <button
+              onClick={handleCopy}
+              className="flex items-center gap-2 px-4 py-3 bg-[#003665] text-white font-semibold rounded-xl hover:bg-[#002a52] transition-colors shrink-0"
+            >
+              <ClipBoard size={16} color="#FFFFFF" />
+              {copied ? 'Copied!' : 'Copy'}
+            </button>
+          </div>
+        </div>
+
+        <div className="bg-[#EFF6FF] rounded-2xl p-4 border border-[#003665]/10 mb-6">
+          <p className="text-[14px] text-[#003665]">
+            You can also share this link via WhatsApp, email, or any messaging platform.
+          </p>
+        </div>
+
+        <button
+          onClick={onClose}
+          className="w-full px-6 py-3 bg-[#003665] text-white font-semibold rounded-xl hover:bg-[#002a52] transition-colors"
+        >
+          Done
+        </button>
+      </div>
+    </div>
+  );
+};
+
 // --- Main Page Component ---
 
 export const InviteMemberPage: React.FC = () => {
@@ -180,6 +293,15 @@ export const InviteMemberPage: React.FC = () => {
     email: '',
   });
   const [participation, setParticipation] = useState<'app' | 'whatsapp' | 'decide'>('whatsapp');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [invitationData, setInvitationData] = useState<{
+    email: string;
+    role: string;
+    token: string;
+    inviterName: string;
+  } | null>(null);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -188,20 +310,89 @@ export const InviteMemberPage: React.FC = () => {
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement actual API call to send the invite
-    console.log('Invite submitted:', {
-      type: inviteType,
-      ...formData,
-      participation,
-    });
-    alert('Invite sent successfully!');
+    setError('');
+    setIsLoading(true);
+
+    try {
+      // Validate form
+      if (!formData.fullName.trim()) {
+        setError('Full name is required');
+        setIsLoading(false);
+        return;
+      }
+      if (!formData.email.trim()) {
+        setError('Email is required');
+        setIsLoading(false);
+        return;
+      }
+      if (!formData.phone.trim()) {
+        setError('Phone number is required');
+        setIsLoading(false);
+        return;
+      }
+      if (formData.relationship === 'Select Relationship') {
+        setError('Please select a relationship');
+        setIsLoading(false);
+        return;
+      }
+
+      // Call backend API to create invitation
+      const inviteData = {
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        relationship: formData.relationship,
+        role: inviteType === 'family' ? 'family-member' : 'caregiver',
+        preferredMethod: participation === 'decide' ? 'App' : participation === 'app' ? 'Email' : 'WhatsApp',
+      };
+
+      const response = await apiClient.post('/care-circles/invitations', [inviteData]);
+      
+      if (response?.invited && response.invited.length > 0) {
+        const invited = response.invited[0];
+        // Find the invitation token from the response
+        // The backend should return the token
+        setInvitationData({
+          email: formData.email,
+          role: inviteType === 'family' ? 'family' : 'caregiver',
+          token: invited.invitationToken || 'token-not-returned',
+          inviterName: 'You', // Could get from user context
+        });
+        setShowModal(true);
+        
+        // Reset form after successful submission
+        setFormData({
+          fullName: '',
+          relationship: 'Select Relationship',
+          phone: '',
+          email: '',
+        });
+      }
+    } catch (err: any) {
+      console.error('Error sending invitation:', err);
+      setError(err?.message || 'Failed to send invitation. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancel = () => {
+    navigate('/dashboard/care-circle');
+  };
+
+  const handleSend = () => {
+    const form = document.querySelector('form');
+    if (form) {
+      form.requestSubmit();
+    }
   };
 
   return (
-    <div className="flex flex-col gap-8 w-full pb-8 mx-auto max-w-[1000px]">
-      {/* Header Section */}
+    <div className="bg-[#FDFDFD] min-h-screen">
+      <div className="max-w-[1000px] mx-auto px-6 py-8 pb-[140px]">
+        {/* Header Section */}
       <div className="flex flex-row justify-between items-start">
         <div className="flex flex-col gap-1">
           <h1 className="text-[30px] font-bold text-[#1B2A4A]">
@@ -221,8 +412,7 @@ export const InviteMemberPage: React.FC = () => {
       </div>
 
       {/* Main Form */}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-        {/* Step 1: Who are you inviting? */}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-8">{/* Step 1: Who are you inviting? */}
         <div className="flex flex-col gap-6">
           <StepHeader number={1} title="Who are you inviting?" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -337,7 +527,30 @@ export const InviteMemberPage: React.FC = () => {
             </p>
           </div>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
+            <p className="text-sm text-red-700">{error}</p>
+          </div>
+        )}
       </form>
+      </div>
+      <InviteMemberFooter onCancel={handleCancel} onSend={isLoading ? undefined : handleSend} />
+      
+      {invitationData && (
+        <InviteLinkModal
+          isOpen={showModal}
+          onClose={() => {
+            setShowModal(false);
+            navigate('/dashboard/care-circle');
+          }}
+          inviteeEmail={invitationData.email}
+          inviteeRole={invitationData.role}
+          invitationToken={invitationData.token}
+          inviterName={invitationData.inviterName}
+        />
+      )}
     </div>
   );
 };

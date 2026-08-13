@@ -11,6 +11,7 @@ import { EmergencyCenterPage } from "@/features/app/pages/emergency/EmergencyCen
 import { EmergencySOSPage } from "@/features/app/pages/emergency/EmergencySOSPage";
 import { LovedOneRoutePage } from "@/features/app/pages/loved-one/LovedOneRoutePage";
 import { useMockUser } from "@/features/app/rbac/MockUserContext";
+import { RequireAuth } from "@/features/app/rbac/RequireAuth";
 import { ROLES } from "@/features/app/rbac/roles";
 import { LovedOneStatusScreenPage } from "@/features/app/pages/loved-one/LovedOneStatusScreenPage";
 import { CareActivityTimelinePage } from "@/features/app/pages/activity/CareActivityTimelinePage";
@@ -50,7 +51,7 @@ export function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route path="/app/*" element={<DashboardLayout />}>
+      <Route path="/app/*" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
         <Route index element={<RoleBasedDashboardPage />} />
         <Route
           path="care-circle"
@@ -183,7 +184,7 @@ export function AppRoutes() {
         />
       </Route>
 
-      <Route path="/dashboard/*" element={<DashboardLayout />}>
+      <Route path="/dashboard/*" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
         <Route index element={<RoleBasedDashboardPage />} />
         <Route
           path="care-circle"

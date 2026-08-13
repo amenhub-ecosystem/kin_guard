@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye } from "@/components/common/icons";
+import { useMockUser } from "@/features/app/rbac/MockUserContext";
 import { AuthInput } from "../../auth-core/components/AuthInput";
 import { AuthDivider } from "../../auth-core/components/AuthDivider";
 import { AuthButton } from "../../auth-core/components/AuthButton";
@@ -10,6 +11,7 @@ import type { LoginFormValues } from "../utils/authFlow";
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const { refreshUser } = useMockUser();
   const [form, setForm] = useState<LoginFormValues>({ email: "", password: "" });
   const [errors, setErrors] = useState<Partial<Record<keyof LoginFormValues, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,7 +23,8 @@ export function LoginPage() {
 
     try {
       await login(form);
-      navigate("/family-admin/care-circle-setup");
+      await refreshUser();
+      navigate("/dashboard");
     } catch (error: unknown) {
       if (error instanceof ApiError && error.fieldErrors) {
         setErrors(error.fieldErrors as Partial<Record<keyof LoginFormValues, string>>);
