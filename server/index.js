@@ -9,7 +9,9 @@ const PORT = process.env.PORT || 4000;
 
 const app = express();
 app.use(cors({ origin: "http://localhost:5173" }));
-app.use(express.json());
+// Allow larger payloads (image data URLs) during local development
+app.use(express.json({ limit: "5mb" }));
+app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 
 const file = join(process.cwd(), "server", "db.json");
 const adapter = new JSONFile(file);
@@ -31,6 +33,45 @@ async function initDb() {
     emergencyEvents: [],
     sessions: {},
   };
+  // Seed demo users and a demo care circle in non-production environments
+  // Only seed when the DB appears empty to avoid adding demo accounts over real data
+  if (process.env.NODE_ENV !== 'production' && (!db.data.users || db.data.users.length === 0)) {
+    const demos = [
+      { email: 'demo-admin@example.com', fullName: 'Amaka Chukwu', role: 'family-admin', password: 'pass' },
+      { email: 'demo-member@example.com', fullName: 'Tunde Okafor', role: 'family-member', password: 'pass' },
+      { email: 'demo-caregiver@example.com', fullName: 'Ngozi Adeyemi', role: 'caregiver', password: 'pass' },
+    ];
+
+    for (const d of demos) {
+      const nEmail = normalizeEmail(d.email);
+      let user = db.data.users.find((u) => u.email === nEmail);
+      if (!user) {
+        user = { id: `user-${Date.now()}-${Math.random().toString(16).slice(2)}`, fullName: d.fullName, email: nEmail, password: d.password, role: d.role, isVerified: true };
+        db.data.users.push(user);
+      }
+    }
+
+    // Ensure a loved one owned by demo-admin exists and that member/caregiver are in the care circle
+    const admin = db.data.users.find((u) => u.email === 'demo-admin@example.com');
+    if (admin) {
+      let loved = db.data.lovedOnes.find((l) => l.ownerId === admin.id);
+      if (!loved) {
+        loved = { id: `loved-${Date.now()}`, ownerId: admin.id, name: 'Demo Loved One', dob: null, gender: null, photo: null, contactInfo: null, relationship: 'self', medication: null, dailyCheckIns: null, circleName: 'Demo Family' };
+        db.data.lovedOnes.push(loved);
+      }
+
+      const member = db.data.users.find((u) => u.email === 'demo-member@example.com');
+      const caregiver = db.data.users.find((u) => u.email === 'demo-caregiver@example.com');
+      if (member) {
+        const exists = db.data.careCircleMembers.find((m) => m.userId === member.id && m.ownerId === admin.id);
+        if (!exists) db.data.careCircleMembers.push({ id: `member-${Date.now()}-${Math.random().toString(16).slice(2)}`, userId: member.id, role: 'family-member', relationship: 'child', phone: null, ownerId: admin.id, addedAt: new Date().toISOString() });
+      }
+      if (caregiver) {
+        const exists = db.data.careCircleMembers.find((m) => m.userId === caregiver.id && m.ownerId === admin.id);
+        if (!exists) db.data.careCircleMembers.push({ id: `member-${Date.now()}-${Math.random().toString(16).slice(2)}`, userId: caregiver.id, role: 'caregiver', relationship: 'friend', phone: null, ownerId: admin.id, addedAt: new Date().toISOString() });
+      }
+    }
+  }
   await db.write();
 }
 
@@ -667,6 +708,75 @@ app.post("/__test__/reset", async (req, res) => {
   await initDb();
   requestLog.length = 0;
   res.json({ success: true });
+});
+
+// Development helpers: create demo users and impersonation
+app.post('/__test__/create-demo-users', async (req, res) => {
+  await db.read();
+  // create demo users if not present
+  const demos = [
+    { email: 'demo-admin@example.com', fullName: 'Amaka Chukwu', role: 'family-admin' },
+    { email: 'demo-member@example.com', fullName: 'Tunde Okafor', role: 'family-member' },
+    { email: 'demo-caregiver@example.com', fullName: 'Ngozi Adeyemi', role: 'caregiver' },
+  ];
+
+  const created = [];
+  for (const d of demos) {
+    const nEmail = normalizeEmail(d.email);
+    let user = db.data.users.find((u) => u.email === nEmail);
+    if (!user) {
+      user = { id: `user-${Date.now()}-${Math.random().toString(16).slice(2)}`, fullName: d.fullName, email: nEmail, password: 'pass', role: d.role };
+      db.data.users.push(user);
+    } else {
+      // Update existing demo user to match current seed values
+      user.fullName = d.fullName;
+      user.password = 'pass';
+      user.role = d.role;
+    }
+    // ensure session token exists
+    const token = genToken();
+    db.data.sessions[token] = { authJourneyActive: true, currentUserId: user.id };
+    created.push({ user: { id: user.id, fullName: user.fullName, email: user.email, role: user.role }, token });
+  }
+
+  // create a lovedOne owned by demo-admin if not present
+  const admin = db.data.users.find((u) => u.email === 'demo-admin@example.com');
+  if (admin) {
+    let loved = db.data.lovedOnes.find((l) => l.ownerId === admin.id);
+    if (!loved) {
+      loved = { id: `loved-${Date.now()}`, ownerId: admin.id, name: 'Demo Loved One', dob: null, gender: null, photo: null, contactInfo: null, relationship: 'self', medication: null, dailyCheckIns: null, circleName: "Demo Family" };
+      db.data.lovedOnes.push(loved);
+    }
+    // ensure careCircleMembers for demo-member and demo-caregiver
+    const member = db.data.users.find((u) => u.email === 'demo-member@example.com');
+    const caregiver = db.data.users.find((u) => u.email === 'demo-caregiver@example.com');
+    if (member) {
+      const exists = db.data.careCircleMembers.find((m) => m.userId === member.id && m.ownerId === admin.id);
+      if (!exists) db.data.careCircleMembers.push({ id: `member-${Date.now()}-${Math.random().toString(16).slice(2)}`, userId: member.id, role: 'family-member', relationship: 'child', phone: null, ownerId: admin.id, addedAt: new Date().toISOString() });
+    }
+    if (caregiver) {
+      const exists = db.data.careCircleMembers.find((m) => m.userId === caregiver.id && m.ownerId === admin.id);
+      if (!exists) db.data.careCircleMembers.push({ id: `member-${Date.now()}-${Math.random().toString(16).slice(2)}`, userId: caregiver.id, role: 'caregiver', relationship: 'friend', phone: null, ownerId: admin.id, addedAt: new Date().toISOString() });
+    }
+  }
+
+  await db.write();
+  logRequest('POST', '/__test__/create-demo-users', null, 200, created);
+  res.json({ created });
+});
+
+app.post('/__test__/impersonate', async (req, res) => {
+  await db.read();
+  const token = req.headers['x-session-token'] || req.headers['authorization']?.replace('Bearer ', '');
+  if (!token || !db.data.sessions[token]) return res.status(401).json({ code: 'UNAUTHORIZED', status: 401 });
+  const { targetUserId } = req.body || {};
+  if (!targetUserId) return res.status(400).json({ code: 'INVALID_INPUT', status: 400, message: 'targetUserId required' });
+  const user = db.data.users.find((u) => u.id === targetUserId);
+  if (!user) return res.status(404).json({ code: 'NOT_FOUND', status: 404 });
+  db.data.sessions[token].currentUserId = user.id;
+  await db.write();
+  logRequest('POST', '/__test__/impersonate', { targetUserId }, 200, { success: true });
+  res.json({ success: true, user: { id: user.id, fullName: user.fullName, email: user.email, role: user.role } });
 });
 
 initDb()

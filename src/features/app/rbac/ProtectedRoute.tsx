@@ -5,7 +5,7 @@ import { routeGuard } from "./roleGuards";
 import type { Permission } from "./permissions";
 
 interface ProtectedRouteProps {
-  requiredPermissions: Permission[];
+  requiredPermissions?: Permission[];
   children: React.ReactNode;
 }
 
@@ -24,13 +24,22 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
+  // If the app's auth journey isn't active or there's no current user, redirect to auth
   if (!currentUser || !authJourneyActive) {
     return <Navigate to="/auth" replace state={{ from: location }} />;
   }
 
-  if (routeGuard(user.role, requiredPermissions)) {
+  // If no permissions required, allow
+  if (!requiredPermissions || requiredPermissions.length === 0) {
+    return <>{children}</>;
+  }
+
+  // routeGuard returns true if allowed
+  if (routeGuard(user?.role, requiredPermissions)) {
     return <>{children}</>;
   }
 
   return <Navigate to="/dashboard" replace state={{ from: location }} />;
 };
+
+export default ProtectedRoute;

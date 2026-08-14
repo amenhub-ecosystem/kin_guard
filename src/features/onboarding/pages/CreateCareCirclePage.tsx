@@ -139,6 +139,7 @@ export default function CreateCareCirclePage() {
   };
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [generalError, setGeneralError] = useState<string | null>(null);
 
   const validateForm = () => {
     const nextErrors: CareCircleFormErrors = {};
@@ -170,7 +171,20 @@ export default function CreateCareCirclePage() {
     }
 
     setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
+    const valid = Object.keys(nextErrors).length === 0;
+    if (!valid) {
+      console.log("CreateCareCircle validation failed:", nextErrors);
+      const firstField = Object.keys(nextErrors)[0];
+      // try to focus the first invalid input by name
+      try {
+        const el = document.getElementsByName(firstField)[0] as HTMLElement | undefined;
+        if (el && typeof el.focus === 'function') el.focus();
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    return valid;
   };
 
   const handleContinue = async () => {
@@ -180,13 +194,19 @@ export default function CreateCareCirclePage() {
 
     setIsSubmitting(true);
     setErrors({});
+    setGeneralError(null);
 
     try {
       await createCareCircle(form);
       navigate("/family-admin/invite-family");
     } catch (err) {
+      console.error("Create care circle failed:", err);
       if (err instanceof ApiError && err.fieldErrors) {
         setErrors(err.fieldErrors as CareCircleFormErrors);
+      } else if (err instanceof Error) {
+        setGeneralError(err.message);
+      } else {
+        setGeneralError("Unable to save your care circle.");
       }
     } finally {
       setIsSubmitting(false);
@@ -243,6 +263,12 @@ export default function CreateCareCirclePage() {
           </p>
 
         </div>
+
+        {generalError ? (
+          <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">
+            {generalError}
+          </div>
+        ) : null}
 
         {/* PHOTO */}
 
@@ -301,6 +327,7 @@ export default function CreateCareCirclePage() {
             <div className="relative">
 
               <FormInput
+                name="circleName"
                 value={form.circleName}
                 placeholder="e.g. Grandma's Team, Johnson Family"
                 error={errors.circleName}
@@ -327,6 +354,7 @@ export default function CreateCareCirclePage() {
               </label>
 
               <FormInput
+                name="lovedOneName"
                 value={form.lovedOneName}
                 placeholder="Full Name"
                 error={errors.lovedOneName}
@@ -347,6 +375,7 @@ export default function CreateCareCirclePage() {
                   value={form.relationship}
                   options={relationshipOptions}
                   placeholder="Select..."
+                  name="relationship"
                   error={errors.relationship}
                   onChange={(value) =>
                     updateField("relationship", value)
@@ -369,6 +398,7 @@ export default function CreateCareCirclePage() {
               </label>
 
               <FormInput
+                name="age"
                 type="number"
                 placeholder="Age"
                 value={form.age}
@@ -390,6 +420,7 @@ export default function CreateCareCirclePage() {
                   value={form.gender}
                   options={genderOptions}
                   placeholder="Select..."
+                  name="gender"
                   error={errors.gender}
                   onChange={(value) =>
                     updateField("gender", value)
@@ -413,6 +444,7 @@ export default function CreateCareCirclePage() {
               </label>
 
               <FormInput
+                name="phone"
                 type="tel"
                 placeholder="Phone Number"
                 value={form.phone}
@@ -429,6 +461,7 @@ export default function CreateCareCirclePage() {
               </label>
 
               <FormInput
+                name="email"
                 type="email"
                 placeholder="Email"
                 value={form.email}
@@ -456,6 +489,7 @@ export default function CreateCareCirclePage() {
                   value={form.medication}
                   options={medicationOptions}
                   placeholder="Select..."
+                  name="medication"
                   error={errors.medication}
                   onChange={(value) =>
                     updateField("medication", value)
@@ -478,6 +512,7 @@ export default function CreateCareCirclePage() {
                   value={form.dailyCheckIns}
                   options={dailyCheckInOptions}
                   placeholder="Select..."
+                  name="dailyCheckIns"
                   error={errors.dailyCheckIns}
                   onChange={(value) =>
                     updateField("dailyCheckIns", value)

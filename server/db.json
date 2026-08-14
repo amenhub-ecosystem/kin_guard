@@ -1,17 +1,30 @@
 {
   "users": [
     {
-      "id": "user-1786646526174",
-      "fullName": "jnde huehbeu",
-      "email": "admin3@example.com",
-      "password": "Aa!sdfgg3fngng",
+      "id": "user-1786651566898",
+      "fullName": "Ngozi Adeyemi",
+      "email": "ngozi@gmail.com",
+      "password": "Ngozi@",
+      "role": "caregiver",
+      "isVerified": true
+    },
+    {
+      "id": "user-1786651954693",
+      "fullName": "Tunde Okafor",
+      "email": "tunde@gmail.com",
+      "password": "Tunde@",
+      "role": "family-member",
+      "isVerified": true
+    },
+    {
+      "id": "user-1786663003918",
+      "fullName": "Amaka Chukwu",
+      "email": "amaka@gmail.com",
+      "password": "Amaka@",
       "role": "family-admin",
       "isVerified": true
     }
   ],
-  "invitations": [],
-  "careCircleMembers": [],
-  "lovedOnes": [],
   "medications": [],
   "medicationLogs": [],
   "careStatusUpdates": [],
@@ -20,10 +33,26 @@
   "notifications": [],
   "emergencyEvents": [],
   "sessions": {
-    "t_ukxbvlcmffj_1786646526174": {
+    "t_eorbe6t096r_1786663003918": {
       "authJourneyActive": true,
-      "currentUserId": "user-1786646526174",
+      "currentUserId": "user-1786663003918",
       "recentlyAddedMember": null
+    },
+    "t_yomnda10e2n_1786665615648": {
+      "authJourneyActive": true,
+      "currentUserId": "user-1786663003918"
+    },
+    "t_mr1uelksyaf_1786666457605": {
+      "authJourneyActive": true,
+      "currentUserId": "user-1786663003918"
+    },
+    "t_hte67ry2afi_1786676713856": {
+      "authJourneyActive": true,
+      "currentUserId": "user-1786651566898"
+    },
+    "t_248bcl89rpx_1786678564743": {
+      "authJourneyActive": true,
+      "currentUserId": "user-1786663003918"
     }
   }
 }

@@ -1,18 +1,8 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  getSession,
-  logout as logoutUser,
-} from "@/features/authentication/api/mockAuthApi";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { getSession, logout as logoutUser } from '@/features/authentication/api/mockAuthApi';
 import { setOnUnauthorized } from '@/lib/apiClient';
 import { useNavigate } from 'react-router-dom';
-import { ROLES, type Role } from "./roles";
+import { ROLES, type Role } from './roles';
 
 export interface MockUser {
   id: string | null;
@@ -39,22 +29,18 @@ interface MockUserContextValue {
   logout: () => Promise<void>;
 }
 
-const defaultAvatarUrl =
-  "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100&h=100";
+const defaultAvatarUrl = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100&h=100';
 
 const defaultUser: MockUser = {
   id: null,
   role: ROLES.FAMILY_ADMIN,
-  name: "Loading user...",
-  email: "",
+  name: 'Loading user...',
+  email: '',
   avatarUrl: defaultAvatarUrl,
 };
 
 function mapSessionUser(sessionUser: SessionUserShape | null | undefined): MockUser {
-  if (!sessionUser) {
-    return defaultUser;
-  }
-
+  if (!sessionUser) return defaultUser;
   return {
     id: sessionUser.id,
     role: sessionUser.role as Role,
@@ -66,9 +52,7 @@ function mapSessionUser(sessionUser: SessionUserShape | null | undefined): MockU
 
 const MockUserContext = createContext<MockUserContextValue | undefined>(undefined);
 
-export const MockUserProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const MockUserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<SessionUserShape | null>(null);
   const [authJourneyActive, setAuthJourneyActive] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -76,19 +60,34 @@ export const MockUserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const refreshUser = useCallback(async () => {
     setIsLoading(true);
-
     try {
       const session = await getSession();
-      setCurrentUser(session.currentUser ?? null);
-      setAuthJourneyActive(Boolean(session.authJourneyActive));
+      // If the session points to a legacy demo user (e.g. "Demo Admin")
+      // clear the stored token so we pick up the current seeded user or show the auth screen.
+      const isDemoNamed = session.currentUser && (
+        (typeof session.currentUser.fullName === 'string' && session.currentUser.fullName.toLowerCase().includes('demo')) ||
+        (typeof session.currentUser.email === 'string' && session.currentUser.email.startsWith('demo-'))
+      );
+
+      if (isDemoNamed) {
+        try {
+          localStorage.removeItem('__kinGuardServerToken');
+        } catch (e) {
+          // ignore
+        }
+        const newSession = await getSession();
+        setCurrentUser(newSession.currentUser ?? null);
+        setAuthJourneyActive(Boolean(newSession.authJourneyActive));
+      } else {
+        setCurrentUser(session.currentUser ?? null);
+        setAuthJourneyActive(Boolean(session.authJourneyActive));
+      }
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    void refreshUser();
-  }, [refreshUser]);
+  useEffect(() => { void refreshUser(); }, [refreshUser]);
 
   const user = useMemo(() => {
     const effectiveRole = currentUser?.role ?? overrideRole ?? defaultUser.role;
@@ -99,7 +98,7 @@ export const MockUserProvider: React.FC<{ children: React.ReactNode }> = ({
       name: currentUser?.fullName ?? defaultUser.name,
       email: currentUser?.email ?? defaultUser.email,
       avatarUrl: defaultAvatarUrl,
-    } satisfies MockUser;
+    } as MockUser;
   }, [currentUser, overrideRole]);
 
   const logout = useCallback(async () => {
@@ -113,38 +112,25 @@ export const MockUserProvider: React.FC<{ children: React.ReactNode }> = ({
   const navigate = useNavigate();
 
   useEffect(() => {
-    // register global 401 handler
-    setOnUnauthorized(() => {
-      void logout();
-      navigate('/auth');
-    });
+    setOnUnauthorized(() => { void logout(); navigate('/auth'); });
     return () => setOnUnauthorized(null);
   }, [logout, navigate]);
 
-  const value = useMemo<MockUserContextValue>(
-    () => ({
-      user,
-      currentUser,
-      authJourneyActive,
-      isLoading,
-      setRole: (role: Role) => {
-        if (!currentUser) {
-          setOverrideRole(role);
-        }
-      },
-      refreshUser,
-      logout,
-    }),
-    [authJourneyActive, currentUser, isLoading, logout, refreshUser, user]
-  );
+  const value = useMemo(() => ({
+    user,
+    currentUser,
+    authJourneyActive,
+    isLoading,
+    setRole: (role: Role) => { if (!currentUser) setOverrideRole(role); },
+    refreshUser,
+    logout,
+  }), [authJourneyActive, currentUser, isLoading, logout, refreshUser, user]);
 
   return <MockUserContext.Provider value={value}>{children}</MockUserContext.Provider>;
 };
 
 export function useMockUser() {
   const context = useContext(MockUserContext);
-  if (!context) {
-    throw new Error("useMockUser must be used within a MockUserProvider");
-  }
+  if (!context) throw new Error('useMockUser must be used within a MockUserProvider');
   return context;
 }

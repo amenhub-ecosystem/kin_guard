@@ -1,10 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { useMockUser } from "@/features/app/rbac/MockUserContext";
 import { ROLE_LABELS, type Role } from "@/features/app/rbac/roles";
+import { apiClient } from '@/lib/apiClient';
+import { useState } from 'react';
 
 export function UserProfileMenu() {
   const navigate = useNavigate();
-  const { user, logout } = useMockUser();
+  const { user, logout, refreshUser } = useMockUser();
+  const [demoTokens, setDemoTokens] = useState<Record<string,string>>({});
+  const [creating, setCreating] = useState(false);
 
   const initials = (
     (user?.name ?? "U")
@@ -44,6 +48,7 @@ export function UserProfileMenu() {
       >
         Log out
       </button>
+      {/* Demo helpers removed from header. Use API endpoints or scripts to seed/demo. */}
     </div>
   );
 }
