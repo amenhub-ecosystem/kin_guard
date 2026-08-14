@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent, type InputHTMLAttributes } from "react";
+import { useRef, useState, type ChangeEvent, type InputHTMLAttributes } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Camera,
