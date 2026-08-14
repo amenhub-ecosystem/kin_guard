@@ -52,7 +52,7 @@ export async function createCareCircle(payload: CareCirclePayload): Promise<{ su
     window.localStorage.setItem(storageKey, JSON.stringify(nextDraft));
   }
 
-  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
   const token = typeof window !== "undefined" ? (window.localStorage.getItem("__kinGuardServerToken") || undefined) : undefined;
 
   const res = await fetch(`${API_BASE}/care-circles`, {

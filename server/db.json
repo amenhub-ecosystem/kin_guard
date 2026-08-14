@@ -1,28 +1,409 @@
 {
   "users": [
     {
-      "id": "user-1786646526174",
-      "fullName": "jnde huehbeu",
-      "email": "admin3@example.com",
-      "password": "Aa!sdfgg3fngng",
+      "id": "user-demo-admin",
+      "fullName": "Sarah Chen",
+      "email": "demo@example.com",
+      "password": "Demo123!",
       "role": "family-admin",
+      "isVerified": true
+    },
+    {
+      "id": "user-demo-caregiver1",
+      "fullName": "Michael Wong",
+      "email": "caregiver1@example.com",
+      "password": "Demo123!",
+      "role": "caregiver",
+      "isVerified": true
+    },
+    {
+      "id": "user-demo-caregiver2",
+      "fullName": "Emma Johnson",
+      "email": "caregiver2@example.com",
+      "password": "Demo123!",
+      "role": "caregiver",
+      "isVerified": true
+    },
+    {
+      "id": "user-demo-family",
+      "fullName": "David Chen",
+      "email": "family@example.com",
+      "password": "Demo123!",
+      "role": "family-member",
       "isVerified": true
     }
   ],
-  "invitations": [],
-  "careCircleMembers": [],
-  "lovedOnes": [],
-  "medications": [],
-  "medicationLogs": [],
-  "careStatusUpdates": [],
-  "activityEvents": [],
-  "messages": [],
-  "notifications": [],
-  "emergencyEvents": [],
+  "invitations": [
+    {
+      "id": "inv-demo-1",
+      "token": "inv-demo-caregiver-active",
+      "email": "invite.caregiver@example.com",
+      "inviterName": "Sarah Chen",
+      "inviterUserId": "user-demo-admin",
+      "careCircleName": "Chen Family Care",
+      "expiresAt": "2026-12-31T23:59:59Z",
+      "role": "caregiver",
+      "relationship": null,
+      "phone": null,
+      "status": "pending"
+    }
+  ],
+  "lovedOnes": [
+    {
+      "id": "loved-one-demo-1",
+      "ownerId": "user-demo-admin",
+      "fullName": "Margaret Chen",
+      "age": 78,
+      "gender": "Female",
+      "relationship": "Mother",
+      "phone": "+1 (555) 123-4567",
+      "email": "margaret.chen@example.com",
+      "photo": "/uploads/margaret-demo.png",
+      "medicalHistory": "Hypertension, Type 2 Diabetes, Mild Arthritis",
+      "emergencyContact": "+1 (555) 987-6543",
+      "notes": "Prefers morning check-ins. Takes medications at 8 AM and 6 PM.",
+      "createdAt": "2025-09-15T10:00:00Z"
+    }
+  ],
+  "careCircleMembers": [
+    {
+      "id": "member-demo-1",
+      "ownerId": "user-demo-admin",
+      "userId": "user-demo-caregiver1",
+      "role": "caregiver",
+      "relationship": "Son-in-law",
+      "phone": "+1 (555) 234-5678",
+      "addedAt": "2025-09-15T10:30:00Z"
+    },
+    {
+      "id": "member-demo-2",
+      "ownerId": "user-demo-admin",
+      "userId": "user-demo-caregiver2",
+      "role": "caregiver",
+      "relationship": "Daughter",
+      "phone": "+1 (555) 345-6789",
+      "addedAt": "2025-09-15T10:35:00Z"
+    },
+    {
+      "id": "member-demo-3",
+      "ownerId": "user-demo-admin",
+      "userId": "user-demo-family",
+      "role": "family-member",
+      "relationship": "Son",
+      "phone": "+1 (555) 456-7890",
+      "addedAt": "2025-09-15T10:40:00Z"
+    }
+  ],
+  "medications": [
+    {
+      "id": "med-demo-1",
+      "lovedOneId": "loved-one-demo-1",
+      "name": "Lisinopril",
+      "dose": "10mg",
+      "schedule": "Once daily, morning",
+      "notes": "For blood pressure control",
+      "active": true,
+      "createdAt": "2025-09-15T11:00:00Z"
+    },
+    {
+      "id": "med-demo-2",
+      "lovedOneId": "loved-one-demo-1",
+      "name": "Metformin",
+      "dose": "500mg",
+      "schedule": "Twice daily, with meals",
+      "notes": "For diabetes management",
+      "active": true,
+      "createdAt": "2025-09-15T11:01:00Z"
+    },
+    {
+      "id": "med-demo-3",
+      "lovedOneId": "loved-one-demo-1",
+      "name": "Aspirin",
+      "dose": "81mg",
+      "schedule": "Once daily, evening",
+      "notes": "Heart health",
+      "active": true,
+      "createdAt": "2025-09-15T11:02:00Z"
+    },
+    {
+      "id": "med-demo-4",
+      "lovedOneId": "loved-one-demo-1",
+      "name": "Vitamin D3",
+      "dose": "1000 IU",
+      "schedule": "Once daily, with breakfast",
+      "notes": "Bone health",
+      "active": true,
+      "createdAt": "2025-09-15T11:03:00Z"
+    }
+  ],
+  "medicationLogs": [
+    {
+      "id": "log-demo-1",
+      "medicationId": "med-demo-1",
+      "lovedOneId": "loved-one-demo-1",
+      "action": "taken",
+      "timestamp": "2026-08-14T08:15:00Z",
+      "actorUserId": "user-demo-caregiver1"
+    },
+    {
+      "id": "log-demo-2",
+      "medicationId": "med-demo-2",
+      "lovedOneId": "loved-one-demo-1",
+      "action": "taken",
+      "timestamp": "2026-08-14T08:15:00Z",
+      "actorUserId": "user-demo-caregiver1"
+    },
+    {
+      "id": "log-demo-3",
+      "medicationId": "med-demo-3",
+      "lovedOneId": "loved-one-demo-1",
+      "action": "taken",
+      "timestamp": "2026-08-13T18:30:00Z",
+      "actorUserId": "user-demo-caregiver2"
+    },
+    {
+      "id": "log-demo-4",
+      "medicationId": "med-demo-4",
+      "lovedOneId": "loved-one-demo-1",
+      "action": "taken",
+      "timestamp": "2026-08-13T08:00:00Z",
+      "actorUserId": "user-demo-caregiver1"
+    },
+    {
+      "id": "log-demo-5",
+      "medicationId": "med-demo-1",
+      "lovedOneId": "loved-one-demo-1",
+      "action": "taken",
+      "timestamp": "2026-08-13T08:10:00Z",
+      "actorUserId": "user-demo-caregiver1"
+    },
+    {
+      "id": "log-demo-6",
+      "medicationId": "med-demo-2",
+      "lovedOneId": "loved-one-demo-1",
+      "action": "taken",
+      "timestamp": "2026-08-13T12:30:00Z",
+      "actorUserId": "user-demo-caregiver2"
+    }
+  ],
+  "careStatusUpdates": [
+    {
+      "id": "check-demo-1",
+      "lovedOneId": "loved-one-demo-1",
+      "status": "good",
+      "notes": "Morning check-in: feeling well, good appetite",
+      "timestamp": "2026-08-14T09:00:00Z",
+      "actorUserId": "user-demo-caregiver1"
+    },
+    {
+      "id": "check-demo-2",
+      "lovedOneId": "loved-one-demo-1",
+      "status": "good",
+      "notes": "Afternoon walk completed, vitals normal",
+      "timestamp": "2026-08-14T14:30:00Z",
+      "actorUserId": "user-demo-caregiver2"
+    },
+    {
+      "id": "check-demo-3",
+      "lovedOneId": "loved-one-demo-1",
+      "status": "needs_attention",
+      "notes": "Slight headache, resting. Will monitor",
+      "timestamp": "2026-08-13T16:45:00Z",
+      "actorUserId": "user-demo-caregiver1"
+    },
+    {
+      "id": "check-demo-4",
+      "lovedOneId": "loved-one-demo-1",
+      "status": "good",
+      "notes": "Evening check: headache resolved, ready for dinner",
+      "timestamp": "2026-08-13T18:00:00Z",
+      "actorUserId": "user-demo-caregiver2"
+    }
+  ],
+  "activityEvents": [
+    {
+      "id": "evt-demo-1",
+      "type": "medication_log",
+      "lovedOneId": "loved-one-demo-1",
+      "actorUserId": "user-demo-caregiver1",
+      "timestamp": "2026-08-14T08:15:00Z",
+      "metadata": {
+        "medicationId": "med-demo-1",
+        "medicationName": "Lisinopril",
+        "action": "taken"
+      }
+    },
+    {
+      "id": "evt-demo-2",
+      "type": "medication_log",
+      "lovedOneId": "loved-one-demo-1",
+      "actorUserId": "user-demo-caregiver1",
+      "timestamp": "2026-08-14T08:15:00Z",
+      "metadata": {
+        "medicationId": "med-demo-2",
+        "medicationName": "Metformin",
+        "action": "taken"
+      }
+    },
+    {
+      "id": "evt-demo-3",
+      "type": "check_in",
+      "lovedOneId": "loved-one-demo-1",
+      "actorUserId": "user-demo-caregiver1",
+      "timestamp": "2026-08-14T09:00:00Z",
+      "metadata": {
+        "status": "good",
+        "notes": "Morning check-in: feeling well, good appetite"
+      }
+    },
+    {
+      "id": "evt-demo-4",
+      "type": "check_in",
+      "lovedOneId": "loved-one-demo-1",
+      "actorUserId": "user-demo-caregiver2",
+      "timestamp": "2026-08-14T14:30:00Z",
+      "metadata": {
+        "status": "good",
+        "notes": "Afternoon walk completed, vitals normal"
+      }
+    },
+    {
+      "id": "evt-demo-5",
+      "type": "check_in",
+      "lovedOneId": "loved-one-demo-1",
+      "actorUserId": "user-demo-caregiver1",
+      "timestamp": "2026-08-13T16:45:00Z",
+      "metadata": {
+        "status": "needs_attention",
+        "notes": "Slight headache, resting. Will monitor"
+      }
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg-demo-1",
+      "conversationId": "conv-demo-1",
+      "fromUserId": "user-demo-caregiver1",
+      "toUserId": "user-demo-admin",
+      "content": "Hi Sarah, just finished Mom's morning medications and check-in. Everything looks good.",
+      "timestamp": "2026-08-14T09:15:00Z",
+      "read": true
+    },
+    {
+      "id": "msg-demo-2",
+      "conversationId": "conv-demo-1",
+      "fromUserId": "user-demo-admin",
+      "toUserId": "user-demo-caregiver1",
+      "content": "Thanks Michael! That's great to hear. Can you also make sure she drinks enough water today?",
+      "timestamp": "2026-08-14T09:45:00Z",
+      "read": true
+    },
+    {
+      "id": "msg-demo-3",
+      "conversationId": "conv-demo-1",
+      "fromUserId": "user-demo-caregiver1",
+      "toUserId": "user-demo-admin",
+      "content": "Will do. I'll check on her again at lunch time.",
+      "timestamp": "2026-08-14T10:00:00Z",
+      "read": true
+    },
+    {
+      "id": "msg-demo-4",
+      "conversationId": "conv-demo-2",
+      "fromUserId": "user-demo-caregiver2",
+      "toUserId": "user-demo-admin",
+      "content": "Mom had a slight headache this afternoon but it's resolved now. She's resting.",
+      "timestamp": "2026-08-13T17:00:00Z",
+      "read": true
+    },
+    {
+      "id": "msg-demo-5",
+      "conversationId": "conv-demo-2",
+      "fromUserId": "user-demo-admin",
+      "toUserId": "user-demo-caregiver2",
+      "content": "Thanks for letting me know Emma. Please keep monitoring her. Let me know if it returns.",
+      "timestamp": "2026-08-13T17:15:00Z",
+      "read": true
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif-demo-1",
+      "type": "care_status",
+      "title": "Status Alert: Needs Attention",
+      "body": "Margaret reported feeling a headache during the afternoon check-in.",
+      "createdAt": "2026-08-13T16:45:00Z",
+      "read": true,
+      "resolved": true,
+      "targetUserId": "user-demo-admin",
+      "lovedOneId": "loved-one-demo-1",
+      "relatedEmergencyId": null
+    },
+    {
+      "id": "notif-demo-2",
+      "type": "medication_reminder",
+      "title": "Medication Due",
+      "body": "Lisinopril is due at 8:00 AM",
+      "createdAt": "2026-08-14T08:00:00Z",
+      "read": true,
+      "resolved": true,
+      "targetUserId": "user-demo-caregiver1",
+      "lovedOneId": "loved-one-demo-1",
+      "relatedEmergencyId": null
+    },
+    {
+      "id": "notif-demo-3",
+      "type": "medication_reminder",
+      "title": "Medication Due",
+      "body": "Metformin is due at 12:00 PM",
+      "createdAt": "2026-08-14T12:00:00Z",
+      "read": false,
+      "resolved": false,
+      "targetUserId": "user-demo-caregiver2",
+      "lovedOneId": "loved-one-demo-1",
+      "relatedEmergencyId": null
+    },
+    {
+      "id": "notif-demo-4",
+      "type": "message",
+      "title": "New message from Michael Wong",
+      "body": "Morning check-in complete. All good.",
+      "createdAt": "2026-08-14T09:15:00Z",
+      "read": true,
+      "resolved": true,
+      "targetUserId": "user-demo-admin",
+      "lovedOneId": "loved-one-demo-1",
+      "relatedEmergencyId": null
+    }
+  ],
+  "emergencyEvents": [
+    {
+      "id": "emerg-demo-1",
+      "lovedOneId": "loved-one-demo-1",
+      "triggerUserId": "user-demo-caregiver1",
+      "type": "manual_sos",
+      "severity": "high",
+      "description": "Accidental SOS trigger during testing",
+      "location": "Home",
+      "timestamp": "2026-08-12T10:30:00Z",
+      "resolved": true,
+      "resolvedAt": "2026-08-12T10:35:00Z",
+      "resolvedBy": "user-demo-admin",
+      "responses": [
+        {
+          "id": "resp-1",
+          "responderId": "user-demo-admin",
+          "action": "acknowledged",
+          "timestamp": "2026-08-12T10:32:00Z",
+          "notes": "False alarm, all clear"
+        }
+      ]
+    }
+  ],
   "sessions": {
-    "t_ukxbvlcmffj_1786646526174": {
-      "authJourneyActive": true,
-      "currentUserId": "user-1786646526174",
+    "demo-session-admin": {
+      "authJourneyActive": false,
+      "currentUserId": "user-demo-admin",
       "recentlyAddedMember": null
     }
   }

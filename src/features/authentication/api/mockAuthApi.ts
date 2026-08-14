@@ -217,7 +217,7 @@ function clearSession() {
 
 export async function signUp(values: SignUpRequest) {
   // Forward signup to backend server
-  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
   const inParse = SignUpRequestSchema.safeParse(values);
   if (!inParse.success) throw new Error(`schema validation failed: ${inParse.error.message}`);
   const res = await fetch(`${API_BASE}/auth/signup`, {
@@ -238,7 +238,7 @@ export async function signUp(values: SignUpRequest) {
 }
 
 export async function login(values: LoginRequest) {
-  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
   const inParse = LoginRequestSchema.safeParse(values);
   if (!inParse.success) throw new Error(`schema validation failed: ${inParse.error.message}`);
   const res = await fetch(`${API_BASE}/auth/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(inParse.data) });
@@ -253,7 +253,7 @@ export async function login(values: LoginRequest) {
 }
 
 export async function requestPasswordReset(email: PasswordResetRequest) {
-  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
   const inParse = PasswordResetRequestSchema.safeParse(email);
   if (!inParse.success) throw new Error(`schema validation failed: ${inParse.error.message}`);
   const res = await fetch(`${API_BASE}/auth/password-reset/request`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(inParse.data) });
@@ -265,7 +265,7 @@ export async function requestPasswordReset(email: PasswordResetRequest) {
 }
 
 export async function verifyOtp(code: VerifyOtpRequest) {
-  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
   const inParse = VerifyOtpRequestSchema.safeParse(code);
   if (!inParse.success) throw new Error(`schema validation failed: ${inParse.error.message}`);
   const token = typeof window !== "undefined" ? (window.localStorage.getItem("__kinGuardServerToken") || undefined) : undefined;
@@ -278,7 +278,7 @@ export async function verifyOtp(code: VerifyOtpRequest) {
 }
 
 export async function resendOtp(): Promise<ResendOtpResponse> {
-  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
   const token = typeof window !== "undefined" ? (window.localStorage.getItem("__kinGuardServerToken") || undefined) : undefined;
   const res = await fetch(`${API_BASE}/auth/otp/resend`, { method: "POST", headers: { "Content-Type": "application/json", ...(token ? { "x-session-token": token } : {}) } });
   const payload = await res.json().catch(() => null);
@@ -289,7 +289,7 @@ export async function resendOtp(): Promise<ResendOtpResponse> {
 }
 
 export async function createCareCircle(data: CareCircleDetails) {
-  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
   const inParse = CareCircleDetailsSchema.safeParse(data);
   if (!inParse.success) throw new Error(`schema validation failed: ${inParse.error.message}`);
   const token = typeof window !== "undefined" ? (window.localStorage.getItem("__kinGuardServerToken") || undefined) : undefined;
@@ -302,7 +302,7 @@ export async function createCareCircle(data: CareCircleDetails) {
 }
 
 export async function inviteFamilyMembers(members: InviteFamilyMembersRequest) {
-  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
   const inParse = InviteFamilyMembersRequestSchema.safeParse(members);
   if (!inParse.success) throw new Error(`schema validation failed: ${inParse.error.message}`);
   const token = typeof window !== "undefined" ? (window.localStorage.getItem("__kinGuardServerToken") || undefined) : undefined;
@@ -315,7 +315,7 @@ export async function inviteFamilyMembers(members: InviteFamilyMembersRequest) {
 }
 
 export async function getInvitationByToken(token: InvitationLookupToken): Promise<InvitationLookupResult> {
-  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
   const inParse = InvitationLookupTokenSchema.safeParse(token);
   if (!inParse.success) throw new Error(`schema validation failed: ${inParse.error.message}`);
   const t = String(inParse.data);
@@ -331,7 +331,7 @@ export async function acceptCaregiverInvitation(
   token: InvitationLookupToken,
   values: AcceptCaregiverInvitationRequest
 ) {
-  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
   const tokenParse = InvitationLookupTokenSchema.safeParse(token);
   if (!tokenParse.success) throw new Error(`schema validation failed: ${tokenParse.error.message}`);
   const inParse = AcceptCaregiverInvitationRequestSchema.safeParse(values);
@@ -349,7 +349,7 @@ export async function acceptCaregiverInvitation(
 export async function acceptFamilyMemberInvitation(
   values: AcceptFamilyMemberInvitationRequest
 ) {
-  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
   const inParse = AcceptFamilyMemberInvitationRequestSchema.safeParse(values);
   if (!inParse.success) throw new Error(`schema validation failed: ${inParse.error.message}`);
   const res = await fetch(`${API_BASE}/invitations/accept/family-member`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(inParse.data) });
@@ -362,7 +362,7 @@ export async function acceptFamilyMemberInvitation(
 }
 
 export async function getSession() {
-  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
   const token = typeof window !== "undefined" ? (window.localStorage.getItem("__kinGuardServerToken") || undefined) : undefined;
   const res = await fetch(`${API_BASE}/auth/session`, { method: "GET", headers: { ...(token ? { "x-session-token": token } : {}) } });
   const payload = await res.json().catch(() => null);
@@ -373,7 +373,7 @@ export async function getSession() {
 }
 
 export async function logout() {
-  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+  const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
   const token = typeof window !== "undefined" ? (window.localStorage.getItem("__kinGuardServerToken") || undefined) : undefined;
   await fetch(`${API_BASE}/auth/logout`, { method: "POST", headers: { ...(token ? { "x-session-token": token } : {}) } }).catch(() => null);
   try { if (typeof window !== "undefined") window.localStorage.removeItem("__kinGuardServerToken"); } catch (e) {}
@@ -469,7 +469,7 @@ try {
     win.__kinGuardMockApi = win.__kinGuardMockApi ?? {};
     win.__kinGuardMockApi.__getLastOtpForEmail = (email: string) => {
       try {
-        const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+        const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
         return fetch(`${API_BASE}/__test__/last-otp?email=${encodeURIComponent(email)}`).then((r) => r.json()).then((j) => j?.otp ?? null).catch(() => null);
       } catch (e) {
         return null;
@@ -477,7 +477,7 @@ try {
     };
     win.__kinGuardMockApi.__resetMockState = () => {
       try {
-        const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+        const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
         return fetch(`${API_BASE}/__test__/reset`, { method: "POST" }).then(() => null).catch(() => null);
       } catch (e) {
         return null;
@@ -493,7 +493,7 @@ try {
     };
     win.__kinGuardMockApi.__getRequestLog = () => {
       try {
-        const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+        const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
         return fetch(`${API_BASE}/__test__/request-log`).then((r) => r.json()).then((j) => j?.log ?? []).catch(() => []);
       } catch (e) {
         return [];
@@ -502,7 +502,7 @@ try {
     win.__kinGuardMockApi.__clearRequestLog = () => {
       try {
         // not implemented server-side; call reset instead
-        const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+        const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
         return fetch(`${API_BASE}/__test__/reset`, { method: "POST" }).then(() => null).catch(() => null);
       } catch (e) {
         return null;
@@ -511,7 +511,7 @@ try {
     win.__kinGuardMockApi.__getCurrentUser = () => {
       try {
         try {
-          const API_BASE = (import.meta as any)?.env?.VITE_API_BASE ?? "http://localhost:4000";
+          const API_BASE = (import.meta as any)?.env?.VITE_API_BASE_URL ?? "http://localhost:4000";
           const token = window.localStorage.getItem("__kinGuardServerToken") || "";
           return fetch(`${API_BASE}/__test__/current-user?token=${encodeURIComponent(token)}`).then((r) => r.json()).then((j) => j?.user ?? null).catch(() => null);
         } catch (e) {

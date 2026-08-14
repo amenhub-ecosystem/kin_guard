@@ -8,7 +8,16 @@ import { existsSync, mkdirSync, writeFileSync } from "fs";
 const PORT = process.env.PORT || 4000;
 
 const app = express();
-app.use(cors({ origin: "http://localhost:5173" }));
+// CORS: allow all origins (no credentials in this app, token-based auth only)
+// This enables preflight OPTIONS to succeed
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "x-session-token", "Authorization"],
+  credentials: false,
+}));
+// Explicit OPTIONS handler for extra safety (cors middleware should handle this, but be explicit)
+app.options("*", cors());
 app.use(express.json());
 
 const file = join(process.cwd(), "server", "db.json");
@@ -672,7 +681,7 @@ app.post("/__test__/reset", async (req, res) => {
 initDb()
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`KinGuard backend running on http://localhost:${PORT}`);
+      console.log(`KinGuard backend running on port ${PORT}`);
     });
   })
   .catch((err) => {
