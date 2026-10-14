@@ -12,6 +12,10 @@ app.use(cors({ origin: "http://localhost:5173" }));
 // Allow larger payloads (image data URLs) during local development
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "5mb" }));
+app.use("/__test__", (req, res, next) => {
+  if (process.env.NODE_ENV === "production") return res.sendStatus(404);
+  next();
+});
 
 const file = join(process.cwd(), "server", "db.json");
 const adapter = new JSONFile(file);
